@@ -1,0 +1,4 @@
+sphinxcontrib-pecanwsme>=0.8
+sphinxcontrib-httpdomain
+wsme
+oslosphinx
