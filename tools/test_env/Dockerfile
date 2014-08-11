@@ -17,6 +17,7 @@ RUN shinken install webui
 RUN shinken install auth-cfg-password
 RUN pip install influxdb && shinken install mod-influxdb
 RUN shinken install ws-arbiter
+RUN pip install riemann-client && shinken install mod-riemann
 
 ## plugins
 RUN apt-get install -y nagios-plugins
