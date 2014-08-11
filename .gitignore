@@ -1,2 +1,5 @@
 # documentation
 doc/build
+
+# tests
+.tox
