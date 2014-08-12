@@ -4,3 +4,4 @@ wsme
 oslosphinx
 nose
 flake8
+testrepository>=0.0.18
