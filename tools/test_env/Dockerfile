@@ -18,6 +18,7 @@ RUN shinken install auth-cfg-password
 RUN pip install influxdb && shinken install mod-influxdb
 RUN shinken install ws-arbiter
 RUN pip install riemann-client && shinken install mod-riemann
+RUN pip install pymongo && shinken install mod-mongodb
 
 ## plugins
 RUN apt-get install -y nagios-plugins
@@ -56,6 +57,9 @@ ADD var/www/html/grafana/config.js /var/www/html/grafana/config.js
 RUN apt-get install -y libapache2-mod-proxy-html
 RUN a2enmod proxy_http
 ADD etc/apache2/conf-enabled/influxdb.conf /etc/apache2/conf-enabled/influxdb.conf
+
+### Mongo
+RUN apt-get install -y mongodb
 
 ### Supervisor
 RUN apt-get -y install supervisor
