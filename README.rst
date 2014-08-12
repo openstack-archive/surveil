@@ -11,4 +11,4 @@ Project Info
 
  * Wiki: https://wiki.openstack.org/wiki/Surveil
  * IRC: #surveil at freenode
- 
+ * Documentation: https://surveil.readthedocs.org/ 
