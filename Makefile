@@ -1,5 +1,5 @@
 build:
-	sudo docker build -t surveil_image tools/test_env
+	sudo docker build -t surveil_image .
 
 kill:
 	- sudo docker stop surveil

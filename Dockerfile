@@ -29,7 +29,7 @@ RUN chmod u+s /bin/ping6
 
 ## configuration
 RUN rm -rf /etc/shinken
-ADD etc/shinken /etc/shinken
+ADD tools/docker/etc/shinken /etc/shinken
 RUN chown -R root:shinken /etc/shinken
 
 ### Influxdb
@@ -43,27 +43,27 @@ RUN service influxdb start && sleep 10 && curl -X POST 'http://localhost:8086/db
 RUN wget http://aphyr.com/riemann/riemann_0.2.6_all.deb
 RUN sudo dpkg -i riemann_0.2.6_all.deb
 RUN sudo apt-get install -y openjdk-7-jre
-ADD etc/riemann/riemann.config /etc/riemann/riemann.config
+ADD tools/docker/etc/riemann/riemann.config /etc/riemann/riemann.config
 
 ### Grafana
 RUN apt-get install -y apache2
 RUN wget http://grafanarel.s3.amazonaws.com/grafana-1.7.0-rc1.tar.gz
 RUN tar xvf grafana-1.7.0-rc1.tar.gz
 RUN mv grafana-1.7.0-rc1 /var/www/html/grafana
-ADD etc/apache2/sites-available/grafana.conf /etc/apache2/sites-available/grafana.conf
-ADD var/www/html/grafana/config.js /var/www/html/grafana/config.js
+ADD tools/docker/etc/apache2/sites-available/grafana.conf /etc/apache2/sites-available/grafana.conf
+ADD tools/docker/var/www/html/grafana/config.js /var/www/html/grafana/config.js
 
 ## Influxdb reverse proxy for grafana
 RUN apt-get install -y libapache2-mod-proxy-html
 RUN a2enmod proxy_http
-ADD etc/apache2/conf-enabled/influxdb.conf /etc/apache2/conf-enabled/influxdb.conf
+ADD tools/docker/etc/apache2/conf-enabled/influxdb.conf /etc/apache2/conf-enabled/influxdb.conf
 
 ### Mongo
 RUN apt-get install -y mongodb
 
 ### Supervisor
 RUN apt-get -y install supervisor
-ADD etc/supervisor /etc/supervisor
+ADD tools/docker/etc/supervisor /etc/supervisor
 
 # Shinken WEBUI
 EXPOSE 7767
