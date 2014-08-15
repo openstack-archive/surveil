@@ -1,0 +1,11 @@
+.. docbookrestapi
+
+============
+ V1 Web API
+============
+
+Hello
+=====
+
+.. rest-controller:: surveil.api.controllers.v1.hello:HelloController
+   :webprefix: /v1/hello
