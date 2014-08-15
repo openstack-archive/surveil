@@ -2,12 +2,13 @@
 Welcome to Surveil's documentation!
 ===================================
 
-Contents:
+Table of Contents:
 
 .. toctree::
    :maxdepth: 2
 
    readme
+   webapi/index
 
 Indices and tables
 ==================
