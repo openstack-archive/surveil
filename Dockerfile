@@ -65,6 +65,21 @@ RUN apt-get install -y mongodb
 RUN apt-get -y install supervisor
 ADD tools/docker/etc/supervisor /etc/supervisor
 
+### Surveil
+## Copy files
+ADD surveil /surveil/surveil
+ADD setup.cfg /surveil/setup.cfg
+ADD requirements.txt surveil/requirements.txt
+ADD setup.py /surveil/setup.py
+ADD .git /surveil/.git
+ADD README.rst surveil/README.rst
+
+## Install
+RUN apt-get install -y python3-pip
+RUN pip3 install -r /surveil/requirements.txt
+RUN apt-get install -y git
+RUN cd surveil && python3 setup.py install
+
 # Shinken WEBUI
 EXPOSE 7767
 
