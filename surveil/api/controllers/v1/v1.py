@@ -13,7 +13,10 @@
 # under the License.
 
 from surveil.api.controllers.v1 import hello
+from surveil.api.controllers.v1 import hosts
 
 
 class V1Controller(object):
+    """ Version 1 API controller root."""
     hello = hello.HelloController()
+    hosts = hosts.HostsController()

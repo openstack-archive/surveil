@@ -9,3 +9,12 @@ Hello
 
 .. rest-controller:: surveil.api.controllers.v1.hello:HelloController
    :webprefix: /v1/hello
+
+Hosts
+=====
+
+.. rest-controller:: surveil.api.controllers.v1.hosts:HostsController
+   :webprefix: /v1/hosts
+
+.. rest-controller:: surveil.api.controllers.v1.hosts:HostController
+   :webprefix: /v1/hosts
