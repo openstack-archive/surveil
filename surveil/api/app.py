@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from pecan import make_app
+import pecan
 # from pecanrest import model
 
 
@@ -21,7 +21,7 @@ def setup_app(config):
     # model.init_model()
     app_conf = dict(config.app)
 
-    return make_app(
+    return pecan.make_app(
         app_conf.pop('root'),
         logging=getattr(config, 'logging', {}),
         **app_conf

@@ -12,21 +12,23 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from unittest import TestCase
-from pecan import set_config
-from pecan.testing import load_test_app
+import pecan
+import pecan.testing
+
+import unittest
 
 __all__ = ['FunctionalTest']
 
 
-class FunctionalTest(TestCase):
-    """
-    Used for functional tests where you need to test your
-    literal application and its integration with the framework.
+class FunctionalTest(unittest.TestCase):
+    """Used for functional tests.
+
+    Used where you need to test your literal
+    application and its integration with the framework.
     """
 
     def setUp(self):
-        self.app = load_test_app({
+        self.app = pecan.testing.load_test_app({
             'app': {
                 'root': 'surveil.api.controllers.root.RootController',
                 'modules': ['surveil.api'],
@@ -35,4 +37,4 @@ class FunctionalTest(TestCase):
         })
 
     def tearDown(self):
-        set_config({}, overwrite=True)
+        pecan.set_config({}, overwrite=True)

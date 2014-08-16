@@ -12,10 +12,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.tests.api.functionalTest import FunctionalTest
+import surveil.tests.api.functionalTest
 
 
-class TestRootController(FunctionalTest):
+class TestRootController(surveil.tests.api.functionalTest.FunctionalTest):
 
     def test_get(self):
         response = self.app.get('/v1/hello')

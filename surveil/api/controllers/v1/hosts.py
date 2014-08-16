@@ -24,7 +24,7 @@ class HostController(rest.RestController):
 
     @pecan.expose()
     def get(self):
-        """Returns a specific host """
+        """Returns a specific host."""
         return "Returns a specific host: " + self._id
 
 
@@ -36,5 +36,5 @@ class HostsController(rest.RestController):
 
     @pecan.expose()
     def get_all(self):
-        """ Returns all host """
+        """Returns all host."""
         return "Returns all hosts"
