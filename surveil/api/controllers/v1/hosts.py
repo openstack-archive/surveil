@@ -12,6 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import json
+
 import pecan
 from pecan import rest
 
@@ -31,6 +33,24 @@ class HostController(rest.RestController):
         if host:
             del host['_id']
         return host
+
+    @pecan.expose()
+    def put(self):
+        """Modify this host."""
+        body = json.loads(pecan.request.body.decode())
+        pecan.request.mongo_connection.shinken.hosts.update(
+            {"host_name": self._id},
+            body
+        )
+        pecan.response.status = 204
+
+    @pecan.expose()
+    def delete(self):
+        """Delete this host."""
+        pecan.request.mongo_connection.shinken.hosts.remove(
+            {"host_name": self._id}
+        )
+        pecan.response.status = 204
 
 
 class HostsController(rest.RestController):

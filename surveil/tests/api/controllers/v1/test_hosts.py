@@ -56,3 +56,52 @@ class TestRootController(functionalTest.FunctionalTest):
             json.loads(response.body.decode()),
             hosts[1]
         )
+        self.assertEqual(response.status_int, 200)
+
+    def test_update_host(self):
+        hosts = [{u"use": u"generic-host", u"contact_groups": u"admins",
+                  u"host_name": u"testhost1", u"address": u"www.google.ca"}]
+        self.mongoconnection.shinken.hosts.insert(copy.deepcopy(hosts))
+
+        put_body = {u"use": u"generic-host", u"contact_groups": u"admins",
+                    u"host_name": u"testhost1", u"address": u"www.test.com"}
+
+        response = self.app.put_json("/v1/hosts/testhost1", params=put_body)
+
+        expected_hosts = [
+            {u"use": u"generic-host", u"contact_groups": u"admins",
+             u"host_name": u"testhost1", u"address": u"www.test.com"}
+        ]
+
+        mongo_hosts = [host for host
+                       in self.mongoconnection.shinken.hosts.find()]
+
+        for host in mongo_hosts:
+            del host['_id']
+
+        self.assertEqual(expected_hosts, mongo_hosts)
+        self.assertEqual(response.status_int, 204)
+
+    def test_delete_host(self):
+        hosts = [
+            {u"use": u"generic-host", u"contact_groups": u"admins",
+             u"host_name": u"testhost1", u"address": u"www.google.ca"},
+            {u"use": u"generic-host", u"contact_groups": u"admins",
+             u"host_name": u"testhost2", u"address": u"www.google.ca"}
+        ]
+        self.mongoconnection.shinken.hosts.insert(copy.deepcopy(hosts))
+
+        response = self.app.delete('/v1/hosts/testhost2')
+
+        expected_hosts = [
+            {u"use": u"generic-host", u"contact_groups": u"admins",
+             u"host_name": u"testhost1", u"address": u"www.google.ca"}
+        ]
+        mongo_hosts = [host for host
+                       in self.mongoconnection.shinken.hosts.find()]
+
+        for host in mongo_hosts:
+            del host['_id']
+
+        self.assertEqual(expected_hosts, mongo_hosts)
+        self.assertEqual(response.status_int, 204)
