@@ -19,5 +19,5 @@ class TestRootController(functionalTest.FunctionalTest):
 
     def test_get(self):
         response = self.app.get('/v1/hello')
-        assert response.body == b"Hello World!"
+        self.assertEqual(response.body,  b"Hello World!")
         assert response.status_int == 200
