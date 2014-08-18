@@ -58,8 +58,9 @@ RUN apt-get install -y libapache2-mod-proxy-html
 RUN a2enmod proxy_http
 ADD tools/docker/etc/apache2/conf-enabled/influxdb.conf /etc/apache2/conf-enabled/influxdb.conf
 
-### Mongo
+### Mongodb
 RUN apt-get install -y mongodb
+ADD tools/docker/etc/mongodb.conf /etc/mongodb.conf
 
 ### Surveil
 ## Copy files
@@ -93,5 +94,8 @@ EXPOSE 80
 
 # Riemann
 EXPOSE 5555
+
+# Mongodb
+EXPOSE 27017
 
 CMD ["/usr/bin/supervisord"]

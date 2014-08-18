@@ -12,17 +12,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import pecan
+from pecan import hooks
 
 
-def setup_app(config):
+class DBHook(hooks.PecanHook):
 
-    app_conf = dict(config.app)
+    def __init__(self, mongo_connection):
+        self.mongo_connection = mongo_connection
 
-    app = pecan.make_app(
-        app_conf.pop('root'),
-        logging=getattr(config, 'logging', {}),
-        **app_conf
-    )
-
-    return app
+    def before(self, state):
+        state.request.mongo_connection = self.mongo_connection

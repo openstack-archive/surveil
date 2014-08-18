@@ -22,10 +22,15 @@ class HostController(rest.RestController):
         pecan.request.context['host_id'] = host_id
         self._id = host_id
 
-    @pecan.expose()
+    @pecan.expose("json")
     def get(self):
         """Returns a specific host."""
-        return "Returns a specific host: " + self._id
+        host = pecan.request.mongo_connection.shinken.hosts.find_one(
+            {"host_name": self._id}
+        )
+        if host:
+            del host['_id']
+        return host
 
 
 class HostsController(rest.RestController):
@@ -34,7 +39,12 @@ class HostsController(rest.RestController):
     def _lookup(self, host_id, *remainder):
         return HostController(host_id), remainder
 
-    @pecan.expose()
+    @pecan.expose("json")
     def get_all(self):
         """Returns all host."""
-        return "Returns all hosts"
+        hosts = [host for host in
+                 pecan.request.mongo_connection.shinken.hosts.find()]
+        for host in hosts:
+            del host['_id']
+
+        return hosts

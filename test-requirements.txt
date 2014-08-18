@@ -2,6 +2,7 @@
 hacking>=0.9.2,<0.10
 sphinxcontrib-pecanwsme>=0.8
 sphinxcontrib-httpdomain
-wsme
 oslosphinx
 testrepository>=0.0.18
+mongomock
+wsme

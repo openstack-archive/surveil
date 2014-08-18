@@ -12,17 +12,22 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import pecan
+import sys
+import unittest
 
 
-def setup_app(config):
+class BaseTestCase(unittest.TestCase):
 
-    app_conf = dict(config.app)
+    def assert_count_equal_backport(self, item1, item2):
+        if sys.version_info[0] >= 3:
+            result = self.assertCountEqual(
+                item1,
+                item2
+            )
+        else:
+            result = self.assertItemsEqual(
+                sorted(item1),
+                sorted(item2)
+            )
 
-    app = pecan.make_app(
-        app_conf.pop('root'),
-        logging=getattr(config, 'logging', {}),
-        **app_conf
-    )
-
-    return app
+        return result

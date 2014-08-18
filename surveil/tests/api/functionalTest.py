@@ -12,15 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import mongomock
 import pecan
 import pecan.testing
 
-import unittest
+from surveil.api import hooks
+from surveil.tests import base
+
 
 __all__ = ['FunctionalTest']
 
 
-class FunctionalTest(unittest.TestCase):
+class FunctionalTest(base.BaseTestCase):
     """Used for functional tests.
 
     Used where you need to test your literal
@@ -28,11 +31,21 @@ class FunctionalTest(unittest.TestCase):
     """
 
     def setUp(self):
+
+        self.mongoconnection = mongomock.Connection()
+
+        app_hooks = [
+            hooks.DBHook(
+                self.mongoconnection
+            )
+        ]
+
         self.app = pecan.testing.load_test_app({
             'app': {
                 'root': 'surveil.api.controllers.root.RootController',
                 'modules': ['surveil.api'],
-                'debug': False
+                'debug': False,
+                'hooks': app_hooks
             }
         })
 

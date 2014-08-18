@@ -12,11 +12,21 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import pymongo
+
+from surveil.api import hooks
+
 # Server Specific Configurations
 server = {
     'port': '8080',
     'host': '0.0.0.0'
 }
+
+app_hooks = [
+    hooks.DBHook(
+        pymongo.MongoClient('172.17.0.2', 27017)
+    )
+]
 
 # Pecan Application Configurations
 app = {
@@ -27,7 +37,8 @@ app = {
     'errors': {
         404: '/error/404',
         '__force_dict__': True
-    }
+    },
+    'hooks': app_hooks,
 }
 
 logging = {
