@@ -12,7 +12,7 @@ run: kill build
 run-interactive: kill build
 	sudo docker run -i -t --name surveil surveil_image bash
 
-test:
+test: clean
 	tox
 
 clean:

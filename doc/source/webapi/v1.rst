@@ -18,3 +18,15 @@ Hosts
 
 .. rest-controller:: surveil.api.controllers.v1.hosts:HostController
    :webprefix: /v1/hosts
+
+Commands
+========
+
+.. rest-controller:: surveil.api.controllers.v1.commands:CommandsController
+   :webprefix: /v1/hosts
+
+.. rest-controller:: surveil.api.controllers.v1.commands:CommandController
+   :webprefix: /v1/hosts
+
+.. autotype:: surveil.api.controllers.v1.commands.Command
+   :members:
