@@ -70,3 +70,13 @@ class CommandsController(rest.RestController):
                     in pecan.request.mongo_connection.shinken.commands.find()]
 
         return [command.Command(**c) for c in commands]
+
+    @wsme_pecan.wsexpose(command.Command, body=command.Command, status_code=201)
+    def post(self, data):
+        """Create a new command.
+
+        :param data: a command within the request body.
+        """
+        pecan.request.mongo_connection.shinken.commands.insert(
+            data.as_dict()
+        )
