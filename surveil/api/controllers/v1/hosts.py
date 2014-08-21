@@ -12,10 +12,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import json
-
 import pecan
 from pecan import rest
+import wsmeext.pecan as wsme_pecan
+
+from surveil.api.controllers.v1.datamodel import host
 
 
 class HostController(rest.RestController):
@@ -24,33 +25,36 @@ class HostController(rest.RestController):
         pecan.request.context['host_id'] = host_id
         self._id = host_id
 
-    @pecan.expose("json")
+    @wsme_pecan.wsexpose(host.Host)
     def get(self):
         """Returns a specific host."""
-        host = pecan.request.mongo_connection.shinken.hosts.find_one(
+        h = pecan.request.mongo_connection.shinken.hosts.find_one(
             {"host_name": self._id}
         )
-        if host:
-            del host['_id']
-        return host
+        return host.Host(**h)
 
-    @pecan.expose()
-    def put(self):
-        """Modify this host."""
-        body = json.loads(pecan.request.body.decode())
+    @wsme_pecan.wsexpose(None, body=host.Host, status_code=204)
+    def put(self, data):
+        """Modify this host.
+
+        :param data: a host within the request body.
+        """
+
+        host_dict = data.as_dict()
+        if "host_name" not in host_dict.keys():
+            host_dict['host_name'] = self._id
+
         pecan.request.mongo_connection.shinken.hosts.update(
             {"host_name": self._id},
-            body
+            host_dict
         )
-        pecan.response.status = 204
 
-    @pecan.expose()
+    @wsme_pecan.wsexpose(None, status_code=204)
     def delete(self):
         """Delete this host."""
         pecan.request.mongo_connection.shinken.hosts.remove(
             {"host_name": self._id}
         )
-        pecan.response.status = 204
 
 
 class HostsController(rest.RestController):
@@ -59,12 +63,20 @@ class HostsController(rest.RestController):
     def _lookup(self, host_id, *remainder):
         return HostController(host_id), remainder
 
-    @pecan.expose("json")
+    @wsme_pecan.wsexpose([host.Host])
     def get_all(self):
-        """Returns all host."""
-        hosts = [host for host in
-                 pecan.request.mongo_connection.shinken.hosts.find()]
-        for host in hosts:
-            del host['_id']
+        """Returns all hosts."""
+        hosts = [h for h
+                 in pecan.request.mongo_connection.shinken.hosts.find()]
 
-        return hosts
+        return [host.Host(**h) for h in hosts]
+
+    @wsme_pecan.wsexpose(host.Host, body=host.Host, status_code=201)
+    def post(self, data):
+        """Create a new host.
+
+        :param data: a host within the request body.
+        """
+        pecan.request.mongo_connection.shinken.hosts.insert(
+            data.as_dict()
+        )

@@ -20,85 +20,98 @@ from surveil.tests.api import functionalTest
 
 class TestRootController(functionalTest.FunctionalTest):
 
-    def test_get_all_hosts(self):
-        hosts = [
-            {u"use": u"generic-host", u"contact_groups": u"admins",
-             u"host_name": u"testhost1", u"address": u"www.google.ca"},
-            {u"use": u"generic-host", u"contact_groups": u"admins",
-             u"host_name": u"testhost2", u"address": u"www.google.ca"},
-            {u"use": u"generic-host", u"contact_groups": u"admins",
-             u"host_name": u"testhost3", u"address": u"www.google.ca"}
+    def setUp(self):
+        super(TestRootController, self).setUp()
+        self.hosts = [
+            {
+                "host_name": "bogus-router", "address": "192.168.1.254",
+                "max_check_attempts": "5", "check_period": "24x7",
+                "contacts": "admin,carl", "contact_groups": "router-admins",
+                "notification_interval": "30", "notification_period": "24x7"
+            },
+            {
+                "host_name": "bogus-router2", "address": "192.168.1.254",
+                "max_check_attempts": "5", "check_period": "24x7",
+                "contacts": "admin,carl", "contact_groups": "router-admins",
+                "notification_interval": "30", "notification_period": "24x7"
+            },
+            {
+                "host_name": "bogus-router333", "address": "192.168.1.254",
+                "max_check_attempts": "5", "check_period": "24x7",
+                "contacts": "admin,carl", "contact_groups": "router-admins",
+                "notification_interval": "30", "notification_period": "24x7"
+            },
         ]
-        self.mongoconnection.shinken.hosts.insert(copy.deepcopy(hosts))
+        self.mongoconnection.shinken.hosts.insert(
+            copy.deepcopy(self.hosts)
+        )
 
+    def test_get_all_hosts(self):
         response = self.app.get('/v1/hosts')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
-            hosts
+            self.hosts
         )
         self.assertEqual(response.status_int, 200)
 
     def test_get_specific_host(self):
-        hosts = [
-            {u"use": u"generic-host", u"contact_groups": u"admins",
-             u"host_name": u"testhost1", u"address": u"www.google.ca"},
-            {u"use": u"generic-host", u"contact_groups": u"admins",
-             u"host_name": u"testhost2", u"address": u"www.google.ca"},
-            {u"use": u"generic-host", u"contact_groups": u"admins",
-             u"host_name": u"testhost3", u"address": u"www.google.ca"}
-        ]
-        self.mongoconnection.shinken.hosts.insert(copy.deepcopy(hosts))
-
-        response = self.app.get('/v1/hosts/testhost2')
+        response = self.app.get('/v1/hosts/bogus-router333')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
-            hosts[1]
+            self.hosts[2]
         )
         self.assertEqual(response.status_int, 200)
 
     def test_update_host(self):
-        hosts = [{u"use": u"generic-host", u"contact_groups": u"admins",
-                  u"host_name": u"testhost1", u"address": u"www.google.ca"}]
-        self.mongoconnection.shinken.hosts.insert(copy.deepcopy(hosts))
-
-        put_body = {u"use": u"generic-host", u"contact_groups": u"admins",
-                    u"host_name": u"testhost1", u"address": u"test.com"}
-
-        response = self.app.put_json("/v1/hosts/testhost1", params=put_body)
-
-        expected_host = {u"use": u"generic-host", u"contact_groups": u"admins",
-                         u"host_name": u"testhost1", u"address": u"test.com"}
-
-        mongo_hosts = self.mongoconnection.shinken.hosts.find_one(
-            {"host_name": "testhost1"}
+        put_host = {
+            u"host_name": u"bogus-router333",
+            u"address": u"newputaddress",
+            u"max_check_attempts": u"222225",
+            u"check_period": u"newtimeperiod",
+            u"contacts": u"aaa,bbb",
+            u"contact_groups": u"newgroup",
+            u"notification_interval": u"newnotificationinterval",
+            u"notification_period": u"newnotificationperiod"
+        }
+        response = self.app.put_json(
+            "/v1/hosts/bogus-router333", params=put_host
         )
-        del mongo_hosts['_id']
 
-        self.assertEqual(expected_host, mongo_hosts)
+        mongo_host = self.mongoconnection.shinken.hosts.find_one(
+            {'host_name': 'bogus-router333'}
+        )
+        del mongo_host['_id']
+
+        self.assertEqual(put_host, mongo_host)
         self.assertEqual(response.status_int, 204)
 
     def test_delete_host(self):
-        hosts = [
-            {u"use": u"generic-host", u"contact_groups": u"admins",
-             u"host_name": u"testhost1", u"address": u"www.google.ca"},
-            {u"use": u"generic-host", u"contact_groups": u"admins",
-             u"host_name": u"testhost2", u"address": u"www.google.ca"}
-        ]
-        self.mongoconnection.shinken.hosts.insert(copy.deepcopy(hosts))
+        response = self.app.delete('/v1/hosts/bogus-router')
 
-        response = self.app.delete('/v1/hosts/testhost2')
-
-        expected_hosts = [
-            {u"use": u"generic-host", u"contact_groups": u"admins",
-             u"host_name": u"testhost1", u"address": u"www.google.ca"}
-        ]
         mongo_hosts = [host for host
                        in self.mongoconnection.shinken.hosts.find()]
 
-        for host in mongo_hosts:
-            del host['_id']
-
-        self.assertEqual(expected_hosts, mongo_hosts)
+        self.assertEqual(2, len(mongo_hosts))
         self.assertEqual(response.status_int, 204)
+
+    def test_add_host(self):
+        new_host = {
+            "host_name": "testpost",
+            "address": "192.168.1.254",
+            "max_check_attempts": "5",
+            "check_period": "24x7",
+            "contacts": "admin,carl",
+            "contact_groups": "router-admins",
+            "notification_interval": "30",
+            "notification_period": "24x7"
+        }
+        response = self.app.post_json("/v1/hosts", params=new_host)
+
+        hosts = [h for h in self.mongoconnection.shinken.hosts.find()]
+        for h in hosts:
+            del h["_id"]
+
+        self.assertTrue(new_host in hosts)
+        self.assertEqual(response.status_int, 201)

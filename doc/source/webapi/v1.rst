@@ -19,6 +19,9 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v1.hosts:HostController
    :webprefix: /v1/hosts
 
+.. autotype:: surveil.api.controllers.v1.datamodel.host.Host
+   :members:
+
 Commands
 ========
 

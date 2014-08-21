@@ -17,6 +17,7 @@ import unittest
 
 
 class BaseTestCase(unittest.TestCase):
+    maxDiff = None
 
     def assert_count_equal_backport(self, item1, item2):
         if sys.version_info[0] >= 3:
