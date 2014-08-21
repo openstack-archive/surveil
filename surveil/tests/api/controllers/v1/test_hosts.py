@@ -18,10 +18,10 @@ import json
 from surveil.tests.api import functionalTest
 
 
-class TestRootController(functionalTest.FunctionalTest):
+class TestHostController(functionalTest.FunctionalTest):
 
     def setUp(self):
-        super(TestRootController, self).setUp()
+        super(TestHostController, self).setUp()
         self.hosts = [
             {
                 "host_name": "bogus-router", "address": "192.168.1.254",

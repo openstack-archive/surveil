@@ -18,10 +18,10 @@ import json
 from surveil.tests.api import functionalTest
 
 
-class TestRootController(functionalTest.FunctionalTest):
+class TestCommandController(functionalTest.FunctionalTest):
 
     def setUp(self):
-        super(TestRootController, self).setUp()
+        super(TestCommandController, self).setUp()
         self.commands = [
             {u"command_name": u"check_test1",
              u"command_line": u"/test/test1/test.py"},

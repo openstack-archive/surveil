@@ -15,7 +15,7 @@
 from surveil.tests.api import functionalTest
 
 
-class TestRootController(functionalTest.FunctionalTest):
+class TestHelloController(functionalTest.FunctionalTest):
 
     def test_get(self):
         response = self.app.get('/v1/hello')
