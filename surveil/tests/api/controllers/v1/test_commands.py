@@ -84,3 +84,17 @@ class TestRootController(functionalTest.FunctionalTest):
 
         self.assertEqual(expected_commands, mongo_commands)
         self.assertEqual(response.status_int, 204)
+
+    def test_add_command(self):
+        new_command = {
+            "command_name": "newcommand",
+            "command_line": "/usr/bin/newcommand -hello"
+        }
+        response = self.app.post_json("/v1/commands", params=new_command)
+
+        commands = [c for c in self.mongoconnection.shinken.commands.find()]
+        for c in commands:
+            del c["_id"]
+
+        self.assertTrue(new_command in commands)
+        self.assertEqual(response.status_int, 201)
