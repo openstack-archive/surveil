@@ -26,10 +26,10 @@ Commands
 ========
 
 .. rest-controller:: surveil.api.controllers.v1.commands:CommandsController
-   :webprefix: /v1/hosts
+   :webprefix: /v1/commands
 
 .. rest-controller:: surveil.api.controllers.v1.commands:CommandController
-   :webprefix: /v1/hosts
+   :webprefix: /v1/commands
 
 .. autotype:: surveil.api.controllers.v1.datamodel.command.Command
    :members:
