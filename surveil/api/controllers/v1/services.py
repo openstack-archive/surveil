@@ -29,9 +29,7 @@ class ServicesController(rest.RestController):
 
         return [service.Service(**s) for s in services]
 
-    @wsme_pecan.wsexpose(service.Service,
-                         body=service.Service,
-                         status_code=201)
+    @wsme_pecan.wsexpose(service.Service, body=service.Service, status_code=201)
     def post(self, data):
         """Create a new service.
 
