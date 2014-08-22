@@ -18,13 +18,13 @@ from surveil.api import hooks
 
 # Server Specific Configurations
 server = {
-    'port': '8080',
+    'port': 8080,
     'host': '0.0.0.0'
 }
 
 app_hooks = [
     hooks.DBHook(
-        pymongo.MongoClient('172.17.0.2', 27017)
+        pymongo.MongoClient('127.0.0.1', 27017)
     )
 ]
 

@@ -98,4 +98,7 @@ EXPOSE 5555
 # Mongodb
 EXPOSE 27017
 
+# Surveil
+EXPOSE 8080
+
 CMD ["/usr/bin/supervisord"]
