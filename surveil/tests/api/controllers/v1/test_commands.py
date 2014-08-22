@@ -15,6 +15,7 @@
 import copy
 import json
 
+from surveil.api.controllers.v1.datamodel import command
 from surveil.tests.api import functionalTest
 
 
@@ -61,12 +62,13 @@ class TestCommandController(functionalTest.FunctionalTest):
         expected_command = {u"command_name": u"check_test2",
                             u"command_line": u"test_put"}
 
-        mongo_command = self.mongoconnection.shinken.commands.find_one(
-            {'command_name': 'check_test2'}
+        mongo_command = command.Command(
+            **self.mongoconnection.shinken.commands.find_one(
+                {'command_name': 'check_test2'}
+            )
         )
-        del mongo_command['_id']
 
-        self.assertEqual(expected_command, mongo_command)
+        self.assertEqual(expected_command, mongo_command.as_dict())
         self.assertEqual(response.status_int, 204)
 
     def test_delete_command(self):
@@ -76,11 +78,8 @@ class TestCommandController(functionalTest.FunctionalTest):
             {u"command_name": u"check_test1",
              u"command_line": u"/test/test1/test.py"}
         ]
-        mongo_commands = [command for command
+        mongo_commands = [command.Command(**c).as_dict() for c
                           in self.mongoconnection.shinken.commands.find()]
-
-        for command in mongo_commands:
-            del command['_id']
 
         self.assertEqual(expected_commands, mongo_commands)
         self.assertEqual(response.status_int, 204)
@@ -92,9 +91,8 @@ class TestCommandController(functionalTest.FunctionalTest):
         }
         response = self.app.post_json("/v1/commands", params=new_command)
 
-        commands = [c for c in self.mongoconnection.shinken.commands.find()]
-        for c in commands:
-            del c["_id"]
+        commands = [command.Command(**c).as_dict() for c
+                    in self.mongoconnection.shinken.commands.find()]
 
         self.assertTrue(new_command in commands)
         self.assertEqual(response.status_int, 201)
