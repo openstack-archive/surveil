@@ -16,6 +16,7 @@ import copy
 import json
 
 from surveil.tests.api import functionalTest
+from surveil.api.controllers.v1.datamodel import host
 
 
 class TestRootController(functionalTest.FunctionalTest):
@@ -79,18 +80,19 @@ class TestRootController(functionalTest.FunctionalTest):
             "/v1/hosts/bogus-router333", params=put_host
         )
 
-        mongo_host = self.mongoconnection.shinken.hosts.find_one(
-            {'host_name': 'bogus-router333'}
+        mongo_host = host.Host(
+            **self.mongoconnection.shinken.hosts.find_one(
+                {'host_name': 'bogus-router333'}
+            )
         )
-        del mongo_host['_id']
 
-        self.assertEqual(put_host, mongo_host)
+        self.assertEqual(put_host, mongo_host.as_dict())
         self.assertEqual(response.status_int, 204)
 
     def test_delete_host(self):
         response = self.app.delete('/v1/hosts/bogus-router')
 
-        mongo_hosts = [host for host
+        mongo_hosts = [host.Host(**h) for h
                        in self.mongoconnection.shinken.hosts.find()]
 
         self.assertEqual(2, len(mongo_hosts))
@@ -109,9 +111,8 @@ class TestRootController(functionalTest.FunctionalTest):
         }
         response = self.app.post_json("/v1/hosts", params=new_host)
 
-        hosts = [h for h in self.mongoconnection.shinken.hosts.find()]
-        for h in hosts:
-            del h["_id"]
+        hosts = [host.Host(**h).as_dict() for h
+                 in self.mongoconnection.shinken.hosts.find()]
 
         self.assertTrue(new_host in hosts)
         self.assertEqual(response.status_int, 201)
