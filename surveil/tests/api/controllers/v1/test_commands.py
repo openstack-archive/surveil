@@ -16,6 +16,7 @@ import copy
 import json
 
 from surveil.tests.api import functionalTest
+from surveil.api.controllers.v1.datamodel import command
 
 
 class TestRootController(functionalTest.FunctionalTest):
@@ -64,7 +65,6 @@ class TestRootController(functionalTest.FunctionalTest):
         mongo_command = self.mongoconnection.shinken.commands.find_one(
             {'command_name': 'check_test2'}
         )
-        del mongo_command['_id']
 
         self.assertEqual(expected_command, mongo_command)
         self.assertEqual(response.status_int, 204)
@@ -76,11 +76,8 @@ class TestRootController(functionalTest.FunctionalTest):
             {u"command_name": u"check_test1",
              u"command_line": u"/test/test1/test.py"}
         ]
-        mongo_commands = [command for command
+        mongo_commands = [command.Command(**c).as_dict() for c
                           in self.mongoconnection.shinken.commands.find()]
-
-        for command in mongo_commands:
-            del command['_id']
 
         self.assertEqual(expected_commands, mongo_commands)
         self.assertEqual(response.status_int, 204)
@@ -92,9 +89,8 @@ class TestRootController(functionalTest.FunctionalTest):
         }
         response = self.app.post_json("/v1/commands", params=new_command)
 
-        commands = [c for c in self.mongoconnection.shinken.commands.find()]
-        for c in commands:
-            del c["_id"]
+        commands = [command.Command(**c).as_dict() for c
+                    in self.mongoconnection.shinken.commands.find()]
 
         self.assertTrue(new_command in commands)
         self.assertEqual(response.status_int, 201)
