@@ -21,9 +21,9 @@ from surveil.api.controllers.v1.datamodel import command
 
 class CommandController(rest.RestController):
 
-    def __init__(self, host_id):
-        pecan.request.context['host_id'] = host_id
-        self._id = host_id
+    def __init__(self, command_name):
+        pecan.request.context['command_name'] = command_name
+        self._id = command_name
 
     @wsme_pecan.wsexpose(command.Command)
     def get(self):
@@ -60,13 +60,13 @@ class CommandController(rest.RestController):
 class CommandsController(rest.RestController):
 
     @pecan.expose()
-    def _lookup(self, host_id, *remainder):
-        return CommandController(host_id), remainder
+    def _lookup(self, command_id, *remainder):
+        return CommandController(command_id), remainder
 
     @wsme_pecan.wsexpose([command.Command])
     def get_all(self):
         """Returns all commands."""
-        commands = [host for host
+        commands = [c for c
                     in pecan.request.mongo_connection.shinken.commands.find()]
 
         return [command.Command(**c) for c in commands]
