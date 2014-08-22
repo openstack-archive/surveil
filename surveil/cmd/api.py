@@ -20,13 +20,13 @@ from wsgiref import simple_server
 import pecan
 
 from surveil.api import app as api_app
-from surveil.api import config as api_config
+from surveil import api
 
 
 # TODO(aviau): Load conf from oslo
 def get_pecan_config():
     # Set up the pecan configuration
-    filename = api_config.__file__.replace('.pyc', '.py')
+    filename = os.path.join(os.path.dirname(api.__file__), "config.py")
     return pecan.configuration.conf_from_file(filename)
 
 

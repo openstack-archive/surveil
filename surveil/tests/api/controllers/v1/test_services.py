@@ -15,6 +15,7 @@
 import copy
 import json
 
+from surveil.api.controllers.v1.datamodel import service
 from surveil.tests.api import functionalTest
 
 
@@ -92,9 +93,8 @@ class TestServiceController(functionalTest.FunctionalTest):
         }
         response = self.app.post_json("/v1/services", params=new_service)
 
-        services = [s for s in self.mongoconnection.shinken.services.find()]
-        for s in services:
-            del s["_id"]
+        services = [service.Service(**s).as_dict() for s in
+                    self.mongoconnection.shinken.services.find()]
 
         self.assertTrue(new_service in services)
         self.assertEqual(response.status_int, 201)
