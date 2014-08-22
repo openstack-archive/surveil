@@ -115,3 +115,30 @@ class TestHostController(functionalTest.FunctionalTest):
 
         self.assertTrue(new_host in hosts)
         self.assertEqual(response.status_int, 201)
+
+    def test_get_associated_services(self):
+        services = [
+            {
+                "host_name": "bogus-router",
+                "service_description": "check-",
+                "check_command": "check-disk!/dev/sdb1",
+                "max_check_attempts": "5",
+                "check_interval": "5",
+                "retry_interval": "3",
+                "check_period": "24x7",
+                "notification_interval": "30",
+                "notification_period": "24x7",
+                "contacts": "surveil-ptl,surveil-bob",
+                "contact_groups": "linux-admins"
+            }
+        ]
+        self.mongoconnection.shinken.services.insert(
+            copy.deepcopy(services[0])
+        )
+
+        response = self.app.get('/v1/hosts/bogus-router/services')
+
+        self.assertEqual(
+            services,
+            json.loads(response.body.decode())
+        )

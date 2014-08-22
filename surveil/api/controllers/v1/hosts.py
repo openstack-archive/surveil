@@ -17,13 +17,35 @@ from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.controllers.v1.datamodel import host
+from surveil.api.controllers.v1.datamodel import service
+
+
+class HostServicesSubController(rest.RestController):
+
+    @wsme_pecan.wsexpose([service.Service])
+    def get_all(self):
+        """Returns all services assocaited with this host."""
+        mongo_s = [
+            s for s
+            in pecan.request.mongo_connection.shinken.services.find(
+                {"host_name": pecan.request.context['host_name']}
+            )
+        ]
+
+        services = [service.Service(**s) for s in mongo_s]
+
+        return services
+
+
+class HostSubController(rest.RestController):
+    services = HostServicesSubController()
 
 
 class HostController(rest.RestController):
 
-    def __init__(self, host_id):
-        pecan.request.context['host_id'] = host_id
-        self._id = host_id
+    def __init__(self, host_name):
+        pecan.request.context['host_name'] = host_name
+        self._id = host_name
 
     @wsme_pecan.wsexpose(host.Host)
     def get(self):
@@ -56,12 +78,16 @@ class HostController(rest.RestController):
             {"host_name": self._id}
         )
 
+    @pecan.expose()
+    def _lookup(self, *remainder):
+        return HostSubController(), remainder
+
 
 class HostsController(rest.RestController):
 
     @pecan.expose()
-    def _lookup(self, host_id, *remainder):
-        return HostController(host_id), remainder
+    def _lookup(self, host_name, *remainder):
+        return HostController(host_name), remainder
 
     @wsme_pecan.wsexpose([host.Host])
     def get_all(self):
