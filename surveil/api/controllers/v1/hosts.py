@@ -14,8 +14,10 @@
 
 import pecan
 from pecan import rest
+import requests
 import wsmeext.pecan as wsme_pecan
 
+from surveil.api.controllers.v1.datamodel import checkresult
 from surveil.api.controllers.v1.datamodel import host
 from surveil.api.controllers.v1.datamodel import service
 
@@ -37,8 +39,26 @@ class HostServicesSubController(rest.RestController):
         return services
 
 
+class HostCheckResultsSubController(rest.RestController):
+
+    @wsme_pecan.wsexpose(body=checkresult.CheckResult, status_code=204)
+    def post(self, data):
+        """Submit a new check result.
+
+        :param data: a check result within the request body.
+        """
+        result = data.as_dict()
+        result['host_name'] = pecan.request.context['host_name']
+
+        requests.post(
+            pecan.request.ws_arbiter_url + "/push_check_result",
+            data=result
+        )
+
+
 class HostSubController(rest.RestController):
     services = HostServicesSubController()
+    results = HostCheckResultsSubController()
 
 
 class HostController(rest.RestController):

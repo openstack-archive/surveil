@@ -37,7 +37,7 @@ RUN apt-get install -y wget curl
 RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb
 RUN useradd influxdb # We should remove this when issue is fixed (https://github.com/influxdb/influxdb/issues/670)
 RUN dpkg -i influxdb_latest_amd64.deb
-RUN service influxdb start && sleep 10 && curl -X POST 'http://localhost:8086/db?u=root&p=root' -d '{"name": "grafana"}' &&  curl -X POST 'http://localhost:8086/db?u=root&p=root' -d '{"name": "db"}' # We should remove the sleep when this issue is fixed: https://github.com/influxdb/influxdb/issues/805
+RUN service influxdb start && until curl -X POST 'http://localhost:8086/db?u=root&p=root' -d '{"name": "grafana"}'; do echo "Try again"; sleep 2; done &&  curl -X POST 'http://localhost:8086/db?u=root&p=root' -d '{"name": "db"}' # We should remove the sleep when this issue is fixed: https://github.com/influxdb/influxdb/issues/805
 
 ### Riemann
 RUN wget http://aphyr.com/riemann/riemann_0.2.6_all.deb
@@ -61,6 +61,11 @@ ADD tools/docker/etc/apache2/conf-enabled/influxdb.conf /etc/apache2/conf-enable
 ### Mongodb
 RUN apt-get install -y mongodb
 ADD tools/docker/etc/mongodb.conf /etc/mongodb.conf
+
+## Import sample config
+## TODO: Use the python client or curl instead.
+ADD tools/docker/mongoimport /mongoimport
+RUN service mongodb start && until mongoimport --db shinken --host localhost --collection hosts < /mongoimport/hosts.json; do echo "Try again"; sleep 2; done && mongoimport --db shinken --host localhost --collection services < /mongoimport/services.json && service mongodb stop
 
 ### Surveil
 ## Copy files

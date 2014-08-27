@@ -17,8 +17,10 @@ from pecan import hooks
 
 class DBHook(hooks.PecanHook):
 
-    def __init__(self, mongo_connection):
+    def __init__(self, mongo_connection, ws_arbiter_url):
         self.mongo_connection = mongo_connection
+        self.ws_arbiter_url = ws_arbiter_url
 
     def before(self, state):
         state.request.mongo_connection = self.mongo_connection
+        state.request.ws_arbiter_url = self.ws_arbiter_url

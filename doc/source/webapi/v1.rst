@@ -22,6 +22,12 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v1.hosts:HostServicesSubController
    :webprefix: /v1/hosts/(host_name)/services
 
+.. rest-controller:: surveil.api.controllers.v1.hosts:HostCheckResultsSubController
+   :webprefix: /v1/hosts/(host_name)/results
+
+.. autotype:: surveil.api.controllers.v1.datamodel.checkresult.CheckResult
+   :members:
+
 .. autotype:: surveil.api.controllers.v1.datamodel.host.Host
    :members:
 

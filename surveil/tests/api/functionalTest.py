@@ -33,10 +33,12 @@ class FunctionalTest(base.BaseTestCase):
     def setUp(self):
 
         self.mongoconnection = mongomock.Connection()
+        self.ws_arbiter_url = "http://localhost:7760"
 
         app_hooks = [
             hooks.DBHook(
-                self.mongoconnection
+                self.mongoconnection,
+                self.ws_arbiter_url
             )
         ]
 
