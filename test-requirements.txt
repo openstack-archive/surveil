@@ -5,3 +5,4 @@ sphinxcontrib-httpdomain
 oslosphinx
 testrepository>=0.0.18
 mongomock
+httpretty

@@ -1,0 +1,1 @@
+{ "check_command": "check_tcp!8080", "check_interval": "5", "check_period": "24x7", "contact_groups": "admins", "contacts": "admin", "host_name": "surveil", "max_check_attempts": "5", "notification_interval": "30", "notification_period": "24x7", "retry_interval": "3", "service_description": "check-surveil-api" }

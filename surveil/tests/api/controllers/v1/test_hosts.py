@@ -15,6 +15,8 @@
 import copy
 import json
 
+import httpretty
+
 from surveil.api.controllers.v1.datamodel import host
 from surveil.tests.api import functionalTest
 
@@ -142,4 +144,29 @@ class TestHostController(functionalTest.FunctionalTest):
         self.assertEqual(
             services,
             json.loads(response.body.decode())
+        )
+
+    @httpretty.activate
+    def test_submit_result(self):
+        httpretty.register_uri(httpretty.POST,
+                               self.ws_arbiter_url + "/push_check_result")
+
+        check_result = {
+            "return_code": "0",
+            "output": "TEST OUTPUT",
+            "time_stamp": "1409149234"
+        }
+
+        response = self.app.post_json("/v1/hosts/bogus-router/results",
+                                      params=check_result)
+
+        self.assertEqual(response.status_int, 204)
+        self.assertEqual(
+            httpretty.last_request().parsed_body,
+            {
+                u'output': [u'TEST OUTPUT'],
+                u'return_code': [u'0'],
+                u'host_name': [u'bogus-router'],
+                u'time_stamp': [u'1409149234']
+            }
         )
