@@ -49,6 +49,25 @@ class TestHostController(functionalTest.FunctionalTest):
             copy.deepcopy(self.hosts)
         )
 
+        self.services = [
+            {
+                "host_name": "bogus-router",
+                "service_description": "service-example",
+                "check_command": "check-disk!/dev/sdb1",
+                "max_check_attempts": "5",
+                "check_interval": "5",
+                "retry_interval": "3",
+                "check_period": "24x7",
+                "notification_interval": "30",
+                "notification_period": "24x7",
+                "contacts": "surveil-ptl,surveil-bob",
+                "contact_groups": "linux-admins"
+            }
+        ]
+        self.mongoconnection.shinken.services.insert(
+            copy.deepcopy(self.services)
+        )
+
     def test_get_all_hosts(self):
         response = self.app.get('/v1/hosts')
 
@@ -120,34 +139,53 @@ class TestHostController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 201)
 
     def test_get_associated_services(self):
-        services = [
-            {
-                "host_name": "bogus-router",
-                "service_description": "check-",
-                "check_command": "check-disk!/dev/sdb1",
-                "max_check_attempts": "5",
-                "check_interval": "5",
-                "retry_interval": "3",
-                "check_period": "24x7",
-                "notification_interval": "30",
-                "notification_period": "24x7",
-                "contacts": "surveil-ptl,surveil-bob",
-                "contact_groups": "linux-admins"
-            }
-        ]
-        self.mongoconnection.shinken.services.insert(
-            copy.deepcopy(services[0])
-        )
-
         response = self.app.get('/v1/hosts/bogus-router/services')
 
         self.assertEqual(
-            services,
+            self.services,
+            json.loads(response.body.decode())
+        )
+
+    def test_get_specific_service(self):
+        response = self.app.get(
+            '/v1/hosts/bogus-router/services/service-example'
+        )
+
+        self.assertEqual(
+            self.services[0],
             json.loads(response.body.decode())
         )
 
     @httpretty.activate
-    def test_submit_result(self):
+    def test_submit_service_result(self):
+        httpretty.register_uri(httpretty.POST,
+                               self.ws_arbiter_url + "/push_check_result")
+
+        check_result = {
+            "return_code": "0",
+            "output": "TEST OUTPUT",
+            "time_stamp": "1409149234"
+        }
+
+        response = self.app.post_json(
+            "/v1/hosts/bogus-router/services/service-example/results",
+            params=check_result
+        )
+
+        self.assertEqual(response.status_int, 204)
+        self.assertEqual(
+            httpretty.last_request().parsed_body,
+            {
+                u'output': [u'TEST OUTPUT'],
+                u'return_code': [u'0'],
+                u'service_description': [u'service-example'],
+                u'host_name': [u'bogus-router'],
+                u'time_stamp': [u'1409149234']
+            }
+        )
+
+    @httpretty.activate
+    def test_submit_host_result(self):
         httpretty.register_uri(httpretty.POST,
                                self.ws_arbiter_url + "/push_check_result")
 

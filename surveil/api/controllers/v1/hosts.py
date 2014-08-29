@@ -22,6 +22,49 @@ from surveil.api.controllers.v1.datamodel import host
 from surveil.api.controllers.v1.datamodel import service
 
 
+class ServiceCheckResultsSubController(rest.RestController):
+
+    @wsme_pecan.wsexpose(body=checkresult.CheckResult, status_code=204)
+    def post(self, data):
+        """Submit a new check result.
+
+        :param data: a check result within the request body.
+        """
+        result = data.as_dict()
+        result['host_name'] = pecan.request.context['host_name']
+
+        result['service_description'] = pecan.request.context[
+            'service_description'
+        ]
+
+        requests.post(
+            pecan.request.ws_arbiter_url + "/push_check_result",
+            data=result
+        )
+
+
+class HostServiceSubController(rest.RestController):
+    results = ServiceCheckResultsSubController()
+
+    def __init__(self, service_description):
+        pecan.request.context['service_description'] = service_description
+        self._id = service_description
+
+    @wsme_pecan.wsexpose(service.Service)
+    def get(self):
+        """Returns a specific service."""
+        mongo_s = pecan.request.mongo_connection.shinken.services.find_one(
+            {
+                "host_name": pecan.request.context['host_name'],
+                "service_description": pecan.request.context[
+                    'service_description'
+                ]
+            }
+        )
+
+        return service.Service(**mongo_s)
+
+
 class HostServicesSubController(rest.RestController):
 
     @wsme_pecan.wsexpose([service.Service])
@@ -37,6 +80,10 @@ class HostServicesSubController(rest.RestController):
         services = [service.Service(**s) for s in mongo_s]
 
         return services
+
+    @pecan.expose()
+    def _lookup(self, service_description, *remainder):
+        return HostServiceSubController(service_description), remainder
 
 
 class HostCheckResultsSubController(rest.RestController):
