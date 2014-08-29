@@ -25,7 +25,7 @@ class Host(types.Base):
     address = wsme.wsattr(wtypes.text, mandatory=True)
     """The address of the host. Normally, this is an IP address."""
 
-    max_check_attempts = wsme.wsattr(wtypes.text, mandatory=True)
+    max_check_attempts = wsme.wsattr(int, mandatory=True)
 
     check_period = wsme.wsattr(wtypes.text, mandatory=True)
     """The time period during which active checks of this host can be made."""
@@ -36,7 +36,7 @@ class Host(types.Base):
     contact_groups = wsme.wsattr(wtypes.text, mandatory=True)
     """List of the short names of the contact groups that should be notified"""
 
-    notification_interval = wsme.wsattr(wtypes.text, mandatory=True)
+    notification_interval = wsme.wsattr(int, mandatory=True)
 
     notification_period = wsme.wsattr(wtypes.text, mandatory=True)
 
@@ -45,10 +45,10 @@ class Host(types.Base):
         return cls(
             host_name="bogus-router",
             address="192.168.1.254",
-            max_check_attempts="5",
+            max_check_attempts=5,
             check_period="24x7",
             contacts="admin,carl",
             contact_groups="router-admins",
-            notification_interval="30",
+            notification_interval=30,
             notification_period="24x7",
         )

@@ -25,15 +25,15 @@ class Service(types.Base):
 
     check_command = wsme.wsattr(wtypes.text, mandatory=True)
 
-    max_check_attempts = wsme.wsattr(wtypes.text, mandatory=True)
+    max_check_attempts = wsme.wsattr(int, mandatory=True)
 
-    check_interval = wsme.wsattr(wtypes.text, mandatory=True)
+    check_interval = wsme.wsattr(int, mandatory=True)
 
-    retry_interval = wsme.wsattr(wtypes.text, mandatory=True)
+    retry_interval = wsme.wsattr(int, mandatory=True)
 
     check_period = wsme.wsattr(wtypes.text, mandatory=True)
 
-    notification_interval = wsme.wsattr(wtypes.text, mandatory=True)
+    notification_interval = wsme.wsattr(int, mandatory=True)
 
     notification_period = wsme.wsattr(wtypes.text, mandatory=True)
 
@@ -47,11 +47,11 @@ class Service(types.Base):
             host_name="sample-server",
             service_description="check-disk-sdb",
             check_command="check-disk!/dev/sdb1",
-            max_check_attempts="5",
-            check_interval="5",
-            retry_interval="3",
+            max_check_attempts=5,
+            check_interval=5,
+            retry_interval=3,
             check_period="24x7",
-            notification_interval="30",
+            notification_interval=3,
             notification_period="24x7",
             contacts="surveil-ptl,surveil-bob",
             contact_groups="linux-admins",

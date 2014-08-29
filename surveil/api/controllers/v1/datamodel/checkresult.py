@@ -26,7 +26,7 @@ class CheckResult(types.Base):
                              default=str(int(time.time())))
     """The time the check was executed. Defaults to now."""
 
-    return_code = wsme.wsattr(wtypes.text, mandatory=True)
+    return_code = wsme.wsattr(int, mandatory=True)
     """The return code of the check."""
 
     output = wsme.wsattr(wtypes.text, mandatory=True)
@@ -36,6 +36,6 @@ class CheckResult(types.Base):
     def sample(cls):
         return cls(
             time_stamp="1409087486",
-            return_code="0",
+            return_code=0,
             output="CPU Usage 98%|c[cpu]=98%;80;95;0;100"
         )

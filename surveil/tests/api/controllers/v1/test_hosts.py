@@ -28,21 +28,21 @@ class TestHostController(functionalTest.FunctionalTest):
         self.hosts = [
             {
                 "host_name": "bogus-router", "address": "192.168.1.254",
-                "max_check_attempts": "5", "check_period": "24x7",
+                "max_check_attempts": 5, "check_period": "24x7",
                 "contacts": "admin,carl", "contact_groups": "router-admins",
-                "notification_interval": "30", "notification_period": "24x7"
+                "notification_interval": 30, "notification_period": "24x7"
             },
             {
                 "host_name": "bogus-router2", "address": "192.168.1.254",
-                "max_check_attempts": "5", "check_period": "24x7",
+                "max_check_attempts": 5, "check_period": "24x7",
                 "contacts": "admin,carl", "contact_groups": "router-admins",
-                "notification_interval": "30", "notification_period": "24x7"
+                "notification_interval": 30, "notification_period": "24x7"
             },
             {
                 "host_name": "bogus-router333", "address": "192.168.1.254",
-                "max_check_attempts": "5", "check_period": "24x7",
+                "max_check_attempts": 5, "check_period": "24x7",
                 "contacts": "admin,carl", "contact_groups": "router-admins",
-                "notification_interval": "30", "notification_period": "24x7"
+                "notification_interval": 30, "notification_period": "24x7"
             },
         ]
         self.mongoconnection.shinken.hosts.insert(
@@ -54,11 +54,11 @@ class TestHostController(functionalTest.FunctionalTest):
                 "host_name": "bogus-router",
                 "service_description": "service-example",
                 "check_command": "check-disk!/dev/sdb1",
-                "max_check_attempts": "5",
-                "check_interval": "5",
-                "retry_interval": "3",
+                "max_check_attempts": 5,
+                "check_interval": 5,
+                "retry_interval": 3,
                 "check_period": "24x7",
-                "notification_interval": "30",
+                "notification_interval": 30,
                 "notification_period": "24x7",
                 "contacts": "surveil-ptl,surveil-bob",
                 "contact_groups": "linux-admins"
@@ -90,11 +90,11 @@ class TestHostController(functionalTest.FunctionalTest):
         put_host = {
             u"host_name": u"bogus-router333",
             u"address": u"newputaddress",
-            u"max_check_attempts": u"222225",
+            u"max_check_attempts": 222225,
             u"check_period": u"newtimeperiod",
             u"contacts": u"aaa,bbb",
             u"contact_groups": u"newgroup",
-            u"notification_interval": u"newnotificationinterval",
+            u"notification_interval": 333,
             u"notification_period": u"newnotificationperiod"
         }
         response = self.app.put_json(
@@ -123,11 +123,11 @@ class TestHostController(functionalTest.FunctionalTest):
         new_host = {
             "host_name": "testpost",
             "address": "192.168.1.254",
-            "max_check_attempts": "5",
+            "max_check_attempts": 5,
             "check_period": "24x7",
             "contacts": "admin,carl",
             "contact_groups": "router-admins",
-            "notification_interval": "30",
+            "notification_interval": 3,
             "notification_period": "24x7"
         }
         response = self.app.post_json("/v1/hosts", params=new_host)
