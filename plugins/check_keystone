@@ -1,0 +1,123 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+#
+# Keystone monitoring script for Nagios
+#
+# Copyright (C) 2014 Savoir-faire Linux Inc.
+# Copyright © 2012 eNovance <licensing@enovance.com>
+#
+# Author: Julien Danjou <julien@danjou.info>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+from shinkenplugins import BasePlugin, PerfData, STATES
+from keystoneclient.v2_0 import client
+
+
+class Plugin(BasePlugin):
+    NAME = 'check-keystone'
+    VERSION = '0.1'
+    DESCRIPTION = 'check keystone'
+    AUTHOR = 'Alexandre Viau'
+    EMAIL = 'alexandre.viau@savoirfairelinux.com'
+
+    ARGS = [
+        # Can't touch this:
+        ('h', 'help', 'display plugin help', False),
+        ('v', 'version', 'display plugin version number', False),
+        # Add your plugin arguments here:
+        # ('short', 'long', 'description', 'does it expect a value?')
+
+        # OpenStack Auth
+        ('U', 'auth_url', 'Keystone URL', True),
+        ('u', 'username', 'username to use for authentication', True),
+        ('p', 'password', 'password to use for authentication', True),
+        ('t', 'tenant', 'tenant name to use for authentication', True),
+
+        # Options
+        ('s', 'services', "comma-separated services to check for", True),
+    ]
+
+    def check_args(self, args):
+        # You can do your various arguments check here.
+        # If you don't need to check things, you can safely remove the method.
+
+        if not args.get('help') and not args.get('version'):
+            for arg in [
+                'auth_url',
+                'username',
+                'password',
+                'tenant',
+                'services',
+            ]:
+                if arg not in args.keys():
+                    return False, 'the argument %s must be present' % arg
+            args['services'] = args['services'].split(',')
+        return True, None
+
+    def run(self, args):
+        # Here is the core of the plugin.
+        # After doing your verifications, escape by doing:
+        # self.exit(return_code, 'return_message', *performance_data)
+        perfdata = []
+
+        try:
+            c = client.Client(
+                username=args['username'],
+                tenant_name=args['tenant'],
+                password=args['password'],
+                auth_url=args['auth_url'],
+            )
+            if not c.authenticate():
+                self.exit(STATES.UNKNOWN, 'Authentication failed')
+        except Exception as e:
+            self.exit(STATES.UNKNOWN, str(e))
+
+        endpoints = c.service_catalog.get_endpoints()
+        services = args['services'] or endpoints.keys()
+
+        msgs = []
+        for service in services:
+            if not service in endpoints.keys():
+                msgs.append("`%s' service is missing" % service)
+                continue
+
+            if not len(endpoints[service]):
+                msgs.append("`%s' service is empty" % service)
+                continue
+
+            if not any(["publicURL" in endpoint.keys() for endpoint in endpoints[service]]):
+                msgs.append("`%s' service has no publicURL" % service)
+
+        perfdata.append(PerfData('auth_token', c.auth_token))
+        perfdata.append(PerfData('auth_user_id', c.auth_user_id))
+        perfdata.append(PerfData('auth_tenant_id', c.auth_tenant_id))
+        perfdata.append(PerfData('services', ','.join(endpoints.keys())))
+
+        if len(msgs) > 0:
+            self.exit(
+                STATES.CRITICAL,
+                ' '.join(msgs),
+                *perfdata
+            )
+        else:
+            self.exit(
+                STATES.OK,
+                "Got token %s for user %s and tenant %s" % (c.auth_token, c.auth_user_id, c.auth_tenant_id),
+                *perfdata
+            )
+
+if __name__ == "__main__":
+    Plugin()
