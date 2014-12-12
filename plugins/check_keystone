@@ -22,6 +22,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import datetime
+
 from shinkenplugins import BasePlugin, PerfData, STATES
 from keystoneclient.v2_0 import client
 
@@ -74,6 +76,7 @@ class Plugin(BasePlugin):
         perfdata = []
 
         try:
+            start_time = datetime.datetime.now()
             c = client.Client(
                 username=args['username'],
                 tenant_name=args['tenant'],
@@ -82,6 +85,15 @@ class Plugin(BasePlugin):
             )
             if not c.authenticate():
                 self.exit(STATES.UNKNOWN, 'Authentication failed')
+            end_time = datetime.datetime.now()
+            perfdata.append(
+                PerfData(
+                    'auth_time',
+                    ((end_time - start_time).total_seconds()/1000),
+                    min_='0',
+                    unit='ms'
+                )
+            )
         except Exception as e:
             self.exit(STATES.UNKNOWN, str(e))
 
@@ -101,10 +113,7 @@ class Plugin(BasePlugin):
             if not any(["publicURL" in endpoint.keys() for endpoint in endpoints[service]]):
                 msgs.append("`%s' service has no publicURL" % service)
 
-        perfdata.append(PerfData('auth_token', c.auth_token))
-        perfdata.append(PerfData('auth_user_id', c.auth_user_id))
-        perfdata.append(PerfData('auth_tenant_id', c.auth_tenant_id))
-        perfdata.append(PerfData('services', ','.join(endpoints.keys())))
+        perfdata.append(PerfData('service_count', len(endpoints), min_='0'))
 
         if len(msgs) > 0:
             self.exit(
