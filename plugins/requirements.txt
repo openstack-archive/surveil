@@ -1,2 +1,3 @@
 shinkenplugins
 python-keystoneclient
+python-glanceclient
