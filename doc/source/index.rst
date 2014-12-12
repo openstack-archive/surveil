@@ -10,6 +10,7 @@ Table of Contents:
    readme
    getting_started
    webapi/index
+   shinken_plugins
 
 Indices and tables
 ==================
