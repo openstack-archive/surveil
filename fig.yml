@@ -2,5 +2,10 @@ surveil:
   build: .
   links:
    - mongo
+   - influxdb
 mongo:
   image: mongo
+influxdb:
+  image: tutum/influxdb
+  environment:
+    PRE_CREATE_DB: "db;grafana"
