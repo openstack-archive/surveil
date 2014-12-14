@@ -13,11 +13,11 @@ RUN apt-get install -y python-pycurl
 RUN shinken --init
 
 ## modules
+RUN mkdir /var/lib/shinken/share
 RUN shinken install webui
 RUN shinken install auth-cfg-password
 RUN pip install influxdb && shinken install mod-influxdb
 RUN shinken install ws-arbiter
-RUN pip install riemann-client && shinken install mod-riemann
 RUN pip install pymongo && shinken install mod-mongodb
 
 ## plugins
@@ -39,12 +39,6 @@ RUN useradd influxdb # We should remove this when issue is fixed (https://github
 RUN dpkg -i influxdb_latest_amd64.deb
 RUN service influxdb start && until curl -X POST 'http://localhost:8086/db?u=root&p=root' -d '{"name": "grafana"}'; do echo "Try again"; sleep 2; done &&  curl -X POST 'http://localhost:8086/db?u=root&p=root' -d '{"name": "db"}' # We should remove the sleep when this issue is fixed: https://github.com/influxdb/influxdb/issues/805
 
-### Riemann
-RUN wget http://aphyr.com/riemann/riemann_0.2.6_all.deb
-RUN sudo dpkg -i riemann_0.2.6_all.deb
-RUN sudo apt-get install -y openjdk-7-jre
-ADD tools/docker/etc/riemann/riemann.config /etc/riemann/riemann.config
-
 ### Grafana
 RUN apt-get install -y apache2
 RUN wget http://grafanarel.s3.amazonaws.com/grafana-1.7.0-rc1.tar.gz
@@ -57,15 +51,6 @@ ADD tools/docker/var/www/html/grafana/config.js /var/www/html/grafana/config.js
 RUN apt-get install -y libapache2-mod-proxy-html
 RUN a2enmod proxy_http
 ADD tools/docker/etc/apache2/conf-enabled/influxdb.conf /etc/apache2/conf-enabled/influxdb.conf
-
-### Mongodb
-RUN apt-get install -y mongodb
-ADD tools/docker/etc/mongodb.conf /etc/mongodb.conf
-
-## Import sample config
-## TODO: Use the python client or curl instead.
-ADD tools/docker/mongoimport /mongoimport
-RUN service mongodb start && until mongoimport --db shinken --host localhost --collection hosts < /mongoimport/hosts.json; do echo "Try again"; sleep 2; done && mongoimport --db shinken --host localhost --collection services < /mongoimport/services.json && service mongodb stop
 
 ### Surveil
 ## Copy files
@@ -97,13 +82,10 @@ EXPOSE 8086
 # Grafana
 EXPOSE 80
 
-# Riemann
-EXPOSE 5555
-
 # Mongodb
 EXPOSE 27017
 
 # Surveil
 EXPOSE 8080
 
-CMD ["/usr/bin/supervisord"]
+CMD surveil-init && /usr/bin/supervisord

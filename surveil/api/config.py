@@ -24,7 +24,7 @@ server = {
 
 app_hooks = [
     hooks.DBHook(
-        pymongo.MongoClient('127.0.0.1', 27017),
+        pymongo.MongoClient('mongo', 27017),
         "http://127.0.0.1:7760"
     )
 ]
