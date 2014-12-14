@@ -32,15 +32,8 @@ RUN rm -rf /etc/shinken
 ADD tools/docker/etc/shinken /etc/shinken
 RUN chown -R root:shinken /etc/shinken
 
-### Influxdb
-RUN apt-get install -y wget curl
-RUN wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb
-RUN useradd influxdb # We should remove this when issue is fixed (https://github.com/influxdb/influxdb/issues/670)
-RUN dpkg -i influxdb_latest_amd64.deb
-RUN service influxdb start && until curl -X POST 'http://localhost:8086/db?u=root&p=root' -d '{"name": "grafana"}'; do echo "Try again"; sleep 2; done &&  curl -X POST 'http://localhost:8086/db?u=root&p=root' -d '{"name": "db"}' # We should remove the sleep when this issue is fixed: https://github.com/influxdb/influxdb/issues/805
-
 ### Grafana
-RUN apt-get install -y apache2
+RUN apt-get install -y apache2 wget
 RUN wget http://grafanarel.s3.amazonaws.com/grafana-1.7.0-rc1.tar.gz
 RUN tar xvf grafana-1.7.0-rc1.tar.gz
 RUN mv grafana-1.7.0-rc1 /var/www/html/grafana
@@ -73,11 +66,6 @@ ADD tools/docker/etc/supervisor /etc/supervisor
 
 # Shinken WEBUI
 EXPOSE 7767
-
-# Influxdb
-EXPOSE 8083
-EXPOSE 8084
-EXPOSE 8086
 
 # Grafana
 EXPOSE 80
