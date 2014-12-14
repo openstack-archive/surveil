@@ -1,0 +1,6 @@
+surveil:
+  build: .
+  links:
+   - mongo
+mongo:
+  image: mongo
