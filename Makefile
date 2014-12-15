@@ -4,6 +4,9 @@ down:
 up:
 	sudo fig up &
 
+build:
+	sudo fig build
+
 test: clean
 	tox
 
