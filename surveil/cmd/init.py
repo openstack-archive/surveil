@@ -20,7 +20,7 @@ from surveil.api import config
 def main():
     # Create a basic config in mongodb
     mongo = config.app_hooks[0].mongo_connection
-
+    mongo.drop_database('shinken')
     mongo_shinken = mongo.shinken
     mongo_hosts = mongo_shinken.hosts
     mongo_services = mongo_shinken.services
