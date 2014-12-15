@@ -1,19 +1,8 @@
-docker_build:
-	sudo docker build -t surveil_image .
+down:
+	- sudo fig kill
 
-docker_rebuild:
-	sudo docker build --no-cache=true -t surveil_image .
-
-docker_kill:
-	- sudo docker stop surveil
-	- sudo docker rm surveil
-
-docker_run: docker_kill docker_build
-	sudo docker run -d -t --name surveil surveil_image
-	sudo docker inspect --format='{{.NetworkSettings.IPAddress}}' surveil
-
-docker_run_interactive: docker_kill docker_build
-	sudo docker run -i -t --name surveil surveil_image bash
+up:
+	sudo fig up &
 
 test: clean
 	tox

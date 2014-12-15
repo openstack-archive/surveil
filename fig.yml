@@ -3,8 +3,14 @@ surveil:
   links:
    - mongo
    - influxdb
+  ports:
+   - "8080:8080"
+   - "80:80"
+   - "7767:7767"
+
 mongo:
   image: mongo
+
 influxdb:
   image: tutum/influxdb
   environment:
