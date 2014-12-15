@@ -5,7 +5,6 @@ surveil:
    - influxdb
   ports:
    - "8080:8080"
-   - "80:80"
    - "7767:7767"
 
 mongo:
@@ -15,3 +14,10 @@ influxdb:
   image: tutum/influxdb
   environment:
     PRE_CREATE_DB: "db;grafana"
+
+grafana:
+  image: reazem/grafana
+  ports:
+    - "80:80"
+  links:
+    - influxdb
