@@ -21,3 +21,10 @@ grafana:
     - "80:80"
   links:
     - influxdb
+  environment:
+    INFLUXDB_HOST: "influxdb"
+    INFLUXDB_PORT: "8086"
+    INFLUXDB_NAME: "db"
+    INFLUXDB_GRAFANADB: "grafana"
+    INFLUXDB_USER: "root"
+    INFLUXDB_PASS: "root"
