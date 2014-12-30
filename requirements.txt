@@ -2,4 +2,6 @@ pecan>=0.5.0
 pymongo>=2.7.2
 wsme
 requests
-
+python-keystoneclient
+python-novaclient
+git+git://github.com/reazem/shinken.git@setup_py#egg=shinken
