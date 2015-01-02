@@ -1,0 +1,2 @@
+pack /etc/shinken/packs/linux-keystone
+package.json /etc/shinken/packs/linux-keystone
