@@ -1,0 +1,21 @@
+{
+"name":"linux-keystone",
+
+"description":"Shinken pack for monitoring OpenStack Keystone",
+
+"path":"",
+
+"macros":{
+        "_AUTH_URL": {"type": "url",
+                     "description": "Auth URL"
+                    },
+        "_USERNAME": {"type": "string",
+                     "description": "OpenStack username"
+                    },
+        "_PASSWORD": {"type": "string",
+                     "description": "OpenStack password"
+                    },
+        "_TENANT": {"type": "string",
+                     "description": "OpenStack tenant name"
+                    },
+}
