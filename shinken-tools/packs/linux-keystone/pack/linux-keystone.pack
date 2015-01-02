@@ -1,0 +1,21 @@
+{
+"name":"linux-keystone",
+
+"description":"Shinken pack for monitoring OpenStack Keystone",
+
+"path":"",
+
+"macros":{
+        "_MACRO_1": {"type": "3 comma-separated integer",
+                     "description": "Macro 1 description"
+                    },
+        "_MACRO_2": {"type": "3 comma-separated integer",
+                     "description": "Macro 2 description"
+                    },
+        "_MACRO_3": {"type": "percent",
+                     "description": "Macro 3 description"
+                    },
+        "_MACRO_4": {"type": "percent",
+                     "description": "Macro 4 description"
+                    },
+}
