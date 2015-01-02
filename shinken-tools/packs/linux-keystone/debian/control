@@ -1,0 +1,15 @@
+Source: monitoring-packs-sfl-linux-keystone
+Section: python
+Priority: optional
+Maintainer: Alexandre Viau <alexandre.viau@savoirfairelinux.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+Homepage: https://github.com/savoirfairelinux/monitoring-tools
+Vcs-Browser: https://github.com/savoirfairelinux/monitoring-tools.git
+
+Package: monitoring-packs-sfl-linux-keystone
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Shinken pack for monitoring OpenStack Keystone
+ More information is available on Github:
+ https://github.com/savoirfairelinux/sfl-shinken-packs

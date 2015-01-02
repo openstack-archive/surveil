@@ -13,7 +13,7 @@ RUN apt-get install -y python-pycurl
 RUN shinken --init
 
 ## modules
-RUN mkdir /var/lib/shinken/share
+#RUN mkdir /var/lib/shinken/share
 RUN shinken install webui
 RUN shinken install auth-cfg-password
 RUN pip install influxdb && shinken install mod-influxdb
@@ -26,6 +26,15 @@ RUN apt-get install -y nagios-plugins
 RUN chmod u+s /usr/lib/nagios/plugins/check_icmp
 RUN chmod u+s /bin/ping
 RUN chmod u+s /bin/ping6
+
+## Packs
+ADD shinken-tools/packs /packs
+ADD shinken-tools/plugins /plugins
+
+# Download packs from savoirfairelinux/monitoring-tools
+RUN apt-get install -y subversion && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/packs/generic-host /packs/generic-host && \
+    apt-get remove -y subversion
 
 ## configuration
 RUN rm -rf /etc/shinken
@@ -42,10 +51,10 @@ ADD .git /surveil/.git
 ADD README.rst surveil/README.rst
 
 ## Install
-RUN apt-get install -y python3-pip
-RUN pip3 install -r /surveil/requirements.txt
+RUN apt-get install -y python3-pip python-dev
+RUN pip install -r /surveil/requirements.txt
 RUN apt-get install -y git
-RUN cd surveil && python3 setup.py install
+RUN cd surveil && python setup.py install
 
 ### Supervisor
 RUN apt-get -y install supervisor
@@ -57,4 +66,7 @@ EXPOSE 7767
 # Surveil
 EXPOSE 8080
 
-CMD surveil-init && /usr/bin/supervisord
+CMD surveil-init && \
+    surveil-pack-upload --mongo-url=mongo --mongo-port=27017 /packs/linux-keystone/ && \
+    surveil-pack-upload --mongo-url=mongo --mongo-port=27017 /packs/generic-host/ && \
+    /usr/bin/supervisord
