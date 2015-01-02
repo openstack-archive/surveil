@@ -40,9 +40,13 @@ class Host(types.Base):
 
     notification_period = wsme.wsattr(wtypes.text, mandatory=True)
 
+    use = wsme.wsattr(wtypes.text, mandatory=False)
+    """The template to use for this host"""
+
     @classmethod
     def sample(cls):
         return cls(
+            use="generic-host",
             host_name="bogus-router",
             address="192.168.1.254",
             max_check_attempts=5,
