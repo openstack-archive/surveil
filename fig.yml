@@ -18,7 +18,7 @@ influxdb:
     PRE_CREATE_DB: "db;grafana"
 
 grafana:
-  image: reazem/grafana
+  image: savoirfairelinux/grafana
   ports:
     - "80:80"
   links:
