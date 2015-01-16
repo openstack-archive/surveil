@@ -1,0 +1,23 @@
+{
+	"name": "sfl-linux-glance",
+	"types": ["pack"],
+	"version": "1.0",
+	"homepage": "https://github.com/stackforge/surveil",
+	"author": "Grégory Starck",
+	"description": "Check an OpenStack Glance instance.",
+	"contributors": [
+	  {
+		"name": "Grégory Starck",
+		"email": "gregory.starck@savoirfairelinux.com"
+	  },
+	],
+	"repository": "https://github.com/stackforge/surveil",
+	"keywords": [
+	  "pack",
+	  "linux-glance"
+	],
+	"dependencies": {
+	  "shinken": ">=1.4"
+	},
+	"license": "GPL"
+}
