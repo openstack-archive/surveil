@@ -1,0 +1,32 @@
+{
+"name":"linux-glance",
+
+"description":"Check Glance service",
+
+# NEXT LINES ARE SAMPLES: YOU CAN DELETE IT
+"macros":{
+         "_OS_AUTH_URL":         {"type": "string",
+                                     "description": "The Auth API URL",
+                                    },
+
+         "_OS_USERNAME":     {"type": "string",
+                                     "description": "The Auth API username",
+                                    },
+        },
+
+        "_OS_PASSWORD":     {"type": "string",
+                                     "description": "The Auth API password",
+                                    },
+        },
+
+        "_OS_TENANT_NAME":     {"type": "string",
+                                     "description": "The Tenant name",
+                                    },
+        },
+
+        "_OS_GLANCE_URL":     {"type": "string",
+                                     "description": "The Glance URL",
+                                    },
+        },
+
+}
