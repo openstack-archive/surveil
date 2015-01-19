@@ -4,3 +4,4 @@ wsme
 requests
 python-keystoneclient
 python-novaclient
+argparse
