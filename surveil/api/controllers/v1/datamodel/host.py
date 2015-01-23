@@ -25,20 +25,20 @@ class Host(types.Base):
     address = wsme.wsattr(wtypes.text, mandatory=True)
     """The address of the host. Normally, this is an IP address."""
 
-    max_check_attempts = wsme.wsattr(int, mandatory=True)
+    max_check_attempts = wsme.wsattr(int, mandatory=False, default=3)
 
-    check_period = wsme.wsattr(wtypes.text, mandatory=True)
+    check_period = wsme.wsattr(wtypes.text, mandatory=False, default='24x7')
     """The time period during which active checks of this host can be made."""
 
-    contacts = wsme.wsattr(wtypes.text, mandatory=True)
+    contacts = wsme.wsattr(wtypes.text, mandatory=False, default='')
     """A list of the short names of the contacts that should be notified."""
 
-    contact_groups = wsme.wsattr(wtypes.text, mandatory=True)
+    contact_groups = wsme.wsattr(wtypes.text, mandatory=False, default='')
     """List of the short names of the contact groups that should be notified"""
 
-    notification_interval = wsme.wsattr(int, mandatory=True)
+    notification_interval = wsme.wsattr(int, mandatory=False, default=30)
 
-    notification_period = wsme.wsattr(wtypes.text, mandatory=True)
+    notification_period = wsme.wsattr(wtypes.text, mandatory=False, default='24x7')
 
     use = wsme.wsattr(wtypes.text, mandatory=False)
     """The template to use for this host"""
