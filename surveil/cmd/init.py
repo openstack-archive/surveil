@@ -12,11 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Script to initialize Surveil dependencies."""
-
-#  from keystoneclient.v2_0 import client as keystone_client
-#  from keystoneclient import session
-#  from novaclient.v1_1 import client as nova_client
+"""Script to reinitialize surveil."""
 
 from surveil.api import config
 
@@ -45,37 +41,3 @@ def main():
          "notification_period": "24x7", "retry_interval": "3",
          "service_description": "check-surveil-api"}
     )
-
-    # Make the inventory of the OpenStack install
-    # keystone = keystone_client.Client(
-    #    username=os.environ['OS_USERNAME'],
-    #    tenant_name=os.environ['OS_TENANT_NAME'],
-    #    password=os.environ['OS_PASSWORD'],
-    #    auth_url=os.environ['OS_AUTH_URL'],
-    # )
-    # endpoints = keystone.service_catalog.get_endpoints()
-    # sess = session.Session(auth=keystone)
-
-    # Compute
-    # if 'compute' in endpoints.keys():
-    #    nova_urls = [endpoint['publicURL'] for
-    #                 endpoint in endpoints['compute']]
-    # TODO(aviau): add compute hosts to surveil
-
-    # Image
-    # if 'image' in endpoints.keys():
-    #    image_urls = [endpoint['publicURL'] for
-    #                  endpoint in endpoints['image']]
-    # TODO(aviau): add image hosts to surveil
-
-    # volume
-    # if 'volume' in endpoints.keys():
-    #    volume_urls = [endpoint['publicURL'] for
-    #                   endpoint in endpoints['volume']]
-    # TODO(aviau): add image hosts to surveil
-
-    # identity
-    # if 'identity' in endpoints.keys():
-    #    identity_urls = [endpoint['publicURL'] for
-    #                     endpoint in endpoints['identity']]
-    # TODO(aviau): add identity hosts to surveil
