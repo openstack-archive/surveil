@@ -68,5 +68,6 @@ EXPOSE 8080
 
 CMD surveil-init && \
     surveil-pack-upload --mongo-url=mongo --mongo-port=27017 /packs/linux-keystone/ && \
+    surveil-pack-upload --mongo-url=mongo --mongo-port=27017 /packs/linux-glance/ && \
     surveil-pack-upload --mongo-url=mongo --mongo-port=27017 /packs/generic-host/ && \
     /usr/bin/supervisord
