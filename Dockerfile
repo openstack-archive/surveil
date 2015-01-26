@@ -31,7 +31,7 @@ RUN chmod u+s /bin/ping6
 ADD shinken-tools/packs /packs
 
 ## Plugins
-ADD shinken-tools/plugins/*/check_* /usr/lib/nagios/plugins/
+ADD shinken-tools/plugins/*/check_* /usr/lib/shinken/plugins/
 
 # Download packs from savoirfairelinux/monitoring-tools
 RUN apt-get install -y subversion && \
