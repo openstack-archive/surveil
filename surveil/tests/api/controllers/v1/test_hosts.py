@@ -103,7 +103,7 @@ class TestHostController(functionalTest.FunctionalTest):
 
         mongo_host = host.Host(
             **self.mongoconnection.shinken.hosts.find_one(
-                {'host_name': 'bogus-router333'}
+                {'host_name': 'bogus-router333'}, {'_id': 0}
             )
         )
 
@@ -133,7 +133,7 @@ class TestHostController(functionalTest.FunctionalTest):
         response = self.app.post_json("/v1/hosts", params=new_host)
 
         hosts = [host.Host(**h).as_dict() for h
-                 in self.mongoconnection.shinken.hosts.find()]
+                 in self.mongoconnection.shinken.hosts.find(None, {'_id': 0})]
 
         self.assertTrue(new_host in hosts)
         self.assertEqual(response.status_int, 201)

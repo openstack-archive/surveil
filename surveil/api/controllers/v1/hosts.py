@@ -118,7 +118,7 @@ class HostController(rest.RestController):
     def get(self):
         """Returns a specific host."""
         h = pecan.request.mongo_connection.shinken.hosts.find_one(
-            {"host_name": self._id}
+            {"host_name": self._id}, {'_id': 0}
         )
         return host.Host(**h)
 
@@ -160,7 +160,8 @@ class HostsController(rest.RestController):
     def get_all(self):
         """Returns all hosts."""
         hosts = [h for h
-                 in pecan.request.mongo_connection.shinken.hosts.find()]
+                 in pecan.request.mongo_connection.
+                 shinken.hosts.find(None, {'_id': 0})]
 
         return [host.Host(**h) for h in hosts]
 

@@ -99,13 +99,13 @@ def main(args=None):
             host_name='OS_keystone_host_%s' % ep['id'],
             use='linux-keystone',
             address=urlparse.urlparse(ep['publicURL']).hostname,
-
-            _OS_AUTH_URL=ep['publicURL'],
-            _OS_USERNAME=cfg.os_username,
-            _OS_PASSWORD=cfg.os_password,
-            _OS_TENANT_NAME=cfg.os_tenant_name,
-            _KS_SERVICES='identity',
-
+            custom_fields={
+                '_OS_AUTH_URL': ep['publicURL'],
+                '_OS_USERNAME': cfg.os_username,
+                '_OS_PASSWORD': cfg.os_password,
+                '_OS_TENANT_NAME': cfg.os_tenant_name,
+                '_KS_SERVICES': 'identity',
+            }
         )
 
     for ep in endpoints.get('image', []):
@@ -113,11 +113,13 @@ def main(args=None):
             host_name='OS_glance_host_%s' % ep['id'],
             use='linux-glance',
             address=urlparse.urlparse(ep['publicURL']).hostname,
-            _OS_AUTH_URL=ep['publicURL'],
-            _OS_USERNAME=cfg.os_username,
-            _OS_PASSWORD=cfg.os_password,
-            _OS_TENANT_NAME=cfg.os_tenant_name,
-            _OS_GLANCE_URL=ep['publicURL'] + '/v1',
+            custom_fields={
+                '_OS_AUTH_URL': ep['publicURL'],
+                '_OS_USERNAME': cfg.os_username,
+                '_OS_PASSWORD': cfg.os_password,
+                '_OS_TENANT_NAME': cfg.os_tenant_name,
+                '_OS_GLANCE_URL': ep['publicURL'] + '/v1',
+            }
         )
 
 
