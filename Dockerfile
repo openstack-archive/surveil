@@ -29,7 +29,9 @@ RUN chmod u+s /bin/ping6
 
 ## Packs
 ADD shinken-tools/packs /packs
-ADD shinken-tools/plugins /plugins
+
+## Plugins
+ADD shinken-tools/plugins/*/check_* /usr/lib/nagios/plugins/
 
 # Download packs from savoirfairelinux/monitoring-tools
 RUN apt-get install -y subversion && \
@@ -51,7 +53,7 @@ ADD .git /surveil/.git
 ADD README.rst surveil/README.rst
 
 ## Install
-RUN apt-get install -y python3-pip python-dev
+RUN apt-get install -y python3-pip python-dev libffi-dev libssl-dev
 RUN pip install -r /surveil/requirements.txt
 RUN apt-get install -y git
 RUN cd surveil && python setup.py install
