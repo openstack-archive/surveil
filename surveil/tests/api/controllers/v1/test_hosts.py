@@ -77,6 +77,24 @@ class TestHostController(functionalTest.FunctionalTest):
         )
         self.assertEqual(response.status_int, 200)
 
+    def test_get_all_hosts_no_templates(self):
+        self.mongoconnection.shinken.hosts.insert(
+            copy.deepcopy(
+                {"host_name": "bogus-router", "address": "192.168.1.254",
+                 "max_check_attempts": 5, "check_period": "24x7",
+                 "contacts": "admin,carl", "contact_groups": "router-admins",
+                 "notification_interval": 30, "notification_period": "24x7",
+                 "register": "0"}
+            )
+        )
+        response = self.app.get('/v1/hosts')
+
+        self.assert_count_equal_backport(
+            json.loads(response.body.decode()),
+            self.hosts
+        )
+        self.assertEqual(response.status_int, 200)
+
     def test_get_specific_host(self):
         response = self.app.get('/v1/hosts/bogus-router333')
 

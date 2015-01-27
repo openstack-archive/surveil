@@ -24,8 +24,12 @@ class ServicesController(rest.RestController):
     @wsme_pecan.wsexpose([service.Service])
     def get_all(self):
         """Returns all services."""
-        services = [s for s
-                    in pecan.request.mongo_connection.shinken.services.find()]
+        services = [
+            s for s
+            in pecan.request.mongo_connection.
+            # Don't return templates
+            shinken.services.find({"register": {"$ne": "0"}})
+        ]
 
         return [service.Service(**s) for s in services]
 

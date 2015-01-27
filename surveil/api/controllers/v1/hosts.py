@@ -161,7 +161,10 @@ class HostsController(rest.RestController):
         """Returns all hosts."""
         hosts = [h for h
                  in pecan.request.mongo_connection.
-                 shinken.hosts.find(None, {'_id': 0})]
+                 shinken.hosts.find(
+                 {"register": {"$ne": "0"}},  # Don't return templates
+                 {'_id': 0}
+                 )]
 
         return [host.Host(**h) for h in hosts]
 

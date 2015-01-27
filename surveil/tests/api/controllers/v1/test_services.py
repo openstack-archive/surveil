@@ -77,6 +77,31 @@ class TestServiceController(functionalTest.FunctionalTest):
         )
         self.assertEqual(response.status_int, 200)
 
+    def test_get_all_services_no_templates(self):
+        self.mongoconnection.shinken.services.insert(
+            copy.deepcopy(
+                {"host_name": "sample-server3",
+                 "service_description": "check-disk-sdb",
+                 "check_command": "check-disk!/dev/sdb1",
+                 "max_check_attempts": 5,
+                 "check_interval": 5,
+                 "retry_interval": 3,
+                 "check_period": "24x7",
+                 "notification_interval": 30,
+                 "notification_period": "24x7",
+                 "contacts": "surveil-ptl,surveil-bob",
+                 "register": "0",
+                 "contact_groups": "linux-admins"}
+            )
+        )
+        response = self.app.get('/v1/services')
+
+        self.assert_count_equal_backport(
+            json.loads(response.body.decode()),
+            self.services
+        )
+        self.assertEqual(response.status_int, 200)
+
     def test_add_host(self):
         new_service = {
             "host_name": "SOMEHOSTNAME",
