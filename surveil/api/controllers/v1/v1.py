@@ -15,6 +15,7 @@
 from surveil.api.controllers.v1 import commands
 from surveil.api.controllers.v1 import hello
 from surveil.api.controllers.v1 import hosts
+from surveil.api.controllers.v1 import reload_config
 from surveil.api.controllers.v1 import services
 
 
@@ -24,3 +25,4 @@ class V1Controller(object):
     hosts = hosts.HostsController()
     commands = commands.CommandsController()
     services = services.ServicesController()
+    reload_config = reload_config.ReloadConfigController()
