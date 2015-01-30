@@ -8,7 +8,7 @@ RUN apt-get install -y vim
 
 ### Shinken
 RUN apt-get install -y python-pip
-RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/master.tar.gz
+RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/2.2-RC1.zip
 RUN apt-get install -y python-pycurl
 RUN shinken --init
 
