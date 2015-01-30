@@ -12,17 +12,21 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.controllers.v1 import commands
-from surveil.api.controllers.v1 import hello
-from surveil.api.controllers.v1 import hosts
-from surveil.api.controllers.v1 import reload_config
-from surveil.api.controllers.v1 import services
+import httpretty
+
+from surveil.tests.api import functionalTest
 
 
-class V1Controller(object):
-    """Version 1 API controller root."""
-    hello = hello.HelloController()
-    hosts = hosts.HostsController()
-    commands = commands.CommandsController()
-    services = services.ServicesController()
-    reload_config = reload_config.ReloadConfigController()
+class TestReloadConfigController(functionalTest.FunctionalTest):
+
+    @httpretty.activate
+    def test_reload_config(self):
+        httpretty.register_uri(httpretty.POST,
+                               self.ws_arbiter_url + "/reload")
+
+        response = self.app.post("/v1/reload_config")
+        self.assertEqual(response.status_int, 200)
+        self.assertEqual(
+            httpretty.last_request().path,
+            '/reload'
+        )

@@ -12,17 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.controllers.v1 import commands
-from surveil.api.controllers.v1 import hello
-from surveil.api.controllers.v1 import hosts
-from surveil.api.controllers.v1 import reload_config
-from surveil.api.controllers.v1 import services
+import wsme
 
 
-class V1Controller(object):
-    """Version 1 API controller root."""
-    hello = hello.HelloController()
-    hosts = hosts.HostsController()
-    commands = commands.CommandsController()
-    services = services.ServicesController()
-    reload_config = reload_config.ReloadConfigController()
+class Info(wsme.types.Base):
+    message = wsme.types.text

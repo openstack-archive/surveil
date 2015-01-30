@@ -4,11 +4,11 @@ MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
 
 RUN apt-get update
-RUN apt-get install -y vim
+RUN apt-get install -y vim supervisor
 
 ### Shinken
 RUN apt-get install -y python-pip
-RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/master.tar.gz
+RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/2.2-RC1.zip
 RUN apt-get install -y python-pycurl
 RUN shinken --init
 
@@ -44,6 +44,9 @@ ADD tools/docker/etc/shinken /etc/shinken
 RUN chown -R root:shinken /etc/shinken
 
 ### Surveil
+## Package deps
+RUN apt-get install -y python3-pip python-dev libffi-dev libssl-dev
+
 ## Copy files
 ADD surveil /surveil/surveil
 ADD setup.cfg /surveil/setup.cfg
@@ -53,13 +56,11 @@ ADD .git /surveil/.git
 ADD README.rst surveil/README.rst
 
 ## Install
-RUN apt-get install -y python3-pip python-dev libffi-dev libssl-dev
 RUN pip install -r /surveil/requirements.txt
 RUN apt-get install -y git
 RUN cd surveil && python setup.py install
 
 ### Supervisor
-RUN apt-get -y install supervisor
 ADD tools/docker/etc/supervisor /etc/supervisor
 
 # Shinken WEBUI

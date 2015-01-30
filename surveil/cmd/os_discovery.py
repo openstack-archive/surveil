@@ -122,6 +122,8 @@ def main(args=None):
             }
         )
 
+    # Reload the surveil config
+    cli_surveil.reload_config()
 
 if __name__ == '__main__':
     sys.exit(main())
