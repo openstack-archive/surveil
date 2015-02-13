@@ -25,7 +25,7 @@ server = {
 app_hooks = [
     hooks.DBHook(
         pymongo.MongoClient('mongo', 27017),
-        "http://127.0.0.1:7760"
+        "http://shinken:7760"
     )
 ]
 
