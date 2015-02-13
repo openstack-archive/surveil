@@ -2,8 +2,3 @@ pecan>=0.5.0
 pymongo>=2.7.2
 wsme
 requests
-
-# Plugins dependencies
-shinkenplugins
-python-keystoneclient
-python-glanceclient
