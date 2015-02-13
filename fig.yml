@@ -3,9 +3,17 @@ surveil:
   links:
    - mongo
    - influxdb
+   - shinken
   ports:
    - "8080:8080"
-   - "7767:7767"
+
+shinken:
+  build: tools/docker/shinken_container/
+  links:
+    - mongo
+    - influxdb
+  ports:
+    - "7767:7767"
 
 mongo:
   image: mongo
