@@ -16,6 +16,9 @@ influxdb:
   image: tutum/influxdb
   environment:
     PRE_CREATE_DB: "db;grafana"
+  ports:
+    - "8083:8083"
+    - "8086:8086"
 
 grafana:
   image: savoirfairelinux/grafana
