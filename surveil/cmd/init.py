@@ -15,6 +15,7 @@
 """Script to reinitialize surveil."""
 
 from surveil.api import config
+import surveilclient.client as sc
 
 
 def main():
@@ -41,3 +42,7 @@ def main():
          "notification_period": "24x7", "retry_interval": "3",
          "service_description": "check-surveil-api"}
     )
+
+    # Reload the surveil config
+    cli_surveil = sc.Client('http://localhost:8080/v1')
+    cli_surveil.reload_config()
