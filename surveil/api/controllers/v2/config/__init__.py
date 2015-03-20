@@ -12,12 +12,20 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from surveil.api.controllers.v2.config import commands
+from surveil.api.controllers.v2.config import hosts
+from surveil.api.controllers.v2.config import reload_config
+from surveil.api.controllers.v2.config import services
+
 from pecan import rest
 
 
 class ConfigController(rest.RestController):
     """Root config controller."""
-    # hosts = HostsController()
+    hosts = hosts.HostsController()
+    commands = commands.CommandsController()
+    services = services.ServicesController()
+    reload_config = reload_config.ReloadConfigController()
     # hostgroups = HostGroupsController()
     # contacts = ContactsController()
     # contactgroups = ContactGroupsController()
@@ -25,7 +33,6 @@ class ConfigController(rest.RestController):
     # servicegroups = ServiceGroupsController()
     # timeperiods = TimeperiodsController()
     # realms = RealmsController()
-    # commands = CommandsController()
     # notificationways = NotificationWayController()
     # engine = EngineController()
     pass
