@@ -12,10 +12,22 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.controllers.v1 import v1
-from surveil.api.controllers.v2 import v2
+import pecan
+from pecan import rest
+import requests
+import wsmeext.pecan as wsme_pecan
+
+from surveil.api.controllers.v1.datamodel import info
 
 
-class RootController(object):
-    v1 = v1.V1Controller()
-    v2 = v2.V2Controller()
+class ReloadConfigController(rest.RestController):
+
+    @wsme_pecan.wsexpose(info.Info)
+    def post(self):
+        """Reloads Shinken's config."""
+
+        requests.post(
+            pecan.request.ws_arbiter_url + "/reload"
+        )
+
+        return info.Info(message='Arbiter reloading.')
