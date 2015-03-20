@@ -12,10 +12,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.controllers.v1 import v1
-from surveil.api.controllers.v2 import v2
+from surveil.api.controllers.v2 import actions as v2_actions
+from surveil.api.controllers.v2 import admin as v2_admin
+from surveil.api.controllers.v2 import auth as v2_auth
+from surveil.api.controllers.v2 import config as v2_config
+from surveil.api.controllers.v2 import status as v2_status
 
 
-class RootController(object):
-    v1 = v1.V1Controller()
-    v2 = v2.V2Controller()
+class V2Controller(object):
+    """Version 2 API controller root."""
+    actions = v2_actions.ActionsController()
+    config = v2_config.ConfigController()
+    status = v2_status.StatusController()
+    surveil = v2_admin.AdminController()
+    auth = v2_auth.AuthController()
