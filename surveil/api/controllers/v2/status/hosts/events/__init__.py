@@ -21,6 +21,7 @@ from surveil.api.controllers.v2.status.hosts.events import comments
 from surveil.api.controllers.v2.status.hosts.events import downtimes
 from surveil.api.controllers.v2.status.hosts.events import notifications
 
+
 class EventsController(rest.RestController):
     acknowledgements = acknowledgements.AcknowledgementsController()
     comments = comments.CommentsController()
@@ -31,9 +32,9 @@ class EventsController(rest.RestController):
     # @wsme_pecan.wsexpose([Host])
     @pecan.expose()
     def get_all(self):
-        """Returns all events from a specific host"""
+        """Returns all events from a specific host."""
         return "ALLL Events"
 
-    #@pecan.expose()
-    #def _lookup(self, host_name, *remainder):
+    # @pecan.expose()
+    # def _lookup(self, host_name, *remainder):
     #    return EventController(host_name), remainder

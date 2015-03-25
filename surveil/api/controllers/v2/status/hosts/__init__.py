@@ -15,9 +15,10 @@
 import pecan
 from pecan import rest
 
-from surveil.api.controllers.v2.status import metrics
 from surveil.api.controllers.v2.status.hosts import config
 from surveil.api.controllers.v2.status.hosts import events
+from surveil.api.controllers.v2.status import metrics
+
 
 class HostsController(rest.RestController):
 
@@ -40,6 +41,7 @@ class HostController(rest.RestController):
     # See init
     # metrics = metrics.MetricsController()
     # externalcommands = ExternalCommandsController()
+
     def __init__(self, host_name):
         pecan.request.context['host_name'] = host_name
         self._id = host_name
@@ -52,4 +54,3 @@ class HostController(rest.RestController):
         output = '{"host_name": "myhostname", "alias": %s}' % self._id
 
         return output
-

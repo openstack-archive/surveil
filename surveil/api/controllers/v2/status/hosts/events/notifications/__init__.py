@@ -22,5 +22,5 @@ class NotificationsController(rest.RestController):
     # @wsme_pecan.wsexpose([Host])
     @pecan.expose()
     def get_all(self):
-        """Returns all notifications from a specific host"""
+        """Returns all notifications from a specific host."""
         return "ALLL notifs"

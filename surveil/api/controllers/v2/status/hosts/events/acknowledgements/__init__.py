@@ -22,5 +22,5 @@ class AcknowledgementsController(rest.RestController):
     # @wsme_pecan.wsexpose([Host])
     @pecan.expose()
     def get_all(self):
-        """Returns all acks from a specific host"""
+        """Returns all acks from a specific host."""
         return "ALLL ACK"

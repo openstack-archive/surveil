@@ -22,5 +22,5 @@ class DowntimesController(rest.RestController):
     # @wsme_pecan.wsexpose([Host])
     @pecan.expose()
     def get_all(self):
-        """Returns all downtimes from a specific host"""
+        """Returns all downtimes from a specific host."""
         return "ALLL DT"

@@ -22,5 +22,5 @@ class ConfigController(rest.RestController):
     # @wsme_pecan.wsexpose([Host])
     @pecan.expose()
     def get_all(self):
-        """Returns config from a specific host"""
+        """Returns config from a specific host."""
         return "Dump CONFIG"

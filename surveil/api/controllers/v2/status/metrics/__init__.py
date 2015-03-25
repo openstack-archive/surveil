@@ -24,7 +24,7 @@ class MetricsController(rest.RestController):
 
     @pecan.expose()
     def get_all(self):
-        """Returns all metrics"""
+        """Returns all metrics."""
         output = '{"host_name": "NOHOSTNAME",  "metrics" : "22"}'
         if self.host_name is not None:
             output = '{"host_name": "%s",  "metrics" : "22"}' % self.host_name
@@ -34,7 +34,7 @@ class MetricsController(rest.RestController):
     def _lookup(self, *args):
         props = {}
         leftovers = list(args)
-        #print leftovers
+        # print leftovers
         for attr in ["host_name", "service_description", "metric"]:
             value = getattr(self, attr, None)
             if value is not None:
@@ -64,6 +64,7 @@ class MetricController(rest.RestController):
     def get(self):
         """Returns a specific metric."""
 
-        output = '{"host_name": "myhostname", "alias": %s, "other": %s, "metric":%s}' % (self._id, self.sd, self.metric)
+        output = '{"host_name": "myhost", "hn": %s, "sd": %s, "metric":%s}' % (
+                 self._id, self.sd, self.metric)
 
         return output

@@ -22,5 +22,5 @@ class CommentsController(rest.RestController):
     # @wsme_pecan.wsexpose([Host])
     @pecan.expose()
     def get_all(self):
-        """Returns all comments from a specific host"""
+        """Returns all comments from a specific host."""
         return "ALLL Comments"

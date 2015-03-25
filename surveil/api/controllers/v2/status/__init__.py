@@ -17,6 +17,7 @@ from pecan import rest
 from surveil.api.controllers.v2.status import hosts as v2_hosts
 from surveil.api.controllers.v2.status import metrics
 
+
 class StatusController(rest.RestController):
     # events = EventsController()
     hosts = v2_hosts.HostsController()
