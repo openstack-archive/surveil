@@ -1,4 +1,3 @@
-===============
 Shinken plugins
 ===============
 
@@ -6,4 +5,4 @@ Shinken plugins
    :maxdepth: 2
    :glob:
 
-   shinken-plugins/plugins/*/doc/*
+   shinken_tools/plugins/*/doc/*
