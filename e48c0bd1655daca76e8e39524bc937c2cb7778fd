@@ -1,0 +1,9 @@
+Verified+2: Jenkins
+Code-Review+2: Alexandre Viau <alexandre@alexandreviau.net>
+Workflow+1: Alexandre Viau <alexandre@alexandreviau.net>
+Code-Review+1: Seb-Solon <openid@pyseb.cx>
+Submitted-by: Jenkins
+Submitted-at: Wed, 25 Mar 2015 14:07:26 +0000
+Reviewed-on: https://review.openstack.org/167270
+Project: stackforge/surveil
+Branch: refs/heads/master
