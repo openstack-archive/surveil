@@ -15,25 +15,40 @@
 import pecan
 from pecan import rest
 
+from surveil.api.controllers.v2 import logs
+from surveil.api.controllers.v2.status.hosts import config
+from surveil.api.controllers.v2.status import metrics
+
 
 class HostsController(rest.RestController):
 
-    # curl -X GET  http://127.0.0.1:8080/v2/titilambert/myproject/builds/
-    # @wsme_pecan.wsexpose([Host])
     @pecan.expose()
     def get_all(self):
-        """Returns all hosts with filters ???"""
-        pass
+        """Returns all hosts."""
+        return "ALLL HOSSSSSSSST"
 
     @pecan.expose()
-    def _lookup(self, host_id, *remainder):
-        return HostController(host_id), remainder
+    def _lookup(self, host_name, *remainder):
+        return HostController(host_name), remainder
 
 
 class HostController(rest.RestController):
-    # events = EventsController()
-    # config = ConfigController()
+
     # services = ServicesController()
-    # metrics = MetricsController()
+    # See init for controller creation. We need host_name to instanciate it
     # externalcommands = ExternalCommandsController()
-    pass
+    config = config.ConfigController()
+    events = logs.LogsController()
+    metrics = metrics.MetricsController()
+
+    def __init__(self, host_name):
+        pecan.request.context['host_name'] = host_name
+        self._id = host_name
+
+    @pecan.expose()
+    def get(self):
+        """Returns a specific host."""
+
+        output = '{"host_name": "myhostname", "alias": %s}' % self._id
+
+        return output

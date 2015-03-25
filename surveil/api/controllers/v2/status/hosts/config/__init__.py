@@ -12,14 +12,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import pecan
 from pecan import rest
 
-from surveil.api.controllers.v2.status import hosts as v2_hosts
-from surveil.api.controllers.v2.status import metrics
 
+class ConfigController(rest.RestController):
 
-class StatusController(rest.RestController):
-    # events = EventsController()
-    hosts = v2_hosts.HostsController()
-    # services = ServicesController()
-    metrics = metrics.MetricsController()
+    @pecan.expose()
+    def get_all(self):
+        """Returns config from a specific host."""
+        return "Dump CONFIG"
