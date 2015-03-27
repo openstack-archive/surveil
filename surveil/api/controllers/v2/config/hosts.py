@@ -17,9 +17,11 @@ from pecan import rest
 import requests
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.controllers.v2.datamodel import checkresult
-from surveil.api.controllers.v2.datamodel import host
-from surveil.api.controllers.v2.datamodel import service
+from surveil.api.datamodel import checkresult
+from surveil.api.datamodel import host
+from surveil.api.datamodel import service
+from surveil.api.handlers import host_handler
+from surveil.api.handlers import service_handler
 
 
 class ServiceCheckResultsSubController(rest.RestController):
@@ -53,16 +55,12 @@ class HostServiceSubController(rest.RestController):
     @wsme_pecan.wsexpose(service.Service)
     def get(self):
         """Returns a specific service."""
-        mongo_s = pecan.request.mongo_connection.shinken.services.find_one(
-            {
-                "host_name": pecan.request.context['host_name'],
-                "service_description": pecan.request.context[
-                    'service_description'
-                ]
-            }
+        handler = service_handler.ServiceHandler(pecan.request)
+        s = handler.get(
+            pecan.request.context['host_name'],
+            pecan.request.context['service_description']
         )
-
-        return service.Service(**mongo_s)
+        return s
 
 
 class HostServicesSubController(rest.RestController):
@@ -70,15 +68,10 @@ class HostServicesSubController(rest.RestController):
     @wsme_pecan.wsexpose([service.Service])
     def get_all(self):
         """Returns all services assocaited with this host."""
-        mongo_s = [
-            s for s
-            in pecan.request.mongo_connection.shinken.services.find(
-                {"host_name": pecan.request.context['host_name']}
-            )
-        ]
-
-        services = [service.Service(**s) for s in mongo_s]
-
+        handler = service_handler.ServiceHandler(pecan.request)
+        services = handler.get_all(
+            host_name=pecan.request.context['host_name']
+        )
         return services
 
     @pecan.expose()
@@ -117,10 +110,9 @@ class HostController(rest.RestController):
     @wsme_pecan.wsexpose(host.Host)
     def get(self):
         """Returns a specific host."""
-        h = pecan.request.mongo_connection.shinken.hosts.find_one(
-            {"host_name": self._id}, {'_id': 0}
-        )
-        return host.Host(**h)
+        handler = host_handler.HostHandler(pecan.request)
+        h = handler.get(self._id)
+        return h
 
     @wsme_pecan.wsexpose(None, body=host.Host, status_code=204)
     def put(self, data):
@@ -128,22 +120,14 @@ class HostController(rest.RestController):
 
         :param data: a host within the request body.
         """
-
-        host_dict = data.as_dict()
-        if "host_name" not in host_dict.keys():
-            host_dict['host_name'] = self._id
-
-        pecan.request.mongo_connection.shinken.hosts.update(
-            {"host_name": self._id},
-            host_dict
-        )
+        handler = host_handler.HostHandler(pecan.request)
+        handler.update(self._id, data)
 
     @wsme_pecan.wsexpose(None, status_code=204)
     def delete(self):
         """Delete this host."""
-        pecan.request.mongo_connection.shinken.hosts.remove(
-            {"host_name": self._id}
-        )
+        handler = host_handler.HostHandler(pecan.request)
+        handler.delete(self._id)
 
     @pecan.expose()
     def _lookup(self, *remainder):
@@ -159,14 +143,9 @@ class HostsController(rest.RestController):
     @wsme_pecan.wsexpose([host.Host])
     def get_all(self):
         """Returns all hosts."""
-        hosts = [h for h
-                 in pecan.request.mongo_connection.
-                 shinken.hosts.find(
-                     {"register": {"$ne": "0"}},  # Don't return templates
-                     {'_id': 0}
-                 )]
-
-        return [host.Host(**h) for h in hosts]
+        handler = host_handler.HostHandler(pecan.request)
+        hosts = handler.get_all()
+        return hosts
 
     @wsme_pecan.wsexpose(host.Host, body=host.Host, status_code=201)
     def post(self, data):
@@ -174,6 +153,5 @@ class HostsController(rest.RestController):
 
         :param data: a host within the request body.
         """
-        pecan.request.mongo_connection.shinken.hosts.insert(
-            data.as_dict()
-        )
+        handler = host_handler.HostHandler(pecan.request)
+        handler.create(data)

@@ -17,7 +17,7 @@ from pecan import rest
 import requests
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.controllers.v2.datamodel import info
+from surveil.api.datamodel import info
 
 
 class ReloadConfigController(rest.RestController):
