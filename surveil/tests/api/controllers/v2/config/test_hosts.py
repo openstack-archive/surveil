@@ -17,7 +17,7 @@ import json
 
 import httpretty
 
-from surveil.api.controllers.v2.datamodel import host
+from surveil.api.datamodel import host
 from surveil.tests.api import functionalTest
 
 
@@ -158,6 +158,9 @@ class TestHostController(functionalTest.FunctionalTest):
 
     def test_get_associated_services(self):
         response = self.app.get('/v2/config/hosts/bogus-router/services')
+
+        print self.services
+        print json.loads(response.body.decode())
 
         self.assertEqual(
             self.services,

@@ -16,7 +16,8 @@ import pecan
 from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.controllers.v2.datamodel import command
+from surveil.api.datamodel import command
+from surveil.api.handlers import command_handler
 
 
 class CommandController(rest.RestController):
@@ -28,10 +29,9 @@ class CommandController(rest.RestController):
     @wsme_pecan.wsexpose(command.Command)
     def get(self):
         """Returns a specific command."""
-        c = pecan.request.mongo_connection.shinken.commands.find_one(
-            {"command_name": self._id}
-        )
-        return command.Command(**c)
+        handler = command_handler.CommandHandler(pecan.request)
+        c = handler.get(self._id)
+        return c
 
     @wsme_pecan.wsexpose(None, body=command.Command, status_code=204)
     def put(self, data):
@@ -39,22 +39,14 @@ class CommandController(rest.RestController):
 
         :param data: a command within the request body.
         """
-
-        command_dict = data.as_dict()
-        if "command_name" not in command_dict.keys():
-            command_dict['command_name'] = self._id
-
-        pecan.request.mongo_connection.shinken.commands.update(
-            {"command_name": self._id},
-            command_dict
-        )
+        handler = command_handler.CommandHandler(pecan.request)
+        handler.update(self._id, data)
 
     @wsme_pecan.wsexpose(None, status_code=204)
     def delete(self):
         """Delete this command."""
-        pecan.request.mongo_connection.shinken.commands.remove(
-            {"command_name": self._id}
-        )
+        handler = command_handler.CommandHandler(pecan.request)
+        handler.delete(self._id)
 
 
 class CommandsController(rest.RestController):
@@ -66,10 +58,9 @@ class CommandsController(rest.RestController):
     @wsme_pecan.wsexpose([command.Command])
     def get_all(self):
         """Returns all commands."""
-        commands = [c for c
-                    in pecan.request.mongo_connection.shinken.commands.find()]
-
-        return [command.Command(**c) for c in commands]
+        handler = command_handler.CommandHandler(pecan.request)
+        commands = handler.get_all()
+        return commands
 
     @wsme_pecan.wsexpose(command.Command,
                          body=command.Command,
@@ -79,6 +70,5 @@ class CommandsController(rest.RestController):
 
         :param data: a command within the request body.
         """
-        pecan.request.mongo_connection.shinken.commands.insert(
-            data.as_dict()
-        )
+        handler = command_handler.CommandHandler(pecan.request)
+        handler.create(data)

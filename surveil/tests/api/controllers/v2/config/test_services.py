@@ -15,7 +15,7 @@
 import copy
 import json
 
-from surveil.api.controllers.v2.datamodel import service
+from surveil.api.datamodel import service
 from surveil.tests.api import functionalTest
 
 

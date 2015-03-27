@@ -20,7 +20,7 @@ from surveil.tests.api import functionalTest
 class TestReloadConfigController(functionalTest.FunctionalTest):
 
     @httpretty.activate
-    def test_reload_config(self):
+    def test_reload_config(self):z
         httpretty.register_uri(httpretty.POST,
                                self.ws_arbiter_url + "/reload")
 
