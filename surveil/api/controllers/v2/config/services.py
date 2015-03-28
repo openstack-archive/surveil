@@ -16,7 +16,8 @@ import pecan
 from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.controllers.v2.datamodel import service
+from surveil.api.datamodel import service
+from surveil.api.handlers import service_handler
 
 
 class ServicesController(rest.RestController):
@@ -24,14 +25,9 @@ class ServicesController(rest.RestController):
     @wsme_pecan.wsexpose([service.Service])
     def get_all(self):
         """Returns all services."""
-        services = [
-            s for s
-            in pecan.request.mongo_connection.
-            # Don't return templates
-            shinken.services.find({"register": {"$ne": "0"}})
-        ]
-
-        return [service.Service(**s) for s in services]
+        handler = service_handler.ServiceHandler(pecan.request)
+        services = handler.get_all()
+        return services
 
     @wsme_pecan.wsexpose(service.Service,
                          body=service.Service,
@@ -41,6 +37,6 @@ class ServicesController(rest.RestController):
 
         :param data: a service within the request body.
         """
-        pecan.request.mongo_connection.shinken.services.insert(
-            data.as_dict()
-        )
+        handler = service_handler.ServiceHandler(pecan.request)
+        services = handler.create(data)
+        return services
