@@ -7,7 +7,7 @@ surveil:
   ports:
    - "8080:8080"
   volumes:
-   - ./surveil/:/surveil/
+   - ./surveil:/surveil/surveil
 
 shinken:
   build: tools/docker/shinken_container/

@@ -20,6 +20,7 @@ RUN apt-get install -y subversion && \
 ADD requirements.txt surveil/requirements.txt
 ADD setup.py /surveil/setup.py
 ADD setup.cfg /surveil/setup.cfg
+ADD README.rst /surveil/README.rst
 ADD .git /surveil/.git
 
 # Install
