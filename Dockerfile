@@ -12,23 +12,18 @@ RUN pip install python-surveilclient
 
 # Download packs
 RUN apt-get install -y subversion && \
-    ## Packs
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/packs/generic-host /packs/generic-host && \
     svn checkout https://github.com/stackforge/surveil/trunk/shinken-tools/packs/linux-glance /packs/linux-glance && \
     svn checkout https://github.com/stackforge/surveil/trunk/shinken-tools/packs/linux-keystone /packs/linux-keystone && \
     apt-get remove -y subversion
 
-# Copy files
-ADD surveil /surveil/surveil
-ADD setup.cfg /surveil/setup.cfg
 ADD requirements.txt surveil/requirements.txt
 ADD setup.py /surveil/setup.py
+ADD setup.cfg /surveil/setup.cfg
 ADD .git /surveil/.git
-ADD README.rst surveil/README.rst
 
 # Install
 RUN pip install -r /surveil/requirements.txt
-RUN cd surveil && python setup.py install
 
 # Supervisor
 ADD tools/docker/surveil_container/etc/supervisor /etc/supervisor
@@ -37,4 +32,6 @@ ADD tools/docker/surveil_container/etc/supervisor /etc/supervisor
 EXPOSE 8080
 
 CMD sleep 20 && \
+    cd /surveil/ && \
+    python setup.py develop && \
     /usr/bin/supervisord
