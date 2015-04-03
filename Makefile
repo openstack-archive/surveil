@@ -1,12 +1,3 @@
-down:
-	- sudo fig kill
-
-up:
-	sudo fig up -d
-
-build:
-	sudo fig build
-
 test: clean
 	tox
 
