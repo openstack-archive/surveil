@@ -1,7 +1,6 @@
 .. role:: bash(code)
    :language: bash
 
-======
 Surveil
 =======
 Monitoring as a Service
