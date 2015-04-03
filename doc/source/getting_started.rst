@@ -8,15 +8,21 @@ Getting Started
 Developpement environnement
 ===========================
 
-Surveil's developpement environnement is based on Docker and fig. There is a Makefile
-at  the root of the repository with commands to make it easier to use:
+Surveil's developpement environnement is based on Docker and docker-compose.
 
-* :bash:`make up`: Launch Surveil and its dependencies in containers.
-* :bash:`make down`: Kill the active docker containers, if any.
-* :bash:`build`: Build the surveil container.
+You can install docker-compose with the following command:
+
+    :bash:`sudo pip install -U docker-compose`
+
+You will then be able to use the environment with the following commands:
+
+* :bash:`sudo docker-compose up`: Launch Surveil and its dependencies in containers.
+* :bash:`sudo docker-compose down`: Kill the active docker containers, if any.
+* :bash:`sudo docker-compose rm`: Remove all containers, if any.
+* :bash:`sudo docker-compose`: Build the docker images.
 
 Configuration for the different services running in the Docker container are
 stored in tools/docker.
 
-Surveil container mounts your local project folder and pecan reloads every
+The Surveil container mounts your local project folder and pecan reloads every
 time the project files change thus providing a proper development environment.
