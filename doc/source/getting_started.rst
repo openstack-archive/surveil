@@ -17,3 +17,6 @@ at  the root of the repository with commands to make it easier to use:
 
 Configuration for the different services running in the Docker container are
 stored in tools/docker.
+
+Surveil container mounts your local project folder and pecan reloads every
+time the project files change thus providing a proper development environment.

@@ -15,41 +15,13 @@
 """Starter script for the Surveil API service."""
 
 import os
-from wsgiref import simple_server
-
-import pecan
+import subprocess
+import sys
 
 from surveil import api
-from surveil.api import app as api_app
-
-
-# TODO(aviau): Load conf from oslo
-def get_pecan_config():
-    # Set up the pecan configuration
-    filename = os.path.join(os.path.dirname(api.__file__), "config.py")
-    return pecan.configuration.conf_from_file(filename)
 
 
 def main():
-    cfg = get_pecan_config()
-
-    app = api_app.setup_app(cfg)
-
-    # Create the WSGI server and start it
-    host, port = cfg.server.host, cfg.server.port
-    srv = simple_server.make_server(host, port, app)
-
-    # TODO(aviau): Logging. don't print :o)
-    print ('Starting server in PID %s' % os.getpid())
-
-    if host == '0.0.0.0':
-        print (
-            'serving on 0.0.0.0:%(port)s, view at http://127.0.0.1:%(port)s' %
-            dict(port=port)
-        )
-    else:
-        print (
-            'serving on http://%(host)s:%(port)s' % dict(host=host, port=port)
-        )
-
-    srv.serve_forever()
+    filename = os.path.join(os.path.dirname(api.__file__), "config.py")
+    subprocess.Popen(['pecan', 'serve', '--reload', filename],
+                     stdin=sys.stdout, stdout=sys.stdout)
