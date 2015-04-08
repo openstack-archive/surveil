@@ -3,3 +3,7 @@ pymongo>=2.7.2
 wsme
 requests
 watchdog
+oslo.config
+oslo.middleware
+keystonemiddleware
+PasteDeploy
