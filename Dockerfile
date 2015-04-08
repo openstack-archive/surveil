@@ -22,6 +22,7 @@ ADD setup.py /surveil/setup.py
 ADD setup.cfg /surveil/setup.cfg
 ADD README.rst /surveil/README.rst
 ADD .git /surveil/.git
+ADD etc/surveil /etc/surveil
 
 # Install
 RUN pip install -r /surveil/requirements.txt

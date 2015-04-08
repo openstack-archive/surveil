@@ -21,4 +21,4 @@ class HelloController(rest.RestController):
     @pecan.expose()
     def get(self):
         """Says hello."""
-        return "Hello World!"
+        return "Hello World! aaaa"
