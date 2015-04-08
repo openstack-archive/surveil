@@ -4,7 +4,7 @@
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -14,14 +14,8 @@
 
 """Starter script for the Surveil API service."""
 
-import os
-import subprocess
-import sys
-
-from surveil import api
+import surveil.api.app as app
 
 
 def main():
-    filename = os.path.join(os.path.dirname(api.__file__), "config.py")
-    subprocess.Popen(['pecan', 'serve', '--reload', filename],
-                     stdin=sys.stdout, stdout=sys.stdout)
+    app.build_server()
