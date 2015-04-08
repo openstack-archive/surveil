@@ -4,7 +4,7 @@ MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
 
 RUN apt-get update
-RUN apt-get install -y vim supervisor python-dev libffi-dev libssl-dev
+RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev
 # libffi-devand libssl-dev are for python-cryptography
 
 ### Shinken
@@ -32,16 +32,16 @@ RUN chmod u+s /bin/ping6
 
 # Download plugins
 RUN apt-get install -y subversion && \
-    svn checkout https://github.com/stackforge/surveil/trunk/shinken-tools/plugins/plugin-check-glance /plugins/check_glance && \
-    svn checkout https://github.com/stackforge/surveil/trunk/shinken-tools/plugins/plugin-check-keystone /plugins/check_keystone && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-glance /plugins/check_glance && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-keystone /plugins/check_keystone && \
     apt-get remove -y subversion
 
 ## Install plugins dependencies
 RUN pip install shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
-RUN mkdir -p /usr/lib/shinken/plugins && \
-    cp /plugins/*/check_* /usr/lib/shinken/plugins/
+RUN cd /plugins/check_glance && sudo python setup.py install
+RUN cd /plugins/check_keystone && sudo python setup.py install
 
 ## configuration
 RUN rm -rf /etc/shinken
