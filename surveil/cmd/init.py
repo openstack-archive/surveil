@@ -18,12 +18,12 @@ import subprocess
 
 import surveilclient.client as sc
 
-from surveil.api import config
+import surveil.api as api
 
 
 def main():
     # Create a basic config in mongodb
-    mongo = config.app_hooks[0].mongo_connection
+    mongo = api.config.app_hooks[0].mongo_connection
 
     # Drop the current shinken config
     mongo.drop_database('shinken')
