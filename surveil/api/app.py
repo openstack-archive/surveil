@@ -12,17 +12,40 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from paste import deploy
 import pecan
 
+import surveil.cmd.api
 
-def setup_app(config):
 
-    app_conf = dict(config.app)
+def setup_app(pecan_config):
+    app_conf = dict(pecan_config.app)
 
     app = pecan.make_app(
         app_conf.pop('root'),
-        logging=getattr(config, 'logging', {}),
+        logging=getattr(pecan_config, 'logging', {}),
         **app_conf
     )
 
     return app
+
+
+def load_app():
+    return deploy.loadapp('config:/etc/surveil/api_paste.ini')
+
+
+def app_factory(global_config, **local_conf):
+    return VersionSelectorApplication()
+
+
+class VersionSelectorApplication(object):
+    def __init__(self):
+        pc = surveil.cmd.api.get_pecan_config()
+
+        self.v1 = setup_app(pecan_config=pc)
+        self.v2 = setup_app(pecan_config=pc)
+
+    def __call__(self, environ, start_response):
+        if environ['PATH_INFO'].startswith('/v1/'):
+            return self.v1(environ, start_response)
+        return self.v2(environ, start_response)
