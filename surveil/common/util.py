@@ -12,16 +12,25 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+
 import pecan
-from pecan import rest
+from webob import exc
 
-from surveil.common import util
+from surveil.api import rbac
 
 
-class HelloController(rest.RestController):
+# TODO(aviau && maybe Freddrickk): Properly document this decorator dudeasdasfd
+def policy_enforce(actions):
+    def policy_enforce_inner(handler):
+        def handle_stack_method(controller, **kwargs):
+            request = pecan.request
+            print(request)
+            for action in actions:
+                allowed = rbac.enforce(action, request)
 
-    @pecan.expose()
-    @util.policy_enforce(['pass'])
-    def get(self):
-        """Says hello."""
-        return "Hello World!"
+                if not allowed:
+                    raise exc.HTTPForbidden()
+
+            return handler(controller, **kwargs)
+        return handle_stack_method
+    return policy_enforce_inner
