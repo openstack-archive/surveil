@@ -15,10 +15,13 @@
 import pecan
 from pecan import rest
 
+from surveil.common import util
+
 
 class HelloController(rest.RestController):
 
     @pecan.expose()
+    @util.policy_enforce([])
     def get(self):
         """Says hello."""
         return "Hello World!"
