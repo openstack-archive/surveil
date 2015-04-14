@@ -12,9 +12,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os
+
 import mongomock
 import pecan
 import pecan.testing
+
+from oslo_config import cfg
 
 from surveil.api import hooks
 from surveil.tests import base
@@ -41,6 +45,16 @@ class FunctionalTest(base.BaseTestCase):
                 self.ws_arbiter_url
             )
         ]
+
+        policy_path = os.path.dirname(os.path.realpath(__file__))
+
+        opts = [
+            cfg.StrOpt('config_dir', default=policy_path),
+            cfg.StrOpt('config_file', default='policy.json'),
+            cfg.StrOpt('project', default='surveil'),
+        ]
+
+        cfg.CONF.register_opts(opts)
 
         self.app = pecan.testing.load_test_app({
             'app': {

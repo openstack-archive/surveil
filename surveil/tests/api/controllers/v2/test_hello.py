@@ -12,22 +12,16 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import pecan
-from pecan import rest
-
-from surveil.common import util
+from surveil.tests.api import functionalTest
 
 
-class HelloController(rest.RestController):
+class TestHelloController(functionalTest.FunctionalTest):
 
-    @pecan.expose()
-    @util.policy_enforce(['pass'])
-    def get(self):
-        """Says hello."""
-        return "Hello World!"
+    def test_get(self):
+        response = self.app.get('/v2/hello')
+        self.assertEqual(response.body, b"Hello World!")
+        assert response.status_int == 200
 
-    @pecan.expose()
-    @util.policy_enforce(['break'])
-    def post(self):
-        """What are you trying to post dude?"""
-        return "Looks like policies are not working."
+    def test_post_policy_forbidden(self):
+        with self.assertRaisesRegexp(Exception, '403 Forbidden'):
+             self.app.post('/v2/hello')
