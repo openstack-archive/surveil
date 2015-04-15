@@ -18,7 +18,7 @@ shinken:
     - "7767:7767"
 
 mongo:
-  image: mongo
+  image: mongo:2.6
   ports:
    - "27017:27017"
 

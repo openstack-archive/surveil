@@ -2,7 +2,7 @@ FROM ubuntu:trusty
 
 MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
-RUN apt-get update && apt-get install -y vim supervisor python-pip python3-pip python-dev libffi-dev libssl-dev git python-pycurl
+RUN apt-get update && apt-get install -y vim python-pip python3-pip python-dev libffi-dev libssl-dev git python-pycurl
 
 # Surveil needs shinken (as a lib)
 RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/2.2-RC1.zip
@@ -27,13 +27,11 @@ ADD etc/surveil /etc/surveil
 # Install
 RUN pip install -r /surveil/requirements.txt
 
-# Supervisor
-ADD tools/docker/surveil_container/etc/supervisor /etc/supervisor
-
 # Surveil API
 EXPOSE 8080
 
-CMD sleep 20 && \
-    cd /surveil/ && \
+CMD cd /surveil/ && \
     python setup.py develop && \
-    /usr/bin/supervisord
+    ((sleep 40 && surveil-init) &) && \
+    sleep 20 && \
+    surveil-api --reload
