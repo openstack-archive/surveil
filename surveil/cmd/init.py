@@ -16,6 +16,7 @@
 
 import subprocess
 
+from pymongo import MongoClient
 import surveilclient.client as sc
 
 from surveil.api import config
@@ -23,7 +24,7 @@ from surveil.api import config
 
 def main():
     # Create a basic config in mongodb
-    mongo = config.app_hooks[0].mongo_connection
+    mongo = MongoClient(config.surveil_api_config['mongodb_uri'])
 
     # Drop the current shinken config
     mongo.drop_database('shinken')

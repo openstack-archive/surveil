@@ -12,15 +12,22 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from pymongo import MongoClient
+
 from pecan import hooks
 
 
 class DBHook(hooks.PecanHook):
 
-    def __init__(self, mongo_connection, ws_arbiter_url):
-        self.mongo_connection = mongo_connection
+    def __init__(self, mongo_url, ws_arbiter_url):
+        self.mongo_url = mongo_url
         self.ws_arbiter_url = ws_arbiter_url
 
     def before(self, state):
-        state.request.mongo_connection = self.mongo_connection
+        self.mongoclient = MongoClient(self.mongo_url)
+
+        state.request.mongo_connection = self.mongoclient
         state.request.ws_arbiter_url = self.ws_arbiter_url
+
+    def after(self, state):
+        self.mongoclient.close()

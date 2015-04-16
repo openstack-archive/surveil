@@ -35,5 +35,4 @@ EXPOSE 8080
 CMD cd /surveil/ && \
     python setup.py develop && \
     ((sleep 40 && surveil-init) &) && \
-    sleep 20 && \
     surveil-api --reload

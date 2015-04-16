@@ -22,10 +22,18 @@ server = {
     'host': '0.0.0.0'
 }
 
+
+# In the future, surveil_api_config could be loaded from somewhere else,
+# as long as is it in the same format.
+surveil_api_config = {
+    "mongodb_uri": "mongodb://mongo:27017",
+    "ws_arbiter_url": "http://shinken:7760"
+}
+
 app_hooks = [
     hooks.DBHook(
-        pymongo.MongoClient('mongo', 27017),
-        "http://shinken:7760"
+        surveil_api_config['mongodb_uri'],
+        surveil_api_config['ws_arbiter_url']
     )
 ]
 
