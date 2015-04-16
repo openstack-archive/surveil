@@ -22,6 +22,7 @@ import time
 from wsgiref import simple_server
 
 from oslo_config import cfg
+import surveil
 
 import surveil.api.app as app
 
@@ -88,36 +89,38 @@ class ServerManager:
                         return True
                 return False
 
-            def ignore_events_one_sec(self):
+            def ignore_events_x_seconds(self, delay):
                 if not self.wait:
                     self.wait = True
-                    t = threading.Thread(target=self.wait_one_sec)
+                    t = threading.Thread(target=self.wait_x_seconds, args=(delay,))
                     t.start()
 
-            def wait_one_sec(self):
-                time.sleep(1)
+            def wait_x_seconds(self, delay):
+                time.sleep(delay)
                 self.wait = False
 
             def on_modified(self, event):
                 if self.should_reload(event) and not self.wait:
                     print("Some source files have been modified")
                     print("Restarting server...")
-                    self.ignore_events_one_sec()
                     parent.server_process.kill()
+                    self.ignore_events_x_seconds(2)
+
+                    # Makes sure the port is closed
+                    time.sleep(1)
                     parent.create_subprocess()
 
-        # Determine a list of file paths to monitor
-        paths = self.paths_to_monitor()
+        path = self.path_to_monitor()
 
         event_handler = AggressiveEventHandler()
-        for path, recurse in paths:
-            observer = observers.Observer()
-            observer.schedule(
-                event_handler,
-                path=path,
-                recursive=recurse
-            )
-            observer.start()
+
+        observer = observers.Observer()
+        observer.schedule(
+            event_handler,
+            path=path,
+            recursive=True
+        )
+        observer.start()
 
         try:
             while True:
@@ -125,20 +128,9 @@ class ServerManager:
         except KeyboardInterrupt:
             pass
 
-    def paths_to_monitor(self):
-        paths = []
-
-        for package_name in getattr(self.config.app, 'modules', []):
-            module = __import__(package_name, fromlist=['app'])
-            if hasattr(module, 'app') and hasattr(module.app, 'setup_app'):
-                paths.append((
-                    os.path.dirname(module.__file__),
-                    True
-                ))
-                break
-
-        paths.append((os.path.dirname(self.config.__file__), False))
-        return paths
+    def path_to_monitor(self):
+        module = __import__('surveil')
+        return os.path.dirname(module.__file__)
 
 
 def main():
