@@ -14,6 +14,8 @@
 
 """Starter script for the Surveil API service."""
 
+from __future__ import print_function
+from __future__ import unicode_literals
 import os
 import subprocess
 import sys
@@ -68,9 +70,10 @@ class ServerManager:
         import watchdog.events as events
         import watchdog.observers as observers
 
-        print('Monitoring for changes...')
-        self.create_subprocess()
+        print('Monitoring for changes...',
+              file=sys.stderr)
 
+        self.create_subprocess()
         parent = self
 
         class AggressiveEventHandler(events.FileSystemEventHandler):
@@ -100,24 +103,25 @@ class ServerManager:
 
             def on_modified(self, event):
                 if self.should_reload(event) and not self.wait:
-                    print("Some source files have been modified")
-                    print("Restarting server...")
-                    self.ignore_events_one_sec()
+                    print("Some source files have been modified",
+                          file=sys.stderr)
+                    print("Restarting server...",
+                          file=sys.stderr)
                     parent.server_process.kill()
+                    self.ignore_events_one_sec()
                     parent.create_subprocess()
 
-        # Determine a list of file paths to monitor
-        paths = self.paths_to_monitor()
+        path = self.path_to_monitor()
 
         event_handler = AggressiveEventHandler()
-        for path, recurse in paths:
-            observer = observers.Observer()
-            observer.schedule(
-                event_handler,
-                path=path,
-                recursive=recurse
-            )
-            observer.start()
+
+        observer = observers.Observer()
+        observer.schedule(
+            event_handler,
+            path=path,
+            recursive=True
+        )
+        observer.start()
 
         try:
             while True:
@@ -125,20 +129,9 @@ class ServerManager:
         except KeyboardInterrupt:
             pass
 
-    def paths_to_monitor(self):
-        paths = []
-
-        for package_name in getattr(self.config.app, 'modules', []):
-            module = __import__(package_name, fromlist=['app'])
-            if hasattr(module, 'app') and hasattr(module.app, 'setup_app'):
-                paths.append((
-                    os.path.dirname(module.__file__),
-                    True
-                ))
-                break
-
-        paths.append((os.path.dirname(self.config.__file__), False))
-        return paths
+    def path_to_monitor(self):
+        module = __import__('surveil')
+        return os.path.dirname(module.__file__)
 
 
 def main():
