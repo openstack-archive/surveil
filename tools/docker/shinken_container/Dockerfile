@@ -21,7 +21,7 @@ RUN shinken install webui
 RUN shinken install auth-cfg-password
 RUN pip install influxdb && shinken install mod-influxdb
 RUN shinken install ws-arbiter
-RUN pip install pymongo && shinken install mod-mongodb
+RUN pip install pymongo==2.8 && shinken install mod-mongodb
 
 ## plugins
 RUN apt-get install -y nagios-plugins
