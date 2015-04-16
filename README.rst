@@ -3,25 +3,25 @@
 
 Surveil
 =======
+
 Monitoring as a Service
 
 An OpenStack related project designed to provide highly available, scalable
 and flexible monitoring for OpenStack.
 
 Project Info
--------------
+############
 
  * Wiki: https://wiki.openstack.org/wiki/Surveil
  * IRC: #surveil at freenode
  * Documentation: https://surveil.readthedocs.org/
  * Open Gerrit Changesets: https://review.openstack.org/#/q/status:open+surveil,n,z
 
-===============
 Getting Started
-===============
+###############
 
 Developpement environnement
-===========================
+---------------------------
 
 Surveil's developpement environnement is based on Docker and docker-compose.
 
