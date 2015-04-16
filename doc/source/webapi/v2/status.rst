@@ -17,7 +17,7 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.status.hosts:HostController
    :webprefix: /v2/status/hosts/
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts.config:ConfigController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts:ConfigController
    :webprefix: /v2/status/hosts/(host_name)/config
 
 .. rest-controller:: surveil.api.controllers.v2.status.metrics:MetricsController
@@ -38,6 +38,13 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.logs.notifications:NotificationsController
    :webprefix: /v2/status/hosts/(host_name)/events/notifications
 
+Services
+========
+
+.. rest-controller:: surveil.api.controllers.v2.status.services:ServicesController
+   :webprefix: /v2/status/services
+
+
 Metrics
 =======
 
@@ -46,3 +53,15 @@ Metrics
 
 .. rest-controller:: surveil.api.controllers.v2.status.metrics:MetricController
    :webprefix: /v2/status/metrics/
+
+Types
+=====
+
+.. autotype:: surveil.api.datamodel.status.live_service.LiveService
+   :members:
+
+.. autotype:: surveil.api.datamodel.status.live_host.LiveHost
+   :members:
+
+.. autotype:: surveil.api.datamodel.status.live_query.LiveQuery
+   :members:
