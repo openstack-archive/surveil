@@ -14,18 +14,29 @@
 
 import pecan
 from pecan import rest
+import wsmeext.pecan as wsme_pecan
 
 from surveil.api.controllers.v2 import logs
-from surveil.api.controllers.v2.status.hosts import config
 from surveil.api.controllers.v2.status import metrics
+from surveil.api.datamodel.status import live_query, live_host
+from surveil.api.handlers.status import live_host_handler
 
 
 class HostsController(rest.RestController):
 
-    @pecan.expose()
+    @wsme_pecan.wsexpose([live_host.LiveHost])
     def get_all(self):
         """Returns all hosts."""
-        return "ALLL HOSSSSSSSST"
+        handler = live_host_handler.HostHandler(pecan.request)
+        hosts = handler.get_all()
+        return hosts
+
+    @wsme_pecan.wsexpose([live_host.LiveHost], body=live_query.LiveQuery)
+    def post(self, query):
+        """Given a LiveQuery, returns all matching hosts."""
+        handler = live_host_handler.HostHandler(pecan.request)
+        hosts = handler.get_all(live_query=query)
+        return hosts
 
     @pecan.expose()
     def _lookup(self, host_name, *remainder):
@@ -37,7 +48,7 @@ class HostController(rest.RestController):
     # services = ServicesController()
     # See init for controller creation. We need host_name to instanciate it
     # externalcommands = ExternalCommandsController()
-    config = config.ConfigController()
+    # config = config.ConfigController()
     events = logs.LogsController()
     metrics = metrics.MetricsController()
 
