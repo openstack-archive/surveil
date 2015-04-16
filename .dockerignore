@@ -1,0 +1,6 @@
+.git
+.gitreview
+.idea
+.tox
+env
+.testrepository
