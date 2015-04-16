@@ -17,9 +17,9 @@ import os
 import mongomock
 from oslo_config import cfg
 import pecan
+from pecan import hooks
 import pecan.testing
 
-from surveil.api import hooks
 from surveil.tests import base
 
 
@@ -38,8 +38,18 @@ class FunctionalTest(base.BaseTestCase):
         self.mongoconnection = mongomock.Connection()
         self.ws_arbiter_url = "http://localhost:7760"
 
+        class TestHook(hooks.PecanHook):
+            def __init__(self, mongoclient, wsarbiterurl):
+                self.mongoclient = mongoclient
+                self.ws_arbiter_url = wsarbiterurl
+
+            def before(self, state):
+                state.request.mongo_connection = self.mongoclient
+                state.request.ws_arbiter_url = self.ws_arbiter_url
+
+
         app_hooks = [
-            hooks.DBHook(
+            TestHook(
                 self.mongoconnection,
                 self.ws_arbiter_url
             )
