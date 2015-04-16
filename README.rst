@@ -43,9 +43,9 @@ After running :bash:`sudo docker-compose up`, you should be able to acces all
 services at the ports configured in the docker-compose.yml file.
 
 * Surveil API: http://localhost:8080/v1/hello
-* InfluxDB: http://localhost:8083
+* InfluxDB: http://localhost:8083 (user:root pw:root)
 * Grafana: http://localhost:80/grafana
-* Shinken WebUI: http://localhost:7767/all
+* Shinken WebUI: http://localhost:7767/all (user:admin pw:admin)
 
 The Surveil container mounts your local project folder and pecan reloads every
 time the project files change thus providing a proper development environment.
