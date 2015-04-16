@@ -9,14 +9,11 @@ RUN apt-get install -y vim supervisor python-dev libffi-dev libssl-dev
 
 ### Shinken
 RUN apt-get install -y python-pip
-RUN sh  -c 'gpg --recv-keys --keyserver pgp.mit.edu 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
-    echo 'deb http://deb.kaji-project.org/ubuntu14.04/ amakuni main' >> /etc/apt/sources.list.d/kaji.list && \
-    apt-get update
-RUN apt-get install -y shinken-common
+RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/5fc7ab61644152ae752b55cee28cc5c9a346591b.zip
+RUN apt-get install -y python-pycurl
 RUN shinken --init
 
 ## modules
-RUN mkdir /var/lib/shinken/share /var/lib/shinken/doc /var/lib/shinken/inventory
 RUN shinken install webui
 RUN shinken install auth-cfg-password
 RUN pip install influxdb && shinken install mod-influxdb
