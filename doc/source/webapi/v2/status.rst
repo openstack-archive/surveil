@@ -17,7 +17,7 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.status.hosts:HostController
    :webprefix: /v2/status/hosts/
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts.config:ConfigController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts:ConfigController
    :webprefix: /v2/status/hosts/(host_name)/config
 
 .. rest-controller:: surveil.api.controllers.v2.status.metrics:MetricsController
