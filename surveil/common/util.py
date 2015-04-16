@@ -19,7 +19,7 @@ from webob import exc
 from surveil.api import rbac
 
 
-# TODO(aviau && maybe Freddrickk): Properly document this decorator dudeasdasfd
+# TODO(aviau && Freddrickk): Properly document this decorator
 def policy_enforce(actions):
     def policy_enforce_inner(handler):
         def handle_stack_method(controller, **kwargs):
