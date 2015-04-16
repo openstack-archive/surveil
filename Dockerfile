@@ -17,15 +17,15 @@ RUN apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/packs/linux-keystone /packs/linux-keystone && \
     apt-get remove -y subversion
 
+
 ADD requirements.txt surveil/requirements.txt
+RUN pip install -r /surveil/requirements.txt
+
 ADD setup.py /surveil/setup.py
 ADD setup.cfg /surveil/setup.cfg
 ADD README.rst /surveil/README.rst
-ADD .git /surveil/.git
 ADD etc/surveil /etc/surveil
-
-# Install
-RUN pip install -r /surveil/requirements.txt
+ADD .git /surveil/.git
 
 # Surveil API
 EXPOSE 8080
