@@ -25,7 +25,9 @@ ADD setup.py /surveil/setup.py
 ADD setup.cfg /surveil/setup.cfg
 ADD README.rst /surveil/README.rst
 ADD etc/surveil /etc/surveil
-ADD .git /surveil/.git
+
+#ADD .git /surveil/.git
+ENV PBR_VERSION=DEV
 
 # Surveil API
 EXPOSE 8080
