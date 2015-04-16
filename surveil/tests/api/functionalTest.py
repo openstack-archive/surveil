@@ -14,6 +14,7 @@
 
 import os
 
+from influxdb import InfluxDBClient
 import mongomock
 from oslo_config import cfg
 import pecan
@@ -37,20 +38,26 @@ class FunctionalTest(base.BaseTestCase):
 
         self.mongoconnection = mongomock.Connection()
         self.ws_arbiter_url = "http://localhost:7760"
+        self.influxdb_client = InfluxDBClient.from_DSN(
+            'influxdb://root:root@influxdb:8086/db'
+        )
 
         class TestHook(hooks.PecanHook):
-            def __init__(self, mongoclient, wsarbiterurl):
+            def __init__(self, mongoclient, wsarbiterurl, influxdb_client):
                 self.mongoclient = mongoclient
                 self.ws_arbiter_url = wsarbiterurl
+                self.influxdb_client = influxdb_client
 
             def before(self, state):
                 state.request.mongo_connection = self.mongoclient
                 state.request.ws_arbiter_url = self.ws_arbiter_url
+                state.request.influxdb_client = self.influxdb_client
 
         app_hooks = [
             TestHook(
                 self.mongoconnection,
-                self.ws_arbiter_url
+                self.ws_arbiter_url,
+                self.influxdb_client
             )
         ]
 
