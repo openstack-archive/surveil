@@ -24,7 +24,6 @@ def policy_enforce(actions):
     def policy_enforce_inner(handler):
         def handle_stack_method(controller, **kwargs):
             request = pecan.request
-            print(request)
             for action in actions:
                 allowed = rbac.enforce(action, request)
 
