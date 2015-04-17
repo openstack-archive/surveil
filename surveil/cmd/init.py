@@ -75,6 +75,20 @@ def main():
          "service_description": "check-ws-arbiter"}
     )
 
+    mongo_hosts.insert(
+        {
+            'host_name':  'test_keystone',
+            'use':'linux-keystone',
+            'address':'127.0.0.1',
+            "_OS_AUTH_URL": "bla",
+                "_OS_USERNAME": "bli",
+                "_OS_PASSWORD": "blo",
+                "_OS_TENANT":   "blu",
+                "_KS_SERVICES": "bly",
+            }
+    )
+
+
     # Reload the surveil config
     cli_surveil = sc.Client('http://localhost:8080/v1')
     cli_surveil.reload_config()
