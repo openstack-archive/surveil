@@ -44,7 +44,7 @@ services at the ports configured in the docker-compose.yml file.
 
 * Surveil API: http://localhost:8080/v1/hello
 * InfluxDB: http://localhost:8083 (user:root pw:root)
-* Grafana: http://localhost:80/grafana
+* Grafana: http://localhost:80 (user:admin pw:admin)
 * Shinken WebUI: http://localhost:7767/all (user:admin pw:admin)
 
 The Surveil container mounts your local project folder and pecan reloads every
