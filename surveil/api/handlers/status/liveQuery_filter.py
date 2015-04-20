@@ -14,6 +14,8 @@
 
 import json
 
+import wsme
+
 
 def filter_dict_list_with_live_query(item_list, live_query):
     filters = json.loads(live_query.filters)
@@ -42,11 +44,13 @@ def filter_dict_list_with_live_query(item_list, live_query):
                             break
 
         if matches:
-            fields = json.loads(live_query.fields)
             matching_item = {}
-            for field in fields:
-                matching_item[field] = item[field]
-
+            if live_query.fields != wsme.Unset:
+                fields = json.loads(live_query.fields)
+                for field in fields:
+                    matching_item[field] = item[field]
+            else:
+                matching_item = item
             matching_items.append(matching_item)
 
     return matching_items

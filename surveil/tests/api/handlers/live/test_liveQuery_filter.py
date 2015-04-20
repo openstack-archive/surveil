@@ -84,3 +84,32 @@ class LiveQueryFilterTest(base.BaseTestCase):
         expected = [{"host_name": "localhost"}]
 
         self.assertItemsEqual(result, expected)
+
+    def test_query_builder_filter_all_fields(self):
+        query = live_query.LiveQuery(
+            filters=json.dumps({
+                "is": {
+                    "state": [0],
+                    "description": ["localhost"]
+                },
+                "isnot": {
+                    "state": [1]
+                }
+            })
+        )
+
+        result = query_filter.filter_dict_list_with_live_query(
+            self.items,
+            query
+        )
+
+        expected = [
+            {'description': 'localhost',
+             'last_state_change': 1429400991,
+             'plugin_output': 'OK - localhost: rta 0.047ms, lost 0%',
+             'last_check': 1429400990,
+             'state': 0,
+             'host_name': 'localhost'}
+        ]
+
+        self.assertItemsEqual(result, expected)

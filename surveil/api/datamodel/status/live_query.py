@@ -26,7 +26,7 @@ class LiveQuery(types.Base):
     filters = wsme.wsattr(wtypes.text, mandatory=True)
     "The filter expression encoded in json."
 
-    fields = wsme.wsattr(wtypes.text, mandatory=True)
+    fields = wsme.wsattr(wtypes.text, mandatory=False)
     "List of fields to include in the response."
 
     @classmethod
