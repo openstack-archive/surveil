@@ -89,5 +89,5 @@ def main():
     )
 
     # Reload the surveil config
-    cli_surveil = sc.Client('http://localhost:8080/v1')
+    cli_surveil = sc.Client('http://localhost:8080/v1', version='1_0')
     cli_surveil.reload_config()

@@ -91,7 +91,7 @@ def main(args=None):
 
     endpoints = keystone.service_catalog.get_endpoints()
 
-    cli_surveil = sc.Client(cfg.api_url)
+    cli_surveil = sc.Client(cfg.api_url, version='1_0')
 
     for ep in endpoints.get('identity', []):
 
