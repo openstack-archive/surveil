@@ -21,6 +21,8 @@ mongo:
   image: mongo:2.6
   ports:
    - "27017:27017"
+  command:
+      "mongod --smallfiles"
 
 influxdb:
   image: savoirfairelinux/influxdb
