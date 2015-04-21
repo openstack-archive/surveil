@@ -24,20 +24,20 @@ class TestStatusHosts(functionalTest.FunctionalTest):
     def setUp(self):
         super(TestStatusHosts, self).setUp()
         self.influxdb_response = (
-            '{"results":[{"series":[{"name":"HOST_STATE","tags":{"host_nam'
-            'e":"localhost"},"columns":["time","last_check","last_state_chan'
-            'ge","output","state","state_type"],"values":[["201'
-            '5-04-19T01:09:24Z",1.429405764e+09,1.429405765316929e+09,"OK '
-            '- localhost: rta 0.033ms, lost 0%",0,"HARD"]]},{"name":"'
-            'HOST_STATE","tags":{"host_name":"test_keystone"},"columns":["'
-            'time","last_check","last_state_change","output","state",'
-            '"state_type"],"values":[["2015-04-19T01:09:23Z",1.4294057'
-            '63e+09,1.429405765317144e+09,"OK - 127.0.0.1: rta 0.032ms, lo'
-            'st 0%",0,"HARD"]]},{"name":"HOST_STATE","tags":{"host_na'
-            'me":"ws-arbiter"},"columns":["time","last_check","last_state_ch'
-            'ange","output","state","state_type"],"values":[["2'
-            '015-04-19T01:09:24Z",1.429405764e+09,1.429405765317063e+09,"O'
-            'K - localhost: rta 0.030ms, lost 0%",0,"HARD"]]}]}]}'
+            '{"results":[{"series":[{"name":"HOST_STATE","tags":{"host_name":'
+            '"localhost"},"columns":["time","last_check","last_state_change",'
+            '"output","state","state_type", "acknowledged"],"values":[["2015-'
+            '04-19T01:09:24Z",1.429405764e+09,1.429405765316929e+09,"OK - loc'
+            'alhost: rta 0.033ms, lost 0%",0,"HARD",0]]},{"name":"HOST_STATE"'
+            ',"tags":{"host_name":"test_keystone"},"columns":["time","last_ch'
+            'eck","last_state_change","output","state","state_type", "acknowl'
+            'edged"],"values":[["2015-04-19T01:09:23Z",1.429405763e+09,1.4294'
+            '05765317144e+09,"OK - 127.0.0.1: rta 0.032ms, lost 0%",0,"HARD",'
+            '0]]},{"name":"HOST_STATE","tags":{"host_name":"ws-arbiter"},"col'
+            'umns":["time","last_check","last_state_change","output","state",'
+            '"state_type","acknowledged"],"values":[["2015-04-19T01:09:24Z",1'
+            '.429405764e+09,1.429405765317063e+09,"OK - localhost: rta 0.030m'
+            's, lost 0%",0,"HARD",0]]}]}]}'
         )
 
     @httpretty.activate
@@ -54,18 +54,21 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "plugin_output": "OK - localhost: rta 0.033ms, lost 0%",
              "last_check": 1429405764,
              "state": 0,
+             "acknowledged": 0,
              "host_name": "localhost"},
             {"description": "test_keystone",
              "last_state_change": 1429405765,
              "plugin_output": "OK - 127.0.0.1: rta 0.032ms, lost 0%",
              "last_check": 1429405763,
              "state": 0,
+             "acknowledged": 0,
              "host_name": "test_keystone"},
             {"description": "ws-arbiter",
              "last_state_change": 1429405765,
              "plugin_output": "OK - localhost: rta 0.030ms, lost 0%",
              "last_check": 1429405764,
              "state": 0,
+             "acknowledged": 0,
              "host_name": "ws-arbiter"}]
 
         self.assertEqual(json.loads(response.body), expected)

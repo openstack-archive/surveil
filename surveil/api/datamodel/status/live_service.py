@@ -31,6 +31,9 @@ class LiveService(types.Base):
     state = wsme.wsattr(int, mandatory=False)
     """The current state of the service"""
 
+    acknowledged = wsme.wsattr(int, mandatory=False)
+    """Wether or not the problem, if any, has been acknowledged"""
+
     last_check = wsme.wsattr(int, mandatory=False)
     """The last time the service was checked"""
 

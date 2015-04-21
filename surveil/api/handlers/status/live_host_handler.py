@@ -37,6 +37,7 @@ class HostHandler(handler.Handler):
                 "host_name": item[0][1]['host_name'],
                 "description": item[0][1]['host_name'],
                 "state": first_entry['state'],
+                "acknowledged": first_entry['acknowledged'],
                 "last_check": int(first_entry['last_check']),
                 "last_state_change": int(first_entry['last_state_change']),
                 "plugin_output": first_entry['output']
