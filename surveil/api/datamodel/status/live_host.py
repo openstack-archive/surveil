@@ -22,6 +22,9 @@ class LiveHost(types.Base):
     host_name = wsme.wsattr(wtypes.text, mandatory=False)
     """The name of the host"""
 
+    address = wsme.wsattr(wtypes.text, mandatory=False)
+    """The address of the host"""
+
     description = wsme.wsattr(wtypes.text, mandatory=False)
     """The description of the host"""
 
