@@ -13,6 +13,7 @@
 # under the License.
 
 from __future__ import print_function
+import json
 
 from surveil.api.datamodel.status import live_host
 from surveil.api.handlers import handler
@@ -25,7 +26,9 @@ class HostHandler(handler.Handler):
     def get_all(self, live_query=None):
         """Return all live hosts."""
         cli = self.request.influxdb_client
-        query = "SELECT * from HOST_STATE GROUP BY host_name, address LIMIT 1"
+        query = ("SELECT * from HOST_STATE "
+                 "GROUP BY host_name, address, childs "
+                 "LIMIT 1")
         response = cli.query(query)
 
         host_dicts = []
@@ -34,9 +37,13 @@ class HostHandler(handler.Handler):
             first_entry = next(item[1])
 
             host_dict = {
+                # TAGS
                 "host_name": item[0][1]['host_name'],
                 "address": item[0][1]['address'],
                 "description": item[0][1]['host_name'],
+                "childs": json.loads(item[0][1]['childs']),
+
+                # Values
                 "state": first_entry['state'],
                 "acknowledged": first_entry['acknowledged'],
                 "last_check": int(first_entry['last_check']),
