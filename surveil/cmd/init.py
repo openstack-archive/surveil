@@ -85,6 +85,7 @@ def main():
             "_OS_PASSWORD": "blo",
             "_OS_TENANT":   "blu",
             "_KS_SERVICES": "bly",
+            "parents": "localhost"
         }
     )
 
