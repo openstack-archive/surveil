@@ -47,8 +47,10 @@ class LiveHost(types.Base):
     def sample(cls):
         return cls(
             host_name='CoolHost',
+            address="127.0.0.1",
             description='Very Nice Host',
             state=0,
+            acknowledged=1,
             last_check=1429220785,
             last_state_change=1429220785,
             plugin_output='PING OK - Packet loss = 0%, RTA = 0.02 ms'
