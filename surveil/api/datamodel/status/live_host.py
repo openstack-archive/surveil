@@ -47,6 +47,7 @@ class LiveHost(types.Base):
     def sample(cls):
         return cls(
             host_name='CoolHost',
+            address="127.0.0.1",
             description='Very Nice Host',
             state=0,
             last_check=1429220785,
