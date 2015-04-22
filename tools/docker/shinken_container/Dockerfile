@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev li
 
 ### Shinken
 RUN apt-get install -y python-pip
-RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/5fc7ab61644152ae752b55cee28cc5c9a346591b.zip
+RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/2.4-RC3.zip
 RUN apt-get install -y python-pycurl
 RUN shinken --init
 
