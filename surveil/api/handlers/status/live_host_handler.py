@@ -45,7 +45,7 @@ class HostHandler(handler.Handler):
 
                 # Values
                 "state": first_entry['state'],
-                "acknowledged": first_entry['acknowledged'],
+                "acknowledged": int(first_entry['acknowledged']),
                 "last_check": int(first_entry['last_check']),
                 "last_state_change": int(first_entry['last_state_change']),
                 "plugin_output": first_entry['output']
@@ -53,11 +53,11 @@ class HostHandler(handler.Handler):
 
             host_dicts.append(host_dict)
 
-            if live_query:
-                host_dicts = query_filter.filter_dict_list_with_live_query(
-                    host_dicts,
-                    live_query
-                )
+        if live_query:
+            host_dicts = query_filter.filter_dict_list_with_live_query(
+                host_dicts,
+                live_query
+            )
 
         hosts = []
         for host_dict in host_dicts:

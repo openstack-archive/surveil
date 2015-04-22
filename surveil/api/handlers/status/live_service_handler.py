@@ -43,7 +43,7 @@ class ServiceHandler(handler.Handler):
                 "host_name": item[0][1]['host_name'],
                 "description": item[0][1]['service_description'],
                 "state": first_entry['state'],
-                "acknowledged": first_entry['acknowledged'],
+                "acknowledged": int(first_entry['acknowledged']),
                 "last_check": int(first_entry['last_check']),
                 "last_state_change": int(first_entry['last_state_change']),
                 "plugin_output": first_entry['output']
@@ -51,11 +51,11 @@ class ServiceHandler(handler.Handler):
 
             service_dicts.append(service_dict)
 
-            if live_query:
-                service_dicts = query_filter.filter_dict_list_with_live_query(
-                    service_dicts,
-                    live_query
-                )
+        if live_query:
+            service_dicts = query_filter.filter_dict_list_with_live_query(
+                service_dicts,
+                live_query
+            )
 
         services = []
         for service_dict in service_dicts:

@@ -23,20 +23,56 @@ class TestStatusServices(functionalTest.FunctionalTest):
 
     def setUp(self):
         super(TestStatusServices, self).setUp()
-        self.influxdb_response = (
-            '{"results":[{"series":[{"name":"SERVICE_STATE","tags":{"host_nam'
-            'e":"test_keystone","service_description":"Check KeyStone service'
-            '."},"columns":["time","last_check","last_state_change","output",'
-            '"state","state_type","acknowledged"],"values":[["2015-04-19T18:2'
-            '0:34Z",1.429467634e+09,1.429467636632134e+09,"There was no suita'
-            'ble authentication url for this request",3,"SOFT",0]]},{"name":"'
-            'SERVICE_STATE","tags":{"host_name":"ws-arbiter","service_descrip'
-            'tion":"check-ws-arbiter"},"columns":["time","last_check","last_s'
-            'tate_change","output","state","state_type","acknowledged"],"valu'
-            'es":[["2015-04-19T18:20:33Z",1.429467633e+09,1.429467635629833e+'
-            '09,"TCP OK - 0.000 second response time on port 7760",0,"HARD",0'
-            ']]}]}]}'
-        )
+        self.influxdb_response = json.dumps({
+            "results": [
+                {"series": [
+                    {"name": "SERVICE_STATE",
+                     "tags": {"host_name": "test_keystone",
+                              "service_description":
+                                  "Check KeyStone service."},
+                     "columns": [
+                         "time",
+                         "last_check",
+                         "last_state_change",
+                         "output",
+                         "state",
+                         "state_type",
+                         "acknowledged"
+                     ],
+                     "values":[
+                         ["2015-04-19T18:20:34Z",
+                          1.429467634e+09,
+                          1.429467636632134e+09,
+                          ("There was no suitable "
+                           "authentication url for this request"),
+                          3,
+                          "SOFT",
+                          0]
+                     ]},
+                    {"name": "SERVICE_STATE",
+                     "tags": {"host_name": "ws-arbiter",
+                              "service_description": "check-ws-arbiter"},
+                     "columns": [
+                         "time",
+                         "last_check",
+                         "last_state_change",
+                         "output",
+                         "state",
+                         "state_type",
+                         "acknowledged"
+                     ],
+                     "values":[
+                         ["2015-04-19T18:20:33Z",
+                          1.429467633e+09,
+                          1.429467635629833e+09,
+                          "TCP OK - 0.000 second response time on port 7760",
+                          0,
+                          "HARD",
+                          0]
+                     ]}
+                ]}
+            ]
+        })
 
     @httpretty.activate
     def test_get_all_services(self):
