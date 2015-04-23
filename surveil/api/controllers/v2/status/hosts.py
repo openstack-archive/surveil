@@ -20,7 +20,9 @@ from surveil.api.controllers.v2 import logs
 from surveil.api.controllers.v2.status import metrics
 from surveil.api.datamodel.status import live_host
 from surveil.api.datamodel.status import live_query
+from surveil.api.datamodel.status import live_service
 from surveil.api.handlers.status import live_host_handler
+from surveil.api.handlers.status import live_service_handler
 
 
 class HostsController(rest.RestController):
@@ -44,9 +46,41 @@ class HostsController(rest.RestController):
         return HostController(host_name), remainder
 
 
+class ConfigController(rest.RestController):
+
+    @pecan.expose()
+    def get_all(self):
+        """Returns config from a specific host."""
+        return "Dump CONFIG"
+
+
+class HostServicesController(rest.RestController):
+
+    @pecan.expose()
+    def _lookup(self, service_name, *remainder):
+        return HostServiceController(service_name), remainder
+
+
+class HostServiceController(rest.RestController):
+
+    def __init__(self, service_name):
+        pecan.request.context['service_name'] = service_name
+        self.service_name = service_name
+
+    @wsme_pecan.wsexpose(live_service.LiveService)
+    def get(self):
+        """Returns a specific host service."""
+        handler = live_service_handler.ServiceHandler(pecan.request)
+        service = handler.get(
+            pecan.request.context['host_name'],
+            self.service_name
+        )
+        return service
+
+
 class HostController(rest.RestController):
 
-    # services = ServicesController()
+    services = HostServicesController()
     # See init for controller creation. We need host_name to instanciate it
     # externalcommands = ExternalCommandsController()
     # config = config.ConfigController()
@@ -63,11 +97,3 @@ class HostController(rest.RestController):
         handler = live_host_handler.HostHandler(pecan.request)
         host = handler.get(self.host_name)
         return host
-
-
-class ConfigController(rest.RestController):
-
-    @pecan.expose()
-    def get_all(self):
-        """Returns config from a specific host."""
-        return "Dump CONFIG"
