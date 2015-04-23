@@ -17,7 +17,6 @@ RUN apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/packs/linux-keystone /packs/linux-keystone && \
     apt-get remove -y subversion
 
-
 ADD requirements.txt surveil/requirements.txt
 RUN pip install -r /surveil/requirements.txt
 
@@ -25,15 +24,12 @@ ADD setup.py /surveil/setup.py
 ADD setup.cfg /surveil/setup.cfg
 ADD README.rst /surveil/README.rst
 ADD etc/surveil /etc/surveil
+ADD surveil /surveil/surveil
 
 #ADD .git /surveil/.git
-ENV PBR_VERSION=DEV
+ENV PBR_VERSION=PROD
 
-# Surveil API
-EXPOSE 8080
+# We are using develop so that the code can be mounted when in DEV.
+RUN cd surveil && python setup.py develop
 
-CMD cd /surveil/ && \
-    python setup.py develop && \
-    ((sleep 40 && surveil-init) &) && \
-    sleep 20 && \
-    surveil-api --reload
+CMD surveil-api

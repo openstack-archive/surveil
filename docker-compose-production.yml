@@ -9,10 +9,7 @@ surveil:
   ports:
    - "8080:8080"
   environment:
-    PBR_VERSION: "DEV"
-  volumes:
-   - ./surveil:/surveil/surveil
-  command: bash -c "cd /surveil/ && python setup.py develop && ((sleep 40 && surveil-init) &) && sleep 20 && surveil-api --reload"
+    PBR_VERSION: "PROD"
 
 shinken:
   extends:
@@ -31,7 +28,9 @@ mongo:
   ports:
    - "27017:27017"
   command:
-      "mongod --nojournal --smallfiles"
+      "mongod --smallfiles"
+  volumes:
+   - ./container-data/mongodb:/data/db
 
 influxdb:
   extends:
@@ -42,6 +41,8 @@ influxdb:
   ports:
     - "8083:8083"
     - "8086:8086"
+  volumes:
+   - ./container-data/influxdb:/data
 
 grafana:
   extends:

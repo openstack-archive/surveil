@@ -6,6 +6,7 @@
 *.egg-info
 AUTHORS
 ChangeLog
+build
 
 # documentation
 doc/build
@@ -15,3 +16,6 @@ doc/source/_build
 .tox
 env
 .testrepository
+
+#Container data
+container-data

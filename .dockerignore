@@ -4,3 +4,4 @@
 .tox
 env
 .testrepository
+container-data
