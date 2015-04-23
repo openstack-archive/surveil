@@ -29,10 +29,6 @@ def main():
     # Drop the current shinken config
     mongo.drop_database('shinken')
 
-    mongo_shinken = mongo.shinken
-    mongo_hosts = mongo_shinken.hosts
-    mongo_services = mongo_shinken.services
-
     # Load the shinken packs
     subprocess.call(
         [
@@ -61,25 +57,35 @@ def main():
         ]
     )
 
-    mongo_hosts.insert(
-        {"use": "generic-host", "contact_groups": "admins",
-         "host_name": "ws-arbiter", "address": "localhost"}
+    # Reload the surveil config
+    cli_surveil = sc.Client('http://localhost:8080/v2', version='2_0')
+
+    cli_surveil.config.hosts.create(
+        use="generic-host",
+        contact_groups="admins",
+        host_name="arbiter",
+        address="localhost"
     )
 
-    mongo_services.insert(
-        {"check_command": "check_tcp!7760", "check_interval": "5",
-         "check_period": "24x7", "contact_groups": "admins",
-         "contacts": "admin", "host_name": "ws-arbiter",
-         "max_check_attempts": "5", "notification_interval": "30",
-         "notification_period": "24x7", "retry_interval": "3",
-         "service_description": "check-ws-arbiter"}
+    cli_surveil.config.services.create(
+        check_command="check_tcp!7760",
+        check_interval="5",
+        check_period="24x7",
+        contact_groups="admins",
+        contacts="admin",
+        host_name="ws-arbiter",
+        max_check_attempts="5",
+        notification_interval="30",
+        notification_period="24x7",
+        retry_interval="3",
+        service_description="check-ws-arbiter"
     )
 
-    mongo_hosts.insert(
-        {
-            'host_name': 'test_keystone',
-            'use': 'linux-keystone',
-            'address': '127.0.0.1',
+    cli_surveil.config.hosts.create(
+        host_name='test_keystone',
+        use='linux-keystone',
+        address='127.0.0.1',
+        custom_fields={
             "_OS_AUTH_URL": "bla",
             "_OS_USERNAME": "bli",
             "_OS_PASSWORD": "blo",
@@ -89,6 +95,4 @@ def main():
         }
     )
 
-    # Reload the surveil config
-    cli_surveil = sc.Client('http://localhost:8080/v1', version='1_0')
-    cli_surveil.reload_config()
+    cli_surveil.config.reload_config()
