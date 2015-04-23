@@ -22,6 +22,20 @@ from surveil.api.handlers.status import liveQuery_filter as query_filter
 class ServiceHandler(handler.Handler):
     """Fulfills a request on live services."""
 
+    def get(self, host_name, service_name):
+        """Return a specific service."""
+        cli = self.request.influxdb_client
+        query = ("SELECT * from SERVICE_STATE "
+                 "WHERE host_name='%s' "
+                 "AND service_description='%s' "
+                 "GROUP BY * LIMIT 1") % (host_name, service_name)
+        response = cli.query(query)
+
+        host = live_service.LiveService(
+            **self._service_dict_from_influx_item(response.items()[0])
+        )
+        return host
+
     def get_all(self, live_query=None):
         """Return all live services."""
         cli = self.request.influxdb_client
@@ -36,19 +50,7 @@ class ServiceHandler(handler.Handler):
         service_dicts = []
 
         for item in response.items():
-            first_entry = next(item[1])
-
-            service_dict = {
-                "service_description": item[0][1]['service_description'],
-                "host_name": item[0][1]['host_name'],
-                "description": item[0][1]['service_description'],
-                "state": first_entry['state'],
-                "acknowledged": int(first_entry['acknowledged']),
-                "last_check": int(first_entry['last_check']),
-                "last_state_change": int(first_entry['last_state_change']),
-                "plugin_output": first_entry['output']
-            }
-
+            service_dict = self._service_dict_from_influx_item(item)
             service_dicts.append(service_dict)
 
         if live_query:
@@ -63,3 +65,21 @@ class ServiceHandler(handler.Handler):
             services.append(service)
 
         return services
+
+    def _service_dict_from_influx_item(self, item):
+        tags = item[0][1]
+        points = item[1]
+        first_point = next(points)
+
+        service_dict = {
+            "service_description": tags['service_description'],
+            "host_name": tags['host_name'],
+            "description": tags['service_description'],
+            "state": first_point['state'],
+            "acknowledged": int(first_point['acknowledged']),
+            "last_check": int(first_point['last_check']),
+            "last_state_change": int(first_point['last_state_change']),
+            "plugin_output": first_point['output']
+        }
+
+        return service_dict
