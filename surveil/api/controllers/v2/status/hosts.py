@@ -55,15 +55,14 @@ class HostController(rest.RestController):
 
     def __init__(self, host_name):
         pecan.request.context['host_name'] = host_name
-        self._id = host_name
+        self.host_name = host_name
 
-    @pecan.expose()
+    @wsme_pecan.wsexpose(live_host.LiveHost)
     def get(self):
         """Returns a specific host."""
-
-        output = '{"host_name": "myhostname", "alias": %s}' % self._id
-
-        return output
+        handler = live_host_handler.HostHandler(pecan.request)
+        host = handler.get(self.host_name)
+        return host
 
 
 class ConfigController(rest.RestController):

@@ -158,3 +158,46 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         expected = [{"host_name": "ws-arbiter", "last_check": 1429405764}]
 
         self.assertItemsEqual(json.loads(response.body), expected)
+
+    @httpretty.activate
+    def test_get_specific_host(self):
+        influx_response = json.dumps(
+            {"results": [
+                {"series": [
+                    {"name": "HOST_STATE",
+                     "tags": {"address": "localhost",
+                              "childs": "[\"test_keystone\"]",
+                              "host_name": "localhost"},
+                     "columns": ["time",
+                                 "acknowledged",
+                                 "last_check",
+                                 "last_state_change",
+                                 "output",
+                                 "state",
+                                 "state_type"],
+                     "values":[["2015-04-23T18:03:11Z",
+                                0,
+                                1.429812191e+09,
+                                1.429812192166997e+09,
+                                "OK - localhost: rta 0.044ms, lost 0%",
+                                0,
+                                "HARD"]]}]}]}
+        )
+
+        httpretty.register_uri(httpretty.GET,
+                               "http://influxdb:8086/query",
+                               body=influx_response)
+
+        response = self.app.get("/v2/status/hosts/localhost")
+
+        expected = {"childs": ["test_keystone"],
+                    "description": "localhost",
+                    "last_state_change": 1429812192,
+                    "acknowledged": 0,
+                    "plugin_output": "OK - localhost: rta 0.044ms, lost 0%",
+                    "last_check": 1429812191,
+                    "state": 0,
+                    "host_name": "localhost",
+                    "address": "localhost"}
+
+        self.assertItemsEqual(json.loads(response.body), expected)

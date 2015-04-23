@@ -23,6 +23,19 @@ from surveil.api.handlers.status import liveQuery_filter as query_filter
 class HostHandler(handler.Handler):
     """Fulfills a request on the live hosts."""
 
+    def get(self, host_name):
+        """Return a host."""
+        cli = self.request.influxdb_client
+        query = ("SELECT * from HOST_STATE "
+                 "WHERE host_name='%s' "
+                 "GROUP BY * LIMIT 1") % host_name
+        response = cli.query(query)
+
+        host = live_host.LiveHost(
+            **self._host_dict_from_influx_item(response.items()[0])
+        )
+        return host
+
     def get_all(self, live_query=None):
         """Return all live hosts."""
         cli = self.request.influxdb_client
@@ -34,23 +47,7 @@ class HostHandler(handler.Handler):
         host_dicts = []
 
         for item in response.items():
-            first_entry = next(item[1])
-
-            host_dict = {
-                # TAGS
-                "host_name": item[0][1]['host_name'],
-                "address": item[0][1]['address'],
-                "description": item[0][1]['host_name'],
-                "childs": json.loads(item[0][1]['childs']),
-
-                # Values
-                "state": first_entry['state'],
-                "acknowledged": int(first_entry['acknowledged']),
-                "last_check": int(first_entry['last_check']),
-                "last_state_change": int(first_entry['last_state_change']),
-                "plugin_output": first_entry['output']
-            }
-
+            host_dict = self._host_dict_from_influx_item(item)
             host_dicts.append(host_dict)
 
         if live_query:
@@ -65,3 +62,26 @@ class HostHandler(handler.Handler):
             hosts.append(host)
 
         return hosts
+
+    def _host_dict_from_influx_item(self, item):
+        points = item[1]
+        first_point = next(points)
+
+        tags = item[0][1]
+
+        host_dict = {
+            # TAGS
+            "host_name": tags['host_name'],
+            "address": tags['address'],
+            "description": tags['host_name'],
+            "childs": json.loads(tags['childs']),
+
+            # Values
+            "state": first_point['state'],
+            "acknowledged": int(first_point['acknowledged']),
+            "last_check": int(first_point['last_check']),
+            "last_state_change": int(first_point['last_state_change']),
+            "plugin_output": first_point['output']
+        }
+
+        return host_dict
