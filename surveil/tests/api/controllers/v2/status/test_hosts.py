@@ -136,6 +136,11 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "host_name": "ws-arbiter"}]
 
         self.assertItemsEqual(json.loads(response.body), expected)
+        self.assertEqual(
+            httpretty.last_request().querystring['q'],
+            ["SELECT * from HOST_STATE "
+             "GROUP BY host_name, address, childs LIMIT 1"]
+        )
 
     @httpretty.activate
     def test_query_hosts(self):
@@ -260,3 +265,11 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     'service_description': 'check-ws-arbiter'}
 
         self.assertItemsEqual(json.loads(response.body), expected)
+        self.assertEqual(
+            httpretty.last_request().querystring['q'],
+            ["SELECT * from SERVICE_STATE "
+             "WHERE host_name='ws-arbiter' "
+             "AND service_description='check-ws-arbiter' "
+             "GROUP BY * "
+             "LIMIT 1"]
+        )
