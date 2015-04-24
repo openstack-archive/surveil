@@ -138,15 +138,45 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         self.assertItemsEqual(json.loads(response.body), expected)
         self.assertEqual(
             httpretty.last_request().querystring['q'],
-            ["SELECT * from HOST_STATE "
+            ["SELECT * FROM HOST_STATE "
              "GROUP BY host_name, address, childs LIMIT 1"]
         )
 
     @httpretty.activate
     def test_query_hosts(self):
+        influxdb_response = json.dumps({
+            "results": [
+                {
+                    "series": [
+                        {"name": "HOST_STATE",
+                         "tags": {"host_name": "ws-arbiter",
+                                  "address": "127.0.0.1",
+                                  "childs": '["test_keystone"]'},
+                         "columns": [
+                             "time",
+                             "last_check",
+                             "last_state_change",
+                             "output",
+                             "state",
+                             "state_type",
+                             "acknowledged"
+                         ],
+                         "values":[
+                             ["2015-04-19T01:09:24Z",
+                              1.429405764e+09,
+                              1.429405765317063e+09,
+                              "OK - localhost: rta 0.030ms, lost 0%",
+                              0,
+                              "HARD",
+                              0]
+                         ]}
+                    ]
+                }
+            ]
+        })
         httpretty.register_uri(httpretty.GET,
                                "http://influxdb:8086/query",
-                               body=self.influxdb_response)
+                               body=influxdb_response)
 
         query = {
             'fields': json.dumps(['host_name', 'last_check']),
@@ -163,6 +193,13 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         expected = [{"host_name": "ws-arbiter", "last_check": 1429405764}]
 
         self.assertItemsEqual(json.loads(response.body), expected)
+
+        self.assertEqual(
+            httpretty.last_request().querystring['q'],
+            ["SELECT * FROM HOST_STATE GROUP BY host_name, address, childs"
+             " LIMIT 1 WHERE host_name!='localhost' "
+             "AND description!='test_keystone'"]
+        )
 
     @httpretty.activate
     def test_get_specific_host(self):
@@ -206,6 +243,12 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     "address": "localhost"}
 
         self.assertItemsEqual(json.loads(response.body), expected)
+
+        self.assertEqual(
+            httpretty.last_request().querystring['q'],
+            ["SELECT * from HOST_STATE WHERE host_name='localhost'"
+             " GROUP BY * LIMIT 1"]
+        )
 
     @httpretty.activate
     def test_get_specific_host_service(self):

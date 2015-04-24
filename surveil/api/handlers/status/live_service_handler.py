@@ -16,7 +16,7 @@ from __future__ import print_function
 
 from surveil.api.datamodel.status import live_service
 from surveil.api.handlers import handler
-from surveil.api.handlers.status import liveQuery_filter as query_filter
+from surveil.api.handlers.status import influxdb_query as query_filter
 
 
 class ServiceHandler(handler.Handler):
@@ -54,7 +54,7 @@ class ServiceHandler(handler.Handler):
             service_dicts.append(service_dict)
 
         if live_query:
-            service_dicts = query_filter.filter_dict_list_with_live_query(
+            service_dicts = query_filter.filter_fields(
                 service_dicts,
                 live_query
             )

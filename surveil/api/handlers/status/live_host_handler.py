@@ -17,7 +17,7 @@ import json
 
 from surveil.api.datamodel.status import live_host
 from surveil.api.handlers import handler
-from surveil.api.handlers.status import liveQuery_filter as query_filter
+from surveil.api.handlers.status import influxdb_query as query_filter
 
 
 class HostHandler(handler.Handler):
@@ -39,9 +39,12 @@ class HostHandler(handler.Handler):
     def get_all(self, live_query=None):
         """Return all live hosts."""
         cli = self.request.influxdb_client
-        query = ("SELECT * from HOST_STATE "
-                 "GROUP BY host_name, address, childs "
-                 "LIMIT 1")
+        query = query_filter.build_influxdb_query(
+            live_query,
+            'HOST_STATE',
+            group_by=['host_name', 'address', 'childs'],
+            limit=1
+        )
         response = cli.query(query)
 
         host_dicts = []
@@ -51,7 +54,7 @@ class HostHandler(handler.Handler):
             host_dicts.append(host_dict)
 
         if live_query:
-            host_dicts = query_filter.filter_dict_list_with_live_query(
+            host_dicts = query_filter.filter_fields(
                 host_dicts,
                 live_query
             )
