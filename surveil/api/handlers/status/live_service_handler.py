@@ -59,10 +59,8 @@ class ServiceHandler(handler.Handler):
                 live_query
             )
 
-        services = []
-        for service_dict in service_dicts:
-            service = live_service.LiveService(**service_dict)
-            services.append(service)
+        services = [live_service.LiveService(**service_dict)
+                    for service_dict in service_dicts]
 
         return services
 

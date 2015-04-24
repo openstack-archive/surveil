@@ -56,10 +56,7 @@ class HostHandler(handler.Handler):
                 live_query
             )
 
-        hosts = []
-        for host_dict in host_dicts:
-            host = live_host.LiveHost(**host_dict)
-            hosts.append(host)
+        hosts = [live_host.LiveHost(**host_dict) for host_dict in host_dicts]
 
         return hosts
 
