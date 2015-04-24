@@ -16,7 +16,7 @@ from __future__ import print_function
 
 from surveil.api.datamodel.status import live_service
 from surveil.api.handlers import handler
-from surveil.api.handlers.status import liveQuery_filter as query_filter
+from surveil.api.handlers.status import influxdb_query
 
 
 class ServiceHandler(handler.Handler):
@@ -39,10 +39,11 @@ class ServiceHandler(handler.Handler):
     def get_all(self, live_query=None):
         """Return all live services."""
         cli = self.request.influxdb_client
-        query = (
-            "SELECT * from SERVICE_STATE "
-            "GROUP BY host_name, service_description "
-            "LIMIT 1"
+        query = influxdb_query.build_influxdb_query(
+            live_query,
+            'SERVICE_STATE',
+            group_by=['host_name', 'service_description'],
+            limit=1
         )
 
         response = cli.query(query)
@@ -54,7 +55,7 @@ class ServiceHandler(handler.Handler):
             service_dicts.append(service_dict)
 
         if live_query:
-            service_dicts = query_filter.filter_dict_list_with_live_query(
+            service_dicts = influxdb_query.filter_fields(
                 service_dicts,
                 live_query
             )

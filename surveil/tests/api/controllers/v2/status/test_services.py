@@ -105,11 +105,47 @@ class TestStatusServices(functionalTest.FunctionalTest):
 
         self.assertEqual(json.loads(response.body), expected)
 
+        self.assertEqual(
+            httpretty.last_request().querystring['q'],
+            ["SELECT * FROM SERVICE_STATE GROUP BY host_name,"
+             " service_description LIMIT 1"]
+        )
+
     @httpretty.activate
     def test_query_services(self):
+        influxdb_response = json.dumps({
+            "results": [
+                {"series": [
+                    {"name": "SERVICE_STATE",
+                     "tags": {"host_name": "test_keystone",
+                              "service_description":
+                                  "Check KeyStone service."},
+                     "columns": [
+                         "time",
+                         "last_check",
+                         "last_state_change",
+                         "output",
+                         "state",
+                         "state_type",
+                         "acknowledged"
+                     ],
+                     "values":[
+                         ["2015-04-19T18:20:34Z",
+                          1.429467634e+09,
+                          1.429467636632134e+09,
+                          ("There was no suitable "
+                           "authentication url for this request"),
+                          3,
+                          "SOFT",
+                          0]
+                     ]}
+                ]}
+            ]
+        })
+
         httpretty.register_uri(httpretty.GET,
                                "http://influxdb:8086/query",
-                               body=self.influxdb_response)
+                               body=influxdb_response)
 
         query = {
             'fields': json.dumps(['host_name', 'service_description']),
