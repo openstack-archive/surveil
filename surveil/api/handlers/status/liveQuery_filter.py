@@ -54,3 +54,55 @@ def filter_dict_list_with_live_query(item_list, live_query):
             matching_items.append(matching_item)
 
     return matching_items
+
+
+def build_influxdb_query(live_query, measurement, group_by=[], limit=None):
+
+    query = ['SELECT * FROM', measurement]
+
+    if group_by:
+        query.append('GROUP BY')
+        query.append(', '.join(group_by))
+
+    if limit is not None:
+        query.append('LIMIT %d' % limit)
+
+    if live_query:
+        filters = json.loads(live_query.filters)
+        if filters:
+            query.append(_build_where_clause(filters))
+
+    return ' '.join(query)
+
+
+def _build_where_clause(filters):
+    """
+    {
+        "is": {
+            "state": [0],
+            "description": ["test_keystone"]
+        }
+    }
+    """
+    filters_conversion = {
+        'is': '=',
+        'isnot': '!='
+    }
+    clause = []
+    first = True
+
+    for filter_name, filter_data in filters.items():
+        for field, values in filter_data.items():
+            for value in values:
+                if first:
+                    clause.append('WHERE')
+                else:
+                    clause.append('AND')
+
+                if type(value) == int:
+                    clause.append("%s%s%d" % (field, filters_conversion[filter_name], value))
+                else:
+                    clause.append("%s%s'%s'" % (field, filters_conversion[filter_name], value))
+                first = False
+
+    return ' '.join(clause)

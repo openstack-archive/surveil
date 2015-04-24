@@ -39,9 +39,12 @@ class HostHandler(handler.Handler):
     def get_all(self, live_query=None):
         """Return all live hosts."""
         cli = self.request.influxdb_client
-        query = ("SELECT * from HOST_STATE "
-                 "GROUP BY host_name, address, childs "
-                 "LIMIT 1")
+        query = query_filter.build_influxdb_query(
+            live_query,
+            'HOST_STATE',
+            group_by=['host_name', 'address', 'childs'],
+            limit=1
+        )
         response = cli.query(query)
 
         host_dicts = []

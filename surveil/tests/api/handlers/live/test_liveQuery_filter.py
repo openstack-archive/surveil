@@ -113,3 +113,46 @@ class LiveQueryFilterTest(base.BaseTestCase):
         ]
 
         self.assertItemsEqual(result, expected)
+
+    def test_build_where_clause(self):
+        filters = {
+            "is": {
+                "state": [0],
+                "description": ["test_keystone"]
+            }
+        }
+
+        result = query_filter._build_where_clause(
+            filters
+        )
+
+        expected = "WHERE state=0 AND description='test_keystone'"
+
+        self.assertItemsEqual(result, expected)
+
+    def test_build_where_clause_no_filters(self):
+        filters = {}
+
+        result = query_filter._build_where_clause(
+            filters
+        )
+
+        expected = ""
+
+        self.assertItemsEqual(result, expected)
+
+    def test_build_influx_query(self):
+        query = live_query.LiveQuery(
+            fields=json.dumps(['host_name', 'last_check']),
+            filters=json.dumps({}),
+        )
+        measurement = 'ALERT'
+        group_by = ['*', 'host_name']
+        limit = 10
+
+        result = query_filter.build_influxdb_query(query, measurement, group_by, limit)
+
+        expected = "SELECT * FROM ALERT GROUP BY *, host_name LIMIT 10"
+
+        self.assertItemsEqual(result, expected)
+
