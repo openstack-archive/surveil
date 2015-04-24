@@ -15,34 +15,20 @@
 import json
 
 from surveil.api.datamodel.status import live_query
-from surveil.api.handlers.status import liveQuery_filter as query_filter
+from surveil.api.handlers.status import influxdb_query
 from surveil.tests import base
 
 
 class LiveQueryFilterTest(base.BaseTestCase):
 
-    def setUp(self):
-        self.items = [
-            {"description": "localhost",
-             "last_state_change": 1429400991,
-             "plugin_output": "OK - localhost: rta 0.047ms, lost 0%",
-             "last_check": 1429400990,
-             "state": 0,
-             "host_name": "localhost"},
+    def test_filter_fields(self):
+        items = [
             {"description": "test_keystone",
              "last_state_change": 1429400986,
              "plugin_output": "OK - 127.0.0.1: rta 0.045ms, lost 0%",
              "last_check": 1429400984, "state": 2,
              "host_name": "test_keystone"},
-            {"description": "ws-arbiter",
-             "last_state_change": 1429400991,
-             "plugin_output": "OK - localhost: rta 0.042ms, lost 0%",
-             "last_check": 1429400990,
-             "state": 2,
-             "host_name": "ws-arbiter"}
-        ]
-
-    def test_query_builder_filter_isnot(self):
+            ]
         query = live_query.LiveQuery(
             fields=json.dumps(['host_name', 'last_check']),
             filters=json.dumps({
@@ -53,63 +39,56 @@ class LiveQueryFilterTest(base.BaseTestCase):
             })
         )
 
-        result = query_filter.filter_dict_list_with_live_query(
-            self.items,
+        result = influxdb_query.filter_fields(
+            items,
             query
         )
 
-        expected = [{"last_check": 1429400990, "host_name": "ws-arbiter"}]
+        expected = [{"last_check": 1429400984, "host_name": "test_keystone"}]
 
         self.assertItemsEqual(result, expected)
 
-    def test_query_builder_filter_is(self):
-        query = live_query.LiveQuery(
-            fields=json.dumps(['host_name']),
-            filters=json.dumps({
-                "is": {
-                    "state": [0],
-                    "description": ["localhost"]
-                },
-                "isnot": {
-                    "state": [1]
-                }
-            })
+    def test_build_where_clause(self):
+        filters = {
+            "is": {
+                "state": [0],
+                "description": ["test_keystone"]
+            }
+        }
+
+        result = influxdb_query._build_where_clause(
+            filters
         )
 
-        result = query_filter.filter_dict_list_with_live_query(
-            self.items,
-            query
-        )
-
-        expected = [{"host_name": "localhost"}]
+        expected = "WHERE state=0 AND description='test_keystone'"
 
         self.assertItemsEqual(result, expected)
 
-    def test_query_builder_filter_all_fields(self):
+    def test_build_where_clause_no_filters(self):
+        filters = {}
+
+        result = influxdb_query._build_where_clause(
+            filters
+        )
+
+        expected = ""
+
+        self.assertItemsEqual(result, expected)
+
+    def test_build_influx_query(self):
         query = live_query.LiveQuery(
-            filters=json.dumps({
-                "is": {
-                    "state": [0],
-                    "description": ["localhost"]
-                },
-                "isnot": {
-                    "state": [1]
-                }
-            })
+            fields=json.dumps(['host_name', 'last_check']),
+            filters=json.dumps({}),
         )
+        measurement = 'ALERT'
+        group_by = ['*', 'host_name']
+        limit = 10
 
-        result = query_filter.filter_dict_list_with_live_query(
-            self.items,
-            query
-        )
+        result = influxdb_query.build_influxdb_query(query,
+                                                   measurement,
+                                                   group_by,
+                                                   limit)
 
-        expected = [
-            {'description': 'localhost',
-             'last_state_change': 1429400991,
-             'plugin_output': 'OK - localhost: rta 0.047ms, lost 0%',
-             'last_check': 1429400990,
-             'state': 0,
-             'host_name': 'localhost'}
-        ]
+        expected = "SELECT * FROM ALERT GROUP BY *, host_name LIMIT 10"
 
         self.assertItemsEqual(result, expected)
