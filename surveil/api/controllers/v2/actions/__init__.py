@@ -14,8 +14,11 @@
 
 from pecan import rest
 
+from surveil.api.controllers.v2.actions import acknowledge
+
 
 class ActionsController(rest.RestController):
+    acknowledge = acknowledge.AcknowledgeController()
     # externalcommands = ExternalCommandsController()
     # engine = EngineController()
     pass
