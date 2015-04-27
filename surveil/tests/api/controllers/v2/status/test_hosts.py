@@ -196,9 +196,9 @@ class TestStatusHosts(functionalTest.FunctionalTest):
 
         self.assertEqual(
             httpretty.last_request().querystring['q'],
-            ["SELECT * FROM HOST_STATE GROUP BY host_name, address, childs"
-             " LIMIT 1 WHERE host_name!='localhost' "
-             "AND description!='test_keystone'"]
+            ["SELECT * FROM HOST_STATE WHERE host_name!='localhost' "
+             "AND description!='test_keystone' "
+             "GROUP BY host_name, address, childs LIMIT 1"]
         )
 
     @httpretty.activate

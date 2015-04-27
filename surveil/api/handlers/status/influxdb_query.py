@@ -37,17 +37,17 @@ def build_influxdb_query(live_query, measurement, group_by=[], limit=None):
 
     query = ['SELECT * FROM', measurement]
 
+    if live_query:
+        filters = json.loads(live_query.filters)
+        if filters:
+            query.append(_build_where_clause(filters))
+
     if group_by:
         query.append('GROUP BY')
         query.append(', '.join(group_by))
 
     if limit is not None:
         query.append('LIMIT %d' % limit)
-
-    if live_query:
-        filters = json.loads(live_query.filters)
-        if filters:
-            query.append(_build_where_clause(filters))
 
     return ' '.join(query)
 
