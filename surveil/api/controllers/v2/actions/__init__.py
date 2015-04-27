@@ -15,10 +15,12 @@
 from pecan import rest
 
 from surveil.api.controllers.v2.actions import acknowledge
+from surveil.api.controllers.v2.actions import downtime
 
 
 class ActionsController(rest.RestController):
     acknowledge = acknowledge.AcknowledgeController()
+    downtime = downtime.DowntimeController()
     # externalcommands = ExternalCommandsController()
     # engine = EngineController()
     pass

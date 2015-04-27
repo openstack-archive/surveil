@@ -17,36 +17,38 @@ import httpretty
 from surveil.tests.api import functionalTest
 
 
-class TestAcknowledgeController(functionalTest.FunctionalTest):
+class TestDowntimeController(functionalTest.FunctionalTest):
 
     @httpretty.activate
-    def test_acknowledge_add(self):
+    def test_downtime_post(self):
         httpretty.register_uri(httpretty.POST,
-                               self.ws_arbiter_url + "/acknowledge")
+                               self.ws_arbiter_url + "/downtime")
 
-        ack = {
-            "host_name": "localhost"
+        dt = {
+            "host_name": "localhost",
+            "duration": 86400
         }
 
-        response = self.app.post_json("/v2/actions/acknowledge/", params=ack)
+        response = self.app.post_json("/v2/actions/downtime/", params=dt)
 
         self.assertEqual(response.status_int, 200)
 
         self.assertEqual(httpretty.last_request().body,
-                         'action=add&host_name=localhost')
+                         'duration=86400&action=add&host_name=localhost')
         self.assertEqual(httpretty.last_request().path,
-                         '/acknowledge')
+                         '/downtime')
 
     @httpretty.activate
-    def test_acknowledge_delete(self):
+    def test_downtime_delete(self):
         httpretty.register_uri(httpretty.POST,
                                self.ws_arbiter_url + "/downtime")
 
-        ack = {
+        dt = {
             "host_name": "localhost",
+            "duration": 86400
         }
 
-        response = self.app.delete_json("/v2/actions/downtime/", params=ack)
+        response = self.app.delete_json("/v2/actions/downtime/", params=dt)
 
         self.assertEqual(response.status_int, 200)
 

@@ -17,40 +17,40 @@ from pecan import rest
 import requests
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.datamodel.actions import acknowledgement
+from surveil.api.datamodel.actions import downtime
 from surveil.api.datamodel import info
 
 
-class AcknowledgeController(rest.RestController):
+class DowntimeController(rest.RestController):
 
     @wsme_pecan.wsexpose(info.Info,
-                         body=acknowledgement.Acknowledgement,
+                         body=downtime.Downtime,
                          status_code=200)
-    def post(self, ack):
-        """Acknowledge a host/service."""
+    def post(self, dt):
+        """Put a host/service in downtime."""
 
-        data = ack.as_dict()
+        data = dt.as_dict()
         data.update({'action': 'add'})
 
         requests.post(
-            pecan.request.ws_arbiter_url + "/acknowledge",
+            pecan.request.ws_arbiter_url + "/downtime",
             data=data
         )
 
-        return info.Info(message='Acknowledgement received.')
+        return info.Info(message='Downtime received.')
 
     @wsme_pecan.wsexpose(info.Info,
-                         body=acknowledgement.Acknowledgement,
+                         body=downtime.Downtime,
                          status_code=200)
-    def delete(self, ack):
-        """Delete a host/service acknowledgement."""
+    def delete(self, dt):
+        """Delete a host/service downtime."""
 
-        data = ack.as_dict()
+        data = dt.as_dict()
         data.update({'action': 'delete'})
 
         requests.post(
-            pecan.request.ws_arbiter_url + "/acknowledge",
+            pecan.request.ws_arbiter_url + "/downtime",
             data=data
         )
 
-        return info.Info(message='Acknowledgement received.')
+        return info.Info(message='Downtime received.')
