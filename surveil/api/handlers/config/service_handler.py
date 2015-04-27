@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel import service
+from surveil.api.datamodel.config import service
 from surveil.api.handlers import handler
 
 
@@ -38,10 +38,10 @@ class ServiceHandler(handler.Handler):
             host_dict
         )
 
-    def delete(self, id):
-        """Delete existing host."""
-        self.request.mongo_connection.shinken.hosts.remove(
-            {"host_name": id}
+    def delete(self, host_name, service_description):
+        """Delete existing service."""
+        self.request.mongo_connection.shinken.services.remove(
+            {"host_name": host_name, "service_description": service_description}
         )
 
     def create(self, data):
