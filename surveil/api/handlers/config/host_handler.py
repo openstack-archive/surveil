@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel import host
+from surveil.api.datamodel.config import host
 from surveil.api.handlers import handler
 
 

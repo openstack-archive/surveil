@@ -16,8 +16,8 @@ import pecan
 from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.datamodel import command
-from surveil.api.handlers import command_handler
+from surveil.api.datamodel.config import command
+from surveil.api.handlers.config import command_handler
 
 
 class CommandController(rest.RestController):
