@@ -16,8 +16,8 @@ import pecan
 from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.datamodel import service
-from surveil.api.handlers import service_handler
+from surveil.api.datamodel.config import service
+from surveil.api.handlers.config import service_handler
 
 
 class ServicesController(rest.RestController):

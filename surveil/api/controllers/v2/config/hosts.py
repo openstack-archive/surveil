@@ -18,10 +18,10 @@ import requests
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel import checkresult
-from surveil.api.datamodel import host
-from surveil.api.datamodel import service
-from surveil.api.handlers import host_handler
-from surveil.api.handlers import service_handler
+from surveil.api.datamodel.config import host
+from surveil.api.datamodel.config import service
+from surveil.api.handlers.config import host_handler
+from surveil.api.handlers.config import service_handler
 
 
 class ServiceCheckResultsSubController(rest.RestController):
@@ -61,6 +61,15 @@ class HostServiceSubController(rest.RestController):
             pecan.request.context['service_description']
         )
         return s
+
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
+        """Delete a specific service."""
+        handler = service_handler.ServiceHandler(pecan.request)
+        handler.delete(
+            pecan.request.context['host_name'],
+            pecan.request.context['service_description']
+        )
 
 
 class HostServicesSubController(rest.RestController):

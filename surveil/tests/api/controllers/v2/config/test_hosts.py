@@ -17,7 +17,8 @@ import json
 
 import httpretty
 
-from surveil.api.datamodel import host
+from surveil.api.datamodel.config import host
+from surveil.api.datamodel.config import service
 from surveil.tests.api import functionalTest
 
 
@@ -173,6 +174,20 @@ class TestHostController(functionalTest.FunctionalTest):
             self.services[0],
             json.loads(response.body.decode())
         )
+
+    def test_delete_specific_service(self):
+        mongo_services = [service.Service(**h) for h
+                          in self.mongoconnection.shinken.services.find()]
+        self.assertEqual(1, len(mongo_services))
+
+        self.app.delete(
+            '/v2/config/hosts/bogus-router/services/service-example'
+        )
+
+        mongo_services = [service.Service(**h) for h
+                          in self.mongoconnection.shinken.services.find()]
+
+        self.assertEqual(0, len(mongo_services))
 
     @httpretty.activate
     def test_submit_service_result(self):

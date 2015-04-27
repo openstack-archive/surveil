@@ -15,7 +15,7 @@
 import copy
 import json
 
-from surveil.api.datamodel import service
+from surveil.api.datamodel.config import service
 from surveil.tests.api import functionalTest
 
 
@@ -102,7 +102,7 @@ class TestServiceController(functionalTest.FunctionalTest):
         )
         self.assertEqual(response.status_int, 200)
 
-    def test_add_host(self):
+    def test_add_service(self):
         new_service = {
             "host_name": "SOMEHOSTNAME",
             "service_description": "check-new-thing",
