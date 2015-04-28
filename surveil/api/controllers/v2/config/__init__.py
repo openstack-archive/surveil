@@ -13,6 +13,7 @@
 # under the License.
 
 from surveil.api.controllers.v2.config import commands
+from surveil.api.controllers.v2.config import contactgroups
 from surveil.api.controllers.v2.config import contacts
 from surveil.api.controllers.v2.config import hostgroups
 from surveil.api.controllers.v2.config import hosts
@@ -36,6 +37,6 @@ class ConfigController(rest.RestController):
     realms = realms.RealmsController()
     servicegroups = servicegroup.ServiceGroupsController()
     hostgroups = hostgroups.HostGroupsController()
-    # contactgroups = ContactGroupsController()
+    contactgroups = contactgroups.ContactGroupsController()
     # notificationways = NotificationWayController()
     # engine = EngineController()
