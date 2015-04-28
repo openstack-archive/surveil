@@ -13,6 +13,7 @@
 # under the License.
 
 from surveil.api.controllers.v2.config import commands
+from surveil.api.controllers.v2.config import contacts
 from surveil.api.controllers.v2.config import hosts
 from surveil.api.controllers.v2.config import reload_config
 from surveil.api.controllers.v2.config import services
@@ -26,8 +27,8 @@ class ConfigController(rest.RestController):
     commands = commands.CommandsController()
     services = services.ServicesController()
     reload_config = reload_config.ReloadConfigController()
+    contacts = contacts.ContactsController()
     # hostgroups = HostGroupsController()
-    # contacts = ContactsController()
     # contactgroups = ContactGroupsController()
     # servicegroups = ServiceGroupsController()
     # timeperiods = TimeperiodsController()
