@@ -14,7 +14,9 @@
 
 """Script to reinitialize surveil."""
 
+import optparse
 import subprocess
+import sys
 
 import pymongo
 import surveilclient.client as sc
@@ -23,6 +25,13 @@ from surveil.api import config
 
 
 def main():
+    parser = optparse.OptionParser()
+    parser.add_option('-d', '--demo',
+                      default=False,
+                      dest='demo',
+                      action="store_true")
+    opts, _ = parser.parse_args(sys.argv)
+
     # Create a basic config in mongodb
     mongo = pymongo.MongoClient(config.surveil_api_config['mongodb_uri'])
 
@@ -68,7 +77,6 @@ def main():
         host_name="ws-arbiter",
         address="localhost"
     )
-
     cli_surveil.config.services.create(
         check_command="check_tcp!7760",
         check_interval="5",
@@ -96,5 +104,75 @@ def main():
             "parents": "localhost"
         }
     )
+
+    # if --demo is specified, you get more hosts.
+    if opts.demo is True:
+        # DOWN HOST (cant resolve)
+        cli_surveil.config.hosts.create(
+            host_name='srv-apache-01',
+            use='linux-system-nrpe',
+            address='srv-apache-01',
+            custom_fields={
+                "_TRAFFICLIMIT": "100000",
+            }
+        )
+
+        # UP HOST, no template
+        cli_surveil.config.hosts.create(
+            host_name='google.com',
+            address='google.com'
+        )
+
+        cli_surveil.config.hosts.create(
+            host_name='srv-monitoring-01',
+            use='linux-system-nrpe',
+            address='127.0.0.1',
+            custom_fields={
+                "_TRAFFICLIMIT": "500000",
+            }
+        )
+
+        cli_surveil.config.hosts.create(
+            host_name='sw-iwebcore-01',
+            parents='srv-monitoring-01',
+            use='generic-host',
+            address='127.0.0.1',
+            custom_fields={
+                "_TRAFFICLIMIT": "200000",
+            }
+        )
+
+        cli_surveil.config.hosts.create(
+            host_name='srv-ldap-01',
+            parents='sw-iwebcore-01',
+            use='generic-host',
+            address='127.0.0.1',
+            custom_fields={
+                "_TRAFFICLIMIT": "5000000",
+            }
+        )
+
+
+        # UP host with down service
+        cli_surveil.config.hosts.create(
+            use="generic-host",
+            contact_groups="admins",
+            host_name="myserviceisdown",
+            address="localhost"
+        )
+        cli_surveil.config.services.create(
+            check_command="check_tcp!4553",
+            check_interval="5",
+            check_period="24x7",
+            contact_groups="admins",
+            contacts="admin",
+            host_name="myserviceisdown",
+            max_check_attempts="5",
+            notification_interval="30",
+            notification_period="24x7",
+            retry_interval="3",
+            service_description="iamadownservice"
+        )
+
 
     cli_surveil.config.reload_config()

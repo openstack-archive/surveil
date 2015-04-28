@@ -12,7 +12,7 @@ surveil:
     PBR_VERSION: "DEV"
   volumes:
    - ./surveil:/surveil/surveil
-  command: bash -c "cd /surveil/ && python setup.py develop && ((sleep 40 && surveil-init) &) && sleep 20 && surveil-api --reload"
+  command: bash -c "cd /surveil/ && python setup.py develop && ((sleep 40 && surveil-init --demo) &) && sleep 20 && surveil-api --reload"
 
 shinken:
   extends:
