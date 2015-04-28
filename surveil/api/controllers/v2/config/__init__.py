@@ -15,6 +15,7 @@
 from surveil.api.controllers.v2.config import commands
 from surveil.api.controllers.v2.config import contacts
 from surveil.api.controllers.v2.config import hosts
+from surveil.api.controllers.v2.config import realms
 from surveil.api.controllers.v2.config import reload_config
 from surveil.api.controllers.v2.config import services
 from surveil.api.controllers.v2.config import timeperiods
@@ -30,9 +31,9 @@ class ConfigController(rest.RestController):
     reload_config = reload_config.ReloadConfigController()
     contacts = contacts.ContactsController()
     timeperiods = timeperiods.TimePeriodsController()
+    realms = realms.RealmsController()
     # hostgroups = HostGroupsController()
     # contactgroups = ContactGroupsController()
     # servicegroups = ServiceGroupsController()
-    # realms = RealmsController()
     # notificationways = NotificationWayController()
     # engine = EngineController()
