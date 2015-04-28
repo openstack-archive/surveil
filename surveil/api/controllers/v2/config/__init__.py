@@ -18,6 +18,7 @@ from surveil.api.controllers.v2.config import hosts
 from surveil.api.controllers.v2.config import realms
 from surveil.api.controllers.v2.config import reload_config
 from surveil.api.controllers.v2.config import services
+from surveil.api.controllers.v2.config import servicegroup
 from surveil.api.controllers.v2.config import timeperiods
 
 from pecan import rest
@@ -32,8 +33,8 @@ class ConfigController(rest.RestController):
     contacts = contacts.ContactsController()
     timeperiods = timeperiods.TimePeriodsController()
     realms = realms.RealmsController()
+    servicegroups = servicegroup.ServiceGroupsController()
     # hostgroups = HostGroupsController()
     # contactgroups = ContactGroupsController()
-    # servicegroups = ServiceGroupsController()
     # notificationways = NotificationWayController()
     # engine = EngineController()
