@@ -17,7 +17,7 @@ import json
 import wsme
 import wsme.types as wtypes
 
-from surveil.api.controllers.v1.datamodel import types
+from surveil.api.datamodel import types
 
 
 class LiveQuery(types.Base):
