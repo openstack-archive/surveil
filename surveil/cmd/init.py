@@ -14,7 +14,9 @@
 
 """Script to reinitialize surveil."""
 
+import optparse
 import subprocess
+import sys
 
 import pymongo
 import surveilclient.client as sc
@@ -23,6 +25,13 @@ from surveil.api import config
 
 
 def main():
+    parser = optparse.OptionParser()
+    parser.add_option('-d', '--demo',
+                      default=False,
+                      dest='demo',
+                      action="store_true")
+    opts, _ = parser.parse_args(sys.argv)
+
     # Create a basic config in mongodb
     mongo = pymongo.MongoClient(config.surveil_api_config['mongodb_uri'])
 
@@ -94,5 +103,16 @@ def main():
             "parents": "localhost"
         }
     )
+
+    # if --demo is specified, you get more hosts.
+    if opts.demo is True:
+        cli_surveil.config.hosts.create(
+            host_name='srv-apache-01',
+            use='linux-system-nrpe',
+            address='srv-apache-01',
+            custom_fields={
+                "_TRAFFICLIMIT": "100000",
+            }
+        )
 
     cli_surveil.config.reload_config()

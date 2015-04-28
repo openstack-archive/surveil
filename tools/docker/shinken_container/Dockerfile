@@ -2,7 +2,6 @@ FROM ubuntu:trusty
 
 MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
-
 RUN apt-get update
 RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev
 # libffi-devand libssl-dev are for python-cryptography
@@ -39,6 +38,12 @@ RUN pip install shinkenplugins python-keystoneclient python-glanceclient
 ## Install Plugins
 RUN cd /plugins/check_glance && sudo pip install --upgrade .
 RUN cd /plugins/check_keystone && sudo pip install --upgrade .
+
+## packs
+RUN sh  -c 'gpg --recv-keys --keyserver pgp.mit.edu 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
+    sh -c "echo 'deb http://deb.kaji-project.org/ubuntu14.04/ plugins main' >> /etc/apt/sources.list.d/kaji.list" && \
+    apt-get update && \
+    apt-get install -y --force-yes monitoring-packs-sfl-generic-host monitoring-packs-sfl-linux-system-nrpe
 
 ## configuration
 RUN rm -rf /etc/shinken
