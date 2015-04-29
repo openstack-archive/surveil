@@ -108,7 +108,9 @@ class TestStatusServices(functionalTest.FunctionalTest):
         self.assertEqual(
             httpretty.last_request().querystring['q'],
             ["SELECT * FROM SERVICE_STATE GROUP BY host_name,"
-             " service_description LIMIT 1"]
+             " service_description "
+             "ORDER BY time DESC "
+             "LIMIT 1"]
         )
 
     @httpretty.activate

@@ -139,7 +139,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         self.assertEqual(
             httpretty.last_request().querystring['q'],
             ["SELECT * FROM HOST_STATE "
-             "GROUP BY host_name, address, childs LIMIT 1"]
+             "GROUP BY host_name, address, childs ORDER BY time DESC LIMIT 1"]
         )
 
     @httpretty.activate
@@ -198,7 +198,9 @@ class TestStatusHosts(functionalTest.FunctionalTest):
             httpretty.last_request().querystring['q'],
             ["SELECT * FROM HOST_STATE WHERE host_name!='localhost' "
              "AND description!='test_keystone' "
-             "GROUP BY host_name, address, childs LIMIT 1"]
+             "GROUP BY host_name, address, childs "
+             "ORDER BY time DESC "
+             "LIMIT 1"]
         )
 
     @httpretty.activate
@@ -247,7 +249,9 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         self.assertEqual(
             httpretty.last_request().querystring['q'],
             ["SELECT * from HOST_STATE WHERE host_name='localhost'"
-             " GROUP BY * LIMIT 1"]
+             " GROUP BY * "
+             "ORDER BY time DESC "
+             "LIMIT 1"]
         )
 
     @httpretty.activate
@@ -314,5 +318,6 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "WHERE host_name='ws-arbiter' "
              "AND service_description='check-ws-arbiter' "
              "GROUP BY * "
+             "ORDER BY time DESC "
              "LIMIT 1"]
         )
