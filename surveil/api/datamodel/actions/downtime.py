@@ -25,7 +25,7 @@ class Downtime(types.Base):
     service_description = wsme.wsattr(wtypes.text, mandatory=False)
     """Ther service description"""
 
-    time_stamp = wsme.wsattr(wtypes.text, mandatory=False)
+    time_stamp = wsme.wsattr(int, mandatory=False)
     """Time stamp for the downtime"""
 
     start_time = wsme.wsattr(int, mandatory=False)

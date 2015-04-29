@@ -28,11 +28,6 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.config.hosts:ServiceCheckResultsSubController
    :webprefix: /v2/config/hosts/(host_name)/services/(service_description)/results
 
-.. autotype:: surveil.api.controllers.v2.datamodel.checkresult.CheckResult
-   :members:
-
-.. autotype:: surveil.api.controllers.v2.datamodel.host.Host
-   :members:
 
 Services
 ========
@@ -40,7 +35,7 @@ Services
 .. rest-controller:: surveil.api.controllers.v2.config.services:ServicesController
    :webprefix: /v2/config/services
 
-.. autotype:: surveil.api.controllers.v2.datamodel.service.Service
+.. autotype:: surveil.api.datamodel.config.service.Service
    :members:
 
 
@@ -53,6 +48,16 @@ Commands
 .. rest-controller:: surveil.api.controllers.v2.config.commands:CommandController
    :webprefix: /v2/config/commands
 
-.. autotype:: surveil.api.controllers.v2.datamodel.command.Command
+
+types documentation
+===================
+
+.. autotype:: surveil.api.datamodel.config.command.Command
+   :members:
+
+.. autotype:: surveil.api.datamodel.config.host.Host
+   :members:
+
+.. autotype:: surveil.api.datamodel.checkresult.CheckResult
    :members:
 
