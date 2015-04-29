@@ -31,3 +31,20 @@ class HelloController(rest.RestController):
     def post(self):
         """What are you trying to post dude?"""
         return "Looks like policies are not working."
+
+    @pecan.expose()
+    def _lookup(self, *remainder):
+        return HostSubController(), remainder
+
+
+class AdminController(rest.RestController):
+
+    @pecan.expose()
+    @util.policy_enforce(['admin'])
+    def get(self):
+        """Says hello to the admin."""
+        return "Hello, dear admin!"
+
+
+class HostSubController(rest.RestController):
+    admin = AdminController()

@@ -14,8 +14,8 @@
 
 from pecan import rest
 
+from surveil.api.controllers.v2.auth import login
+
 
 class AuthController(rest.RestController):
-    # login = LoginController()
-    # logout = LogoutController()
-    pass
+    login = login.LoginController()
