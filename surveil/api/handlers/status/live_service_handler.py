@@ -28,7 +28,9 @@ class ServiceHandler(handler.Handler):
         query = ("SELECT * from SERVICE_STATE "
                  "WHERE host_name='%s' "
                  "AND service_description='%s' "
-                 "GROUP BY * LIMIT 1") % (host_name, service_name)
+                 "GROUP BY * "
+                 "ORDER BY time DESC "
+                 "LIMIT 1") % (host_name, service_name)
         response = cli.query(query)
 
         host = live_service.LiveService(
@@ -43,6 +45,7 @@ class ServiceHandler(handler.Handler):
             live_query,
             'SERVICE_STATE',
             group_by=['host_name', 'service_description'],
+            order_by=['time DESC'],
             limit=1
         )
 

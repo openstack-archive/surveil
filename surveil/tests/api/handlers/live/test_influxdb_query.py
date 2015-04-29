@@ -86,9 +86,31 @@ class LiveQueryFilterTest(base.BaseTestCase):
 
         result = influxdb_query.build_influxdb_query(query,
                                                      measurement,
-                                                     group_by,
-                                                     limit)
+                                                     group_by=group_by,
+                                                     limit=limit)
 
         expected = "SELECT * FROM ALERT GROUP BY *, host_name LIMIT 10"
+
+        self.assertItemsEqual(result, expected)
+
+    def test_build_influx_query_orderby(self):
+        query = live_query.LiveQuery(
+            fields=json.dumps(['host_name', 'last_check']),
+            filters=json.dumps({}),
+        )
+        measurement = 'ALERT'
+        group_by = ['*', 'host_name']
+        order_by = ['time DESC']
+        limit = 10
+
+        result = influxdb_query.build_influxdb_query(query,
+                                                     measurement,
+                                                     group_by=group_by,
+                                                     order_by=order_by,
+                                                     limit=limit)
+
+        expected = ("SELECT * FROM ALERT "
+                    "GROUP BY *, host_name "
+                    "ORDER BY time DESC LIMIT 10")
 
         self.assertItemsEqual(result, expected)

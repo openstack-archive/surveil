@@ -33,7 +33,11 @@ def filter_fields(item_list, live_query):
     return filtered_items
 
 
-def build_influxdb_query(live_query, measurement, group_by=[], limit=None):
+def build_influxdb_query(live_query,
+                         measurement,
+                         group_by=[],
+                         order_by=[],
+                         limit=None):
 
     query = ['SELECT * FROM', measurement]
 
@@ -45,6 +49,10 @@ def build_influxdb_query(live_query, measurement, group_by=[], limit=None):
     if group_by:
         query.append('GROUP BY')
         query.append(', '.join(group_by))
+
+    if order_by:
+        query.append('ORDER BY')
+        query.append(', '.join(order_by))
 
     if limit is not None:
         query.append('LIMIT %d' % limit)
