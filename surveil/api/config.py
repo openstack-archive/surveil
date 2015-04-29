@@ -49,6 +49,7 @@ app = {
         '__force_dict__': True
     },
     'hooks': app_hooks,
+    'surveil_api_config': surveil_api_config,
 }
 
 logging = {
