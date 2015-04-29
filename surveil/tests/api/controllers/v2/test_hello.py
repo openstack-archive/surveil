@@ -24,4 +24,4 @@ class TestHelloController(functionalTest.FunctionalTest):
 
     def test_post_policy_forbidden(self):
         with self.assertRaisesRegexp(Exception, '403 Forbidden'):
-            self.app.post('/v2/hello')
+            self.app.get('/v2/hello/denied')
