@@ -25,7 +25,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinxcontrib.autohttp.flask',
     'sphinxcontrib.pecanwsme.rest',
-    'oslosphinx',
+    #  'oslosphinx',
     'wsmeext.sphinxext',
 ]
 
@@ -43,7 +43,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'surveil'
-copyright = u'2014, Surveil Contributors'
+copyright = u'2014-2015, Surveil Contributors'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -60,8 +60,9 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
 # html_theme_path = ["."]
-# html_theme = '_theme'
-html_static_path = ['_static']
+import sphinx_rtd_theme
+html_theme = "sphinx_rtd_theme"
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = '%sdoc' % project

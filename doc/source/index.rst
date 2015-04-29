@@ -8,7 +8,6 @@ Table of Contents:
    :maxdepth: 2
 
    readme
-   getting_started
    webapi/index
 
 Indices and tables

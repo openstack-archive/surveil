@@ -54,8 +54,8 @@ Metrics
 .. rest-controller:: surveil.api.controllers.v2.status.metrics:MetricController
    :webprefix: /v2/status/metrics/
 
-Types
-=====
+types documentation
+===================
 
 .. autotype:: surveil.api.datamodel.status.live_service.LiveService
    :members:
