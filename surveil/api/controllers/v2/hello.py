@@ -27,7 +27,28 @@ class HelloController(rest.RestController):
         return "Hello World!"
 
     @pecan.expose()
+    def _lookup(self, *remainder):
+        return HelloSubController(), remainder
+
+
+class AdminController(rest.RestController):
+
+    @pecan.expose()
+    @util.policy_enforce(['admin'])
+    def get(self):
+        """Says hello to the admin."""
+        return "Hello, dear admin!"
+
+
+class DeniedController(rest.RestController):
+
+    @pecan.expose()
     @util.policy_enforce(['break'])
-    def post(self):
-        """What are you trying to post dude?"""
+    def get(self):
+        """This should be denied."""
         return "Looks like policies are not working."
+
+
+class HelloSubController(rest.RestController):
+    admin = AdminController()
+    denied = DeniedController()
