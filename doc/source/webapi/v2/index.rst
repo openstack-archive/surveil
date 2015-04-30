@@ -8,3 +8,4 @@ V2 Web API
    config
    status
    actions
+   bansho

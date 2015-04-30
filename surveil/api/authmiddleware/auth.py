@@ -94,7 +94,7 @@ class AuthProtocol(object):
 
         user_headers = {
             'X-Identity-Status': 'Confirmed',
-            'X-User-Id': 'surveil',
+            'X-User-Id': 'surveil-default-user',
             'X-Roles': 'admin',
             'X-Service-Catalog': 'surveil'
         }
