@@ -69,7 +69,7 @@ class TestServiceController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_services(self):
-        response = self.app.get('/v2/config/services')
+        response = self.get('/v2/config/services')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -94,7 +94,7 @@ class TestServiceController(functionalTest.FunctionalTest):
                  "contact_groups": "linux-admins"}
             )
         )
-        response = self.app.get('/v2/config/services')
+        response = self.get('/v2/config/services')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -116,7 +116,7 @@ class TestServiceController(functionalTest.FunctionalTest):
             "contacts": "surveil-ptl,surveil-bob",
             "contact_groups": "linux-admins"
         }
-        response = self.app.post_json(
+        response = self.post_json(
             "/v2/config/services",
             params=new_service
         )

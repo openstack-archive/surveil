@@ -39,7 +39,7 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_contactgroups(self):
-        response = self.app.get('/v2/config/contactgroups')
+        response = self.get('/v2/config/contactgroups')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -48,7 +48,7 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 200)
 
     def test_get_one_contactgroup(self):
-        response = self.app.get('/v2/config/contactgroups/novell-admins')
+        response = self.get('/v2/config/contactgroups/novell-admins')
 
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -61,7 +61,7 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
             members="marie,bob,joe",
         )
 
-        self.app.post_json('/v2/config/contactgroups', g.as_dict())
+        self.post_json('/v2/config/contactgroups', g.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.contactgroups.find_one(g.as_dict())
@@ -72,7 +72,7 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.contactgroups.find_one(self.groups[0])
         )
 
-        self.app.delete('/v2/config/contactgroups/novell-admins')
+        self.delete('/v2/config/contactgroups/novell-admins')
 
         self.assertIsNone(
             self.mongoconnection.shinken.contactgroups.find_one(self.groups[0])
@@ -86,7 +86,7 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
             'jdoe,rtobert,tzach'
         )
 
-        self.app.put_json(
+        self.put_json(
             '/v2/config/contactgroups/novell-admins',
             {"contactgroup_name": "novell-admins",
              "members": "updated"}

@@ -19,10 +19,12 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import contact
 from surveil.api.handlers.config import contact_handler
+from surveil.common import util
 
 
 class ContactsController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([contact.Contact])
     def get_all(self):
         """Returns all hosts."""
@@ -30,6 +32,7 @@ class ContactsController(rest.RestController):
         hosts = handler.get_all()
         return hosts
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(contact.Contact, unicode)
     def get_one(self, contact_name):
         """Returns a specific contact."""
@@ -37,6 +40,7 @@ class ContactsController(rest.RestController):
         contact = handler.get(contact_name)
         return contact
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=contact.Contact, status_code=201)
     def post(self, data):
         """Create a new contact.
@@ -46,12 +50,14 @@ class ContactsController(rest.RestController):
         handler = contact_handler.ContactHandler(pecan.request)
         handler.create(data)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(contact.Contact, unicode, status_code=204)
     def delete(self, contact_name):
         """Returns a specific contact."""
         handler = contact_handler.ContactHandler(pecan.request)
         handler.delete(contact_name)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(contact.Contact,
                          unicode,
                          body=contact.Contact,

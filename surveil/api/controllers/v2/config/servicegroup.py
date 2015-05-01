@@ -19,10 +19,12 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import servicegroup
 from surveil.api.handlers.config import servicegroup_handler
+from surveil.common import util
 
 
 class ServiceGroupsController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([servicegroup.ServiceGroup])
     def get_all(self):
         """Returns all service groups."""
@@ -30,6 +32,7 @@ class ServiceGroupsController(rest.RestController):
         service_groups = handler.get_all()
         return service_groups
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(servicegroup.ServiceGroup, unicode)
     def get_one(self, group_name):
         """Returns a service group."""
@@ -37,6 +40,7 @@ class ServiceGroupsController(rest.RestController):
         servicegroup = handler.get(group_name)
         return servicegroup
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=servicegroup.ServiceGroup, status_code=201)
     def post(self, data):
         """Create a new service group.
@@ -46,12 +50,14 @@ class ServiceGroupsController(rest.RestController):
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
         handler.create(data)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(servicegroup.ServiceGroup, unicode, status_code=204)
     def delete(self, group_name):
         """Returns a specific service group."""
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
         handler.delete(group_name)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(servicegroup.ServiceGroup,
                          unicode,
                          body=servicegroup.ServiceGroup,
