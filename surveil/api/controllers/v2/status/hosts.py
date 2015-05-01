@@ -23,10 +23,12 @@ from surveil.api.datamodel.status import live_query
 from surveil.api.datamodel.status import live_service
 from surveil.api.handlers.status import live_host_handler
 from surveil.api.handlers.status import live_service_handler
+from surveil.common import util
 
 
 class HostsController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([live_host.LiveHost])
     def get_all(self):
         """Returns all hosts."""
@@ -34,6 +36,7 @@ class HostsController(rest.RestController):
         hosts = handler.get_all()
         return hosts
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([live_host.LiveHost], body=live_query.LiveQuery)
     def post(self, query):
         """Given a LiveQuery, returns all matching hosts."""
@@ -48,6 +51,7 @@ class HostsController(rest.RestController):
 
 class ConfigController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @pecan.expose()
     def get_all(self):
         """Returns config from a specific host."""
@@ -67,6 +71,7 @@ class HostServiceController(rest.RestController):
         pecan.request.context['service_name'] = service_name
         self.service_name = service_name
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(live_service.LiveService)
     def get(self):
         """Returns a specific host service."""
@@ -91,6 +96,7 @@ class HostController(rest.RestController):
         pecan.request.context['host_name'] = host_name
         self.host_name = host_name
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(live_host.LiveHost)
     def get(self):
         """Returns a specific host."""

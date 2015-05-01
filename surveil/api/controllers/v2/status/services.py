@@ -19,10 +19,12 @@ import wsmeext.pecan as wsme_pecan
 from surveil.api.datamodel.status import live_query
 from surveil.api.datamodel.status import live_service
 from surveil.api.handlers.status import live_service_handler
+from surveil.common import util
 
 
 class ServicesController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([live_service.LiveService])
     def get_all(self):
         """Returns all services."""
@@ -30,6 +32,7 @@ class ServicesController(rest.RestController):
         services = handler.get_all()
         return services
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([live_service.LiveService], body=live_query.LiveQuery)
     def post(self, query):
         """Given a LiveQuery, returns all matching services."""

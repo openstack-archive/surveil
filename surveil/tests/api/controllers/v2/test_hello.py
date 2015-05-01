@@ -18,10 +18,10 @@ from surveil.tests.api import functionalTest
 class TestHelloController(functionalTest.FunctionalTest):
 
     def test_get(self):
-        response = self.app.get('/v2/hello')
+        response = self.get('/v2/hello')
         self.assertEqual(response.body, b"Hello World!")
         assert response.status_int == 200
 
     def test_post_policy_forbidden(self):
         with self.assertRaisesRegexp(Exception, '403 Forbidden'):
-            self.app.get('/v2/hello/denied')
+            self.get('/v2/hello/denied')

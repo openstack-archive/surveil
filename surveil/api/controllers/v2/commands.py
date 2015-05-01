@@ -17,6 +17,7 @@ from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.controllers.v1.datamodel import command
+from surveil.common import util
 
 
 class CommandController(rest.RestController):
@@ -25,6 +26,7 @@ class CommandController(rest.RestController):
         pecan.request.context['command_name'] = command_name
         self._id = command_name
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(command.Command)
     def get(self):
         """Returns a specific command."""
@@ -33,6 +35,7 @@ class CommandController(rest.RestController):
         )
         return command.Command(**c)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(None, body=command.Command, status_code=204)
     def put(self, data):
         """Modify this command.
@@ -49,6 +52,7 @@ class CommandController(rest.RestController):
             command_dict
         )
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(None, status_code=204)
     def delete(self):
         """Delete this command."""
@@ -63,6 +67,7 @@ class CommandsController(rest.RestController):
     def _lookup(self, command_id, *remainder):
         return CommandController(command_id), remainder
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([command.Command])
     def get_all(self):
         """Returns all commands."""
@@ -71,6 +76,7 @@ class CommandsController(rest.RestController):
 
         return [command.Command(**c) for c in commands]
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(command.Command,
                          body=command.Command,
                          status_code=201)

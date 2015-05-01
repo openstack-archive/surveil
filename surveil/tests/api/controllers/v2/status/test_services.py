@@ -80,7 +80,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
                                "http://influxdb:8086/query",
                                body=self.influxdb_response)
 
-        response = self.app.get("/v2/status/services")
+        response = self.get("/v2/status/services")
 
         expected = [
             {'description': 'Check KeyStone service.',
@@ -161,7 +161,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
             })
         }
 
-        response = self.app.post_json("/v2/status/services", params=query)
+        response = self.post_json("/v2/status/services", params=query)
 
         expected = [
             {'host_name': 'test_keystone',

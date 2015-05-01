@@ -19,10 +19,12 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import realm
 from surveil.api.handlers.config import realm_handler
+from surveil.common import util
 
 
 class RealmsController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([realm.Realm])
     def get_all(self):
         """Returns all realms."""
@@ -30,6 +32,7 @@ class RealmsController(rest.RestController):
         realms = handler.get_all()
         return realms
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(realm.Realm, unicode)
     def get_one(self, realm_name):
         """Returns a specific realm."""
@@ -37,6 +40,7 @@ class RealmsController(rest.RestController):
         realm = handler.get(realm_name)
         return realm
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=realm.Realm, status_code=201)
     def post(self, data):
         """Create a new realm.
@@ -46,12 +50,14 @@ class RealmsController(rest.RestController):
         handler = realm_handler.RealmHandler(pecan.request)
         handler.create(data)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(realm.Realm, unicode, status_code=204)
     def delete(self, realm_name):
         """Deletes a specific realm."""
         handler = realm_handler.RealmHandler(pecan.request)
         handler.delete(realm_name)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(realm.Realm,
                          unicode,
                          body=realm.Realm,

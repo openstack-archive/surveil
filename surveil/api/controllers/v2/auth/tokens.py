@@ -17,9 +17,12 @@ import json
 import pecan
 from pecan import rest
 
+from surveil.common import util
+
 
 class TokensController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @pecan.expose()
     def post(self):
         """Retrieve an auth token."""
