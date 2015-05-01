@@ -40,7 +40,7 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_timeperiods(self):
-        response = self.app.get('/v2/config/timeperiods')
+        response = self.get('/v2/config/timeperiods')
 
         self.assertItemsEqual(
             json.loads(response.body.decode()),
@@ -56,7 +56,7 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 200)
 
     def test_get_one_timeperiod(self):
-        response = self.app.get('/v2/config/timeperiods/nonworkhours')
+        response = self.get('/v2/config/timeperiods/nonworkhours')
 
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -72,7 +72,7 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
                  "tuesday": "pizza day"
              }}
 
-        self.app.post_json('/v2/config/timeperiods', t)
+        self.post_json('/v2/config/timeperiods', t)
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.timeperiods.find_one(
@@ -88,7 +88,7 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
             )
         )
 
-        self.app.delete('/v2/config/timeperiods/nonworkhours')
+        self.delete('/v2/config/timeperiods/nonworkhours')
 
         self.assertIsNone(
             self.mongoconnection.shinken.timeperiods.find_one(
@@ -104,7 +104,7 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
             '00:00-24:00'
         )
 
-        self.app.put_json(
+        self.put_json(
             '/v2/config/timeperiods/nonworkhours',
             {"timeperiod_name": "nonworkhours",
              "periods": {"sunday": "updated"}}

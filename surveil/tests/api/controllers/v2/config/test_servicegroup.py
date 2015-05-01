@@ -39,7 +39,7 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_servicegroups(self):
-        response = self.app.get('/v2/config/servicegroups')
+        response = self.get('/v2/config/servicegroups')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -48,7 +48,7 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 200)
 
     def test_get_one_servicegroup(self):
-        response = self.app.get('/v2/config/servicegroups/dbservices')
+        response = self.get('/v2/config/servicegroups/dbservices')
 
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -61,7 +61,7 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
             members="marie,bob,joe",
         )
 
-        self.app.post_json('/v2/config/servicegroups', s.as_dict())
+        self.post_json('/v2/config/servicegroups', s.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.servicegroups.find_one(s.as_dict())
@@ -72,7 +72,7 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.servicegroups.find_one(self.groups[0])
         )
 
-        self.app.delete('/v2/config/servicegroups/dbservices')
+        self.delete('/v2/config/servicegroups/dbservices')
 
         self.assertIsNone(
             self.mongoconnection.shinken.servicegroups.find_one(self.groups[0])
@@ -86,7 +86,7 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
             'ms1,SQL Server,ms1,SQL Serverc Agent,ms1,SQL DTC'
         )
 
-        self.app.put_json(
+        self.put_json(
             '/v2/config/servicegroups/dbservices',
             {"servicegroup_name": "dbservices",
              "members": "updated"}

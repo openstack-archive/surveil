@@ -24,7 +24,7 @@ class TestReloadConfigController(functionalTest.FunctionalTest):
         httpretty.register_uri(httpretty.POST,
                                self.ws_arbiter_url + "/reload")
 
-        response = self.app.post("/v2/config/reload_config")
+        response = self.post("/v2/config/reload_config")
         self.assertEqual(response.status_int, 200)
         self.assertEqual(
             httpretty.last_request().path,

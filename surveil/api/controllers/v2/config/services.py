@@ -18,10 +18,12 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import service
 from surveil.api.handlers.config import service_handler
+from surveil.common import util
 
 
 class ServicesController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([service.Service])
     def get_all(self):
         """Returns all services."""
@@ -29,6 +31,7 @@ class ServicesController(rest.RestController):
         services = handler.get_all()
         return services
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(service.Service,
                          body=service.Service,
                          status_code=201)
