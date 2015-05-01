@@ -30,7 +30,7 @@ class TestAuthController(functionalTest.FunctionalTest):
             }
         }
 
-        response = self.app.post_json('/v2/auth/login', params=auth)
+        response = self.app.post_json('/v2/auth/tokens', params=auth)
 
         expected = {
             "access": {

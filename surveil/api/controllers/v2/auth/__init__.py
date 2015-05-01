@@ -14,8 +14,9 @@
 
 from pecan import rest
 
-from surveil.api.controllers.v2.auth import login
+from surveil.api.controllers.v2.auth import tokens as v2_login
 
 
 class AuthController(rest.RestController):
-    login = login.LoginController()
+    tokens = v2_login.TokensController()
+
