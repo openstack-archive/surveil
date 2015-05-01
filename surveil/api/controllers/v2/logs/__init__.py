@@ -20,6 +20,7 @@ from surveil.api.controllers.v2.logs import acknowledgements
 from surveil.api.controllers.v2.logs import comments
 from surveil.api.controllers.v2.logs import downtimes
 from surveil.api.controllers.v2.logs import notifications
+from surveil.common import util
 
 
 class LogsController(rest.RestController):
@@ -29,6 +30,7 @@ class LogsController(rest.RestController):
     notifications = notifications.NotificationsController()
 
     # @wsme_pecan.wsexpose([Host])
+    @util.policy_enforce(['authenticated'])
     @pecan.expose()
     def get_all(self):
         """Returns all events from a specific host."""

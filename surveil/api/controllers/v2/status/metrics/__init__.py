@@ -16,8 +16,12 @@ import pecan
 from pecan import rest
 
 
+from surveil.common import util
+
+
 class MetricsController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @pecan.expose()
     def get_all(self):
         """Returns all metrics."""
@@ -27,6 +31,7 @@ class MetricsController(rest.RestController):
 
         return '{"host_name": "NOHOSTNAME",  "metrics" : "22"}'
 
+    @util.policy_enforce(['authenticated'])
     @pecan.expose()
     def _lookup(self, *args):
         props = {}
@@ -53,6 +58,7 @@ class MetricController(rest.RestController):
         self.sd = service_description
         self.metric = metric
 
+    @util.policy_enforce(['authenticated'])
     @pecan.expose()
     def get(self):
         """Returns (specific) metrics."""

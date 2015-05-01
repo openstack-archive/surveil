@@ -19,10 +19,12 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.actions import downtime
 from surveil.api.datamodel import info
+from surveil.common import util
 
 
 class DowntimeController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(info.Info,
                          body=downtime.Downtime,
                          status_code=200)
@@ -39,6 +41,7 @@ class DowntimeController(rest.RestController):
 
         return info.Info(message='Downtime received.')
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(info.Info,
                          body=downtime.Downtime,
                          status_code=200)

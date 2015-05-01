@@ -104,7 +104,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                                "http://influxdb:8086/query",
                                body=self.influxdb_response)
 
-        response = self.app.get("/v2/status/hosts")
+        response = self.get("/v2/status/hosts")
 
         expected = [
             {"description": "localhost",
@@ -188,7 +188,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
             })
         }
 
-        response = self.app.post_json("/v2/status/hosts", params=query)
+        response = self.post_json("/v2/status/hosts", params=query)
 
         expected = [{"host_name": "ws-arbiter", "last_check": 1429405764}]
 
@@ -232,7 +232,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                                "http://influxdb:8086/query",
                                body=influx_response)
 
-        response = self.app.get("/v2/status/hosts/localhost")
+        response = self.get("/v2/status/hosts/localhost")
 
         expected = {"childs": ["test_keystone"],
                     "description": "localhost",
@@ -297,7 +297,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                                "http://influxdb:8086/query",
                                body=influx_response)
 
-        response = self.app.get(
+        response = self.get(
             "/v2/status/hosts/ws-arbiter/services/check-ws-arbiter"
         )
 

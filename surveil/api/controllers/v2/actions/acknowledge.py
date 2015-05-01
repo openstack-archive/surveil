@@ -19,10 +19,12 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.actions import acknowledgement
 from surveil.api.datamodel import info
+from surveil.common import util
 
 
 class AcknowledgeController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(info.Info,
                          body=acknowledgement.Acknowledgement,
                          status_code=200)
@@ -39,6 +41,7 @@ class AcknowledgeController(rest.RestController):
 
         return info.Info(message='Acknowledgement received.')
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(info.Info,
                          body=acknowledgement.Acknowledgement,
                          status_code=200)

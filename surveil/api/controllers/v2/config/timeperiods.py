@@ -19,10 +19,12 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import timeperiod
 from surveil.api.handlers.config import timeperiod_handler
+from surveil.common import util
 
 
 class TimePeriodsController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([timeperiod.TimePeriod])
     def get_all(self):
         """Returns all time periods."""
@@ -30,6 +32,7 @@ class TimePeriodsController(rest.RestController):
         time_periods = handler.get_all()
         return time_periods
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(timeperiod.TimePeriod, unicode)
     def get_one(self, timeperiod_name):
         """Returns a specific time period."""
@@ -37,6 +40,7 @@ class TimePeriodsController(rest.RestController):
         timeperiod = handler.get(timeperiod_name)
         return timeperiod
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=timeperiod.TimePeriod, status_code=201)
     def post(self, data):
         """Create a new time period.
@@ -46,12 +50,14 @@ class TimePeriodsController(rest.RestController):
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
         handler.create(data)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(timeperiod.TimePeriod, unicode, status_code=204)
     def delete(self, timeperiod_name):
         """Returns a specific time period."""
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
         handler.delete(timeperiod_name)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(timeperiod.TimePeriod,
                          unicode,
                          body=timeperiod.TimePeriod,

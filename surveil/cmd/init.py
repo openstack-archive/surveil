@@ -58,7 +58,9 @@ def main():
     )
 
     # Reload the surveil config
-    cli_surveil = sc.Client('http://localhost:8080/v2', version='2_0')
+    cli_surveil = sc.Client('http://localhost:8080/v2',
+                            auth_url='http://localhost:8080/v2/auth',
+                            version='2_0')
 
     cli_surveil.config.hosts.create(
         use="generic-host",

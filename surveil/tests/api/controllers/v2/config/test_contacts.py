@@ -39,7 +39,7 @@ class TestContactsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_contacts(self):
-        response = self.app.get('/v2/config/contacts')
+        response = self.get('/v2/config/contacts')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -48,7 +48,7 @@ class TestContactsController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 200)
 
     def test_get_one_contact(self):
-        response = self.app.get('/v2/config/contacts/bobby')
+        response = self.get('/v2/config/contacts/bobby')
 
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -60,7 +60,7 @@ class TestContactsController(functionalTest.FunctionalTest):
             contact_name='John'
         )
 
-        self.app.post_json('/v2/config/contacts', c.as_dict())
+        self.post_json('/v2/config/contacts', c.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.contacts.find_one(c.as_dict())
@@ -71,7 +71,7 @@ class TestContactsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.contacts.find_one(self.contacts[0])
         )
 
-        self.app.delete('/v2/config/contacts/bobby')
+        self.delete('/v2/config/contacts/bobby')
 
         self.assertIsNone(
             self.mongoconnection.shinken.contacts.find_one(self.contacts[0])
@@ -85,7 +85,7 @@ class TestContactsController(functionalTest.FunctionalTest):
             'bob@bob.com'
         )
 
-        self.app.put_json(
+        self.put_json(
             '/v2/config/contacts/bobby',
             {"contact_name": "bobby", "email": "updated@bob.com"}
         )
