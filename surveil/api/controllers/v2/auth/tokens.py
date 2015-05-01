@@ -18,7 +18,7 @@ import pecan
 from pecan import rest
 
 
-class LoginController(rest.RestController):
+class TokensController(rest.RestController):
 
     @pecan.expose()
     def post(self):
