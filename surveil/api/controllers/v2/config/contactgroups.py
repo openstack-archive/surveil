@@ -19,10 +19,12 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import contactgroup
 from surveil.api.handlers.config import contactgroup_handler
+from surveil.common import util
 
 
 class ContactGroupsController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([contactgroup.ContactGroup])
     def get_all(self):
         """Returns all contact groups."""
@@ -30,6 +32,7 @@ class ContactGroupsController(rest.RestController):
         contact_groups = handler.get_all()
         return contact_groups
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(contactgroup.ContactGroup, unicode)
     def get_one(self, group_name):
         """Returns a contact group."""
@@ -37,6 +40,7 @@ class ContactGroupsController(rest.RestController):
         contactgroup = handler.get(group_name)
         return contactgroup
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=contactgroup.ContactGroup, status_code=201)
     def post(self, data):
         """Create a new contact group.
@@ -46,12 +50,14 @@ class ContactGroupsController(rest.RestController):
         handler = contactgroup_handler.ContactGroupHandler(pecan.request)
         handler.create(data)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(contactgroup.ContactGroup, unicode, status_code=204)
     def delete(self, group_name):
         """Delete a specific contact group."""
         handler = contactgroup_handler.ContactGroupHandler(pecan.request)
         handler.delete(group_name)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(contactgroup.ContactGroup,
                          unicode,
                          body=contactgroup.ContactGroup,

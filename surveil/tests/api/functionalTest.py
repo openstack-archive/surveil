@@ -89,13 +89,17 @@ class FunctionalTest(base.BaseTestCase):
             'X-Service-Roles': 'surveil',
         }
 
+        def make_action(verb):
+            target = getattr(self.app, verb)
+
+            def func(*args, **kwargs):
+                kwargs.setdefault('headers', self.auth_headers)
+                return target(*args, **kwargs)
+            return func
+
+        for action in ('get', 'post', 'put', 'delete',
+                       'post', 'post_json', 'put_json'):
+            setattr(self, action, make_action(action))
+
     def tearDown(self):
         pecan.set_config({}, overwrite=True)
-
-    def post_json(self, *args, **kwargs):
-        kwargs.setdefault('headers', self.auth_headers)
-        return self.app.post_json(*args, **kwargs)
-
-    def get(self, *args, **kwargs):
-        kwargs.setdefault('headers', self.auth_headers)
-        return self.app.get(*args, **kwargs)

@@ -28,7 +28,7 @@ class TestAcknowledgeController(functionalTest.FunctionalTest):
             "host_name": "localhost"
         }
 
-        response = self.app.post_json("/v2/actions/acknowledge/", params=ack)
+        response = self.post_json("/v2/actions/acknowledge/", params=ack)
 
         self.assertEqual(response.status_int, 200)
 
@@ -46,7 +46,7 @@ class TestAcknowledgeController(functionalTest.FunctionalTest):
             "host_name": "localhost",
         }
 
-        response = self.app.delete_json("/v2/actions/downtime/", params=ack)
+        response = self.delete_json("/v2/actions/downtime/", params=ack)
 
         self.assertEqual(response.status_int, 200)
 

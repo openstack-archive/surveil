@@ -34,7 +34,7 @@ class TestCommandController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_commands(self):
-        response = self.app.get('/v2/config/commands')
+        response = self.get('/v2/config/commands')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -44,7 +44,7 @@ class TestCommandController(functionalTest.FunctionalTest):
 
     def test_get_specific_command(self):
 
-        response = self.app.get('/v2/config/commands/check_test2')
+        response = self.get('/v2/config/commands/check_test2')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -55,7 +55,7 @@ class TestCommandController(functionalTest.FunctionalTest):
     def test_update_command(self):
         put_body = {"command_line": "test_put",
                     "command_name": "check_test2"}
-        response = self.app.put_json(
+        response = self.put_json(
             "/v2/config/commands/check_test2", params=put_body
         )
 
@@ -72,7 +72,7 @@ class TestCommandController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 204)
 
     def test_delete_command(self):
-        response = self.app.delete('/v2/config/commands/check_test2')
+        response = self.delete('/v2/config/commands/check_test2')
 
         expected_commands = [
             {u"command_name": u"check_test1",
@@ -89,7 +89,7 @@ class TestCommandController(functionalTest.FunctionalTest):
             "command_name": "newcommand",
             "command_line": "/usr/bin/newcommand -hello"
         }
-        response = self.app.post_json(
+        response = self.post_json(
             "/v2/config/commands",
             params=new_command
         )

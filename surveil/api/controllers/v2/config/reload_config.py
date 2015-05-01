@@ -18,10 +18,12 @@ import requests
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel import info
+from surveil.common import util
 
 
 class ReloadConfigController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(info.Info)
     def post(self):
         """Reloads Shinken's config."""

@@ -29,7 +29,7 @@ class TestDowntimeController(functionalTest.FunctionalTest):
             "duration": 86400
         }
 
-        response = self.app.post_json("/v2/actions/downtime/", params=dt)
+        response = self.post_json("/v2/actions/downtime/", params=dt)
 
         self.assertEqual(response.status_int, 200)
 
@@ -48,7 +48,7 @@ class TestDowntimeController(functionalTest.FunctionalTest):
             "duration": 86400
         }
 
-        response = self.app.delete_json("/v2/actions/downtime/", params=dt)
+        response = self.delete_json("/v2/actions/downtime/", params=dt)
 
         self.assertEqual(response.status_int, 200)
 

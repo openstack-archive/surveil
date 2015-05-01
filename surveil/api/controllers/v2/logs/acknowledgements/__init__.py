@@ -15,11 +15,14 @@
 import pecan
 from pecan import rest
 
+from surveil.common import util
+
 
 class AcknowledgementsController(rest.RestController):
 
     # curl -X GET  http://127.0.0.1:8080/v2/titilambert/myproject/builds/
     # @wsme_pecan.wsexpose([Host])
+    @util.policy_enforce(['authenticated'])
     @pecan.expose()
     def get_all(self):
         """Returns all acks from a specific host."""

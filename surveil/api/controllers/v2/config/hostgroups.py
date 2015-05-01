@@ -19,10 +19,12 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import hostgroup
 from surveil.api.handlers.config import hostgroup_handler
+from surveil.common import util
 
 
 class HostGroupsController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([hostgroup.HostGroup])
     def get_all(self):
         """Returns all host groups."""
@@ -30,6 +32,7 @@ class HostGroupsController(rest.RestController):
         host_groups = handler.get_all()
         return host_groups
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(hostgroup.HostGroup, unicode)
     def get_one(self, group_name):
         """Returns a host group."""
@@ -37,6 +40,7 @@ class HostGroupsController(rest.RestController):
         hostgroup = handler.get(group_name)
         return hostgroup
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=hostgroup.HostGroup, status_code=201)
     def post(self, data):
         """Create a new host group.
@@ -46,12 +50,14 @@ class HostGroupsController(rest.RestController):
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
         handler.create(data)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(hostgroup.HostGroup, unicode, status_code=204)
     def delete(self, group_name):
         """Returns a specific host group."""
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
         handler.delete(group_name)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(hostgroup.HostGroup,
                          unicode,
                          body=hostgroup.HostGroup,

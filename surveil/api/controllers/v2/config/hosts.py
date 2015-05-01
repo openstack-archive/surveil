@@ -22,10 +22,12 @@ from surveil.api.datamodel.config import host
 from surveil.api.datamodel.config import service
 from surveil.api.handlers.config import host_handler
 from surveil.api.handlers.config import service_handler
+from surveil.common import util
 
 
 class ServiceCheckResultsSubController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=checkresult.CheckResult, status_code=204)
     def post(self, data):
         """Submit a new check result.
@@ -52,6 +54,7 @@ class HostServiceSubController(rest.RestController):
         pecan.request.context['service_description'] = service_description
         self._id = service_description
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(service.Service)
     def get(self):
         """Returns a specific service."""
@@ -62,6 +65,7 @@ class HostServiceSubController(rest.RestController):
         )
         return s
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(None, status_code=204)
     def delete(self):
         """Delete a specific service."""
@@ -74,6 +78,7 @@ class HostServiceSubController(rest.RestController):
 
 class HostServicesSubController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([service.Service])
     def get_all(self):
         """Returns all services assocaited with this host."""
@@ -90,6 +95,7 @@ class HostServicesSubController(rest.RestController):
 
 class HostCheckResultsSubController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=checkresult.CheckResult, status_code=204)
     def post(self, data):
         """Submit a new check result.
@@ -116,6 +122,7 @@ class HostController(rest.RestController):
         pecan.request.context['host_name'] = host_name
         self._id = host_name
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(host.Host)
     def get(self):
         """Returns a specific host."""
@@ -123,6 +130,7 @@ class HostController(rest.RestController):
         h = handler.get(self._id)
         return h
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(None, body=host.Host, status_code=204)
     def put(self, data):
         """Modify this host.
@@ -132,6 +140,7 @@ class HostController(rest.RestController):
         handler = host_handler.HostHandler(pecan.request)
         handler.update(self._id, data)
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(None, status_code=204)
     def delete(self):
         """Delete this host."""
@@ -149,6 +158,7 @@ class HostsController(rest.RestController):
     def _lookup(self, host_name, *remainder):
         return HostController(host_name), remainder
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([host.Host])
     def get_all(self):
         """Returns all hosts."""
@@ -156,6 +166,7 @@ class HostsController(rest.RestController):
         hosts = handler.get_all()
         return hosts
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(host.Host, body=host.Host, status_code=201)
     def post(self, data):
         """Create a new host.
