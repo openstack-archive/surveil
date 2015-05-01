@@ -88,23 +88,23 @@ class AuthProtocol(object):
         """
         self._remove_auth_headers(env)
 
-        #  TODO(aviau): Get token and validate it, then build proper headers
-        if False:
-            self._reject_request(env, start_response)
+        token = self._get_header(env, 'X-Auth-Token', None)
 
-        user_headers = {
-            'X-Identity-Status': 'Confirmed',
-            'X-User-Id': 'surveil-default-user',
-            'X-Roles': 'admin',
-            'X-Service-Catalog': 'surveil'
-        }
-        self._add_headers(env, user_headers)
+        #  TODO(aviau): Validate token, then build proper headers
+        if token == "aaaaa-bbbbb-ccccc-dddd":
+            user_headers = {
+                'X-Identity-Status': 'Confirmed',
+                'X-User-Id': 'surveil-default-user',
+                'X-Roles': 'admin,surveil',
+                'X-Service-Catalog': 'surveil'
+            }
+            self._add_headers(env, user_headers)
 
-        service_headers = {
-            'X-Service-Identity-Status': 'Confirmed',
-            'X-Service-Roles': 'surveil',
-        }
-        self._add_headers(env, service_headers)
+            service_headers = {
+                'X-Service-Identity-Status': 'Confirmed',
+                'X-Service-Roles': 'surveil',
+            }
+            self._add_headers(env, service_headers)
 
         return self._call_app(env, start_response)
 
@@ -141,6 +141,11 @@ class AuthProtocol(object):
 
         """
         return 'HTTP_%s' % key.replace('-', '_').upper()
+
+    def _get_header(self, env, key, default=None):
+        """Get http header from environment."""
+        env_key = self._header_to_env_var(key)
+        return env.get(env_key, default)
 
     def _call_app(self, env, start_response):
         # NOTE(jamielennox): We wrap the given start response so that if an

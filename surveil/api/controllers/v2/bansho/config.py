@@ -18,10 +18,12 @@ from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.handlers.bansho import config_handler
+from surveil.common import util
 
 
 class ConfigController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(unicode)
     def get(self):
         """Retrieve user config, empty dict if no config exists."""
@@ -30,6 +32,7 @@ class ConfigController(rest.RestController):
         config = handler.get(user_name)
         return config
 
+    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=unicode)
     def post(self, config):
         """Save user config.

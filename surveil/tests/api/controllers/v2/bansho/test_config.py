@@ -34,15 +34,26 @@ class TestConfigController(functionalTest.FunctionalTest):
         )
 
     def test_get_post_get(self):
+
         # At first, conf is empty
-        response = self.app.get('/v2/bansho/config')
+        self.assertIsNone(
+            self.mongoconnection.surveil.bansho.config.find_one(
+                {"user_name": "surveil-default-user"}
+            )
+        )
+        response = self.get('/v2/bansho/config')
         self.assertEqual({}, json.loads(response.body.decode()))
 
         # Now, post config
         config = {"key": "val",
                   "morekey": "moreval"}
-        self.app.post_json('/v2/bansho/config', params=config)
+        self.post_json('/v2/bansho/config', params=config)
 
         # Now config is what we gave to the API
-        response = self.app.get('/v2/bansho/config')
+        response = self.get('/v2/bansho/config')
         self.assertEqual(config, json.loads(response.body.decode()))
+        self.assertIsNotNone(
+            self.mongoconnection.surveil.bansho.config.find_one(
+                {"user_name": "surveil-default-user"}
+            )
+        )

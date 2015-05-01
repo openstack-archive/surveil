@@ -13,6 +13,8 @@
 # under the License.
 
 
+import functools
+
 import pecan
 from webob import exc
 
@@ -22,7 +24,8 @@ from surveil.api import rbac
 # TODO(aviau && Freddrickk): Properly document this decorator
 def policy_enforce(actions):
     def policy_enforce_inner(handler):
-        def handle_stack_method(controller, **kwargs):
+        @functools.wraps(handler)
+        def handle_stack_method(*args, **kwargs):
             request = pecan.request
             for action in actions:
                 allowed = rbac.enforce(action, request)
@@ -30,6 +33,6 @@ def policy_enforce(actions):
                 if not allowed:
                     raise exc.HTTPForbidden()
 
-            return handler(controller, **kwargs)
+            return handler(*args, **kwargs)
         return handle_stack_method
     return policy_enforce_inner

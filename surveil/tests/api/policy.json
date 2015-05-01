@@ -1,4 +1,10 @@
 {
-  "surveil:break":"!",
-  "surveil:pass":"@"
+    "admin_required": "role:admin or is_admin:1",
+    "surveil_required": "role:surveil",
+
+    "surveil:admin": "rule:admin_required",
+    "surveil:authenticated": "rule:surveil_required",
+
+    "surveil:break": "!",
+    "surveil:pass": "@"
 }

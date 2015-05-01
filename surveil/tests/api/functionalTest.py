@@ -75,10 +75,27 @@ class FunctionalTest(base.BaseTestCase):
             'app': {
                 'root': 'surveil.api.controllers.root.RootController',
                 'modules': ['surveil.api'],
-                'debug': False,
+                'debug': True,
                 'hooks': app_hooks
             }
         })
 
+        self.auth_headers = {
+            'X-Identity-Status': 'Confirmed',
+            'X-User-Id': 'surveil-default-user',
+            'X-Roles': 'admin,surveil',
+            'X-Service-Catalog': 'surveil',
+            'X-Service-Identity-Status': 'Confirmed',
+            'X-Service-Roles': 'surveil',
+        }
+
     def tearDown(self):
         pecan.set_config({}, overwrite=True)
+
+    def post_json(self, *args, **kwargs):
+        kwargs.setdefault('headers', self.auth_headers)
+        return self.app.post_json(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        kwargs.setdefault('headers', self.auth_headers)
+        return self.app.get(*args, **kwargs)
