@@ -39,7 +39,7 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_hostgroups(self):
-        response = self.app.get('/v2/config/hostgroups')
+        response = self.get('/v2/config/hostgroups')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -48,7 +48,7 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 200)
 
     def test_get_one_hostgroups(self):
-        response = self.app.get('/v2/config/hostgroups/novell-servers')
+        response = self.get('/v2/config/hostgroups/novell-servers')
 
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -61,7 +61,7 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
             members="marie,bob,joe",
         )
 
-        self.app.post_json('/v2/config/hostgroups', s.as_dict())
+        self.post_json('/v2/config/hostgroups', s.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.hostgroups.find_one(s.as_dict())
@@ -72,7 +72,7 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.hostgroups.find_one(self.groups[0])
         )
 
-        self.app.delete('/v2/config/hostgroups/novell-servers')
+        self.delete('/v2/config/hostgroups/novell-servers')
 
         self.assertIsNone(
             self.mongoconnection.shinken.hostgroups.find_one(self.groups[0])
@@ -86,7 +86,7 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
             'netware1,netware2,netware3,netware4'
         )
 
-        self.app.put_json(
+        self.put_json(
             '/v2/config/hostgroups/novell-servers',
             {"hostgroup_name": "novell-servers",
              "members": "updated"}

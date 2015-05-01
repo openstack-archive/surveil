@@ -70,7 +70,7 @@ class TestHostController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_hosts(self):
-        response = self.app.get('/v2/config/hosts')
+        response = self.get('/v2/config/hosts')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -88,7 +88,7 @@ class TestHostController(functionalTest.FunctionalTest):
                  "register": "0"}
             )
         )
-        response = self.app.get('/v2/config/hosts')
+        response = self.get('/v2/config/hosts')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -97,7 +97,7 @@ class TestHostController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 200)
 
     def test_get_specific_host(self):
-        response = self.app.get('/v2/config/hosts/bogus-router333')
+        response = self.get('/v2/config/hosts/bogus-router333')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -116,7 +116,7 @@ class TestHostController(functionalTest.FunctionalTest):
             u"notification_interval": 333,
             u"notification_period": u"newnotificationperiod"
         }
-        response = self.app.put_json(
+        response = self.put_json(
             "/v2/config/hosts/bogus-router333", params=put_host
         )
 
@@ -130,7 +130,7 @@ class TestHostController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 204)
 
     def test_delete_host(self):
-        response = self.app.delete('/v2/config/hosts/bogus-router')
+        response = self.delete('/v2/config/hosts/bogus-router')
 
         mongo_hosts = [host.Host(**h) for h
                        in self.mongoconnection.shinken.hosts.find()]
@@ -149,7 +149,7 @@ class TestHostController(functionalTest.FunctionalTest):
             "notification_interval": 3,
             "notification_period": "24x7"
         }
-        response = self.app.post_json("/v2/config/hosts", params=new_host)
+        response = self.post_json("/v2/config/hosts", params=new_host)
 
         hosts = [host.Host(**h).as_dict() for h
                  in self.mongoconnection.shinken.hosts.find(None, {'_id': 0})]
@@ -158,7 +158,7 @@ class TestHostController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 201)
 
     def test_get_associated_services(self):
-        response = self.app.get('/v2/config/hosts/bogus-router/services')
+        response = self.get('/v2/config/hosts/bogus-router/services')
 
         self.assertEqual(
             self.services,
@@ -166,7 +166,7 @@ class TestHostController(functionalTest.FunctionalTest):
         )
 
     def test_get_specific_service(self):
-        response = self.app.get(
+        response = self.get(
             '/v2/config/hosts/bogus-router/services/service-example'
         )
 
@@ -180,7 +180,7 @@ class TestHostController(functionalTest.FunctionalTest):
                           in self.mongoconnection.shinken.services.find()]
         self.assertEqual(1, len(mongo_services))
 
-        self.app.delete(
+        self.delete(
             '/v2/config/hosts/bogus-router/services/service-example'
         )
 
@@ -200,7 +200,7 @@ class TestHostController(functionalTest.FunctionalTest):
             "time_stamp": "1409149234"
         }
 
-        response = self.app.post_json(
+        response = self.post_json(
             "/v2/config/hosts/bogus-router/services/service-example/results",
             params=check_result
         )
@@ -228,8 +228,8 @@ class TestHostController(functionalTest.FunctionalTest):
             "time_stamp": "1409149234"
         }
 
-        response = self.app.post_json("/v2/config/hosts/bogus-router/results",
-                                      params=check_result)
+        response = self.post_json("/v2/config/hosts/bogus-router/results",
+                                  params=check_result)
 
         self.assertEqual(response.status_int, 204)
         self.assertEqual(

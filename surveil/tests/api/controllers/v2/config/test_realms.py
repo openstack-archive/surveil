@@ -41,7 +41,7 @@ class TestRealmsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_realms(self):
-        response = self.app.get('/v2/config/realms')
+        response = self.get('/v2/config/realms')
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -50,7 +50,7 @@ class TestRealmsController(functionalTest.FunctionalTest):
         self.assertEqual(response.status_int, 200)
 
     def test_get_one_realm(self):
-        response = self.app.get('/v2/config/realms/World')
+        response = self.get('/v2/config/realms/World')
 
         self.assertEqual(
             json.loads(response.body.decode()),
@@ -64,7 +64,7 @@ class TestRealmsController(functionalTest.FunctionalTest):
             default=1
         )
 
-        self.app.post_json('/v2/config/realms', r.as_dict())
+        self.post_json('/v2/config/realms', r.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.realms.find_one(r.as_dict())
@@ -75,7 +75,7 @@ class TestRealmsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.realms.find_one(self.realms[0])
         )
 
-        self.app.delete('/v2/config/realms/World')
+        self.delete('/v2/config/realms/World')
 
         self.assertIsNone(
             self.mongoconnection.shinken.realms.find_one(self.realms[0])
@@ -89,7 +89,7 @@ class TestRealmsController(functionalTest.FunctionalTest):
             'Europe,America,Asia'
         )
 
-        self.app.put_json(
+        self.put_json(
             '/v2/config/realms/World',
             {"realm_name": "World",
              "realm_members": "updated",
