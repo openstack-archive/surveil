@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y vim python-pip python3-pip python-dev l
 RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/2.2-RC1.zip
 
 # python-surveilclient (used by surveil-init)
-RUN pip install python-surveilclient>=0.4.1
+RUN pip install "python-surveilclient>=0.4.1"
 
 # Download packs
 RUN apt-get install -y subversion && \
