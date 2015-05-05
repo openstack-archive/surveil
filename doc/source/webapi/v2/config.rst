@@ -48,6 +48,12 @@ Commands
 .. rest-controller:: surveil.api.controllers.v2.config.commands:CommandController
    :webprefix: /v2/config/commands
 
+Business impact modulations
+===========================
+
+.. rest-controller:: surveil.api.controllers.v2.config.businessimpactmodulations:BusinessImpactModulationsController
+   :webprefix: /v2/config/businessimpactmodulations
+
 
 types documentation
 ===================
@@ -61,3 +67,5 @@ types documentation
 .. autotype:: surveil.api.datamodel.checkresult.CheckResult
    :members:
 
+.. autotype:: surveil.api.datamodel.config.businessimpactmodulation.BuisnessImpactModulation
+   :members:
