@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from surveil.api.controllers.v2.config import businessimpactmodulations
 from surveil.api.controllers.v2.config import commands
 from surveil.api.controllers.v2.config import contactgroups
 from surveil.api.controllers.v2.config import contacts
@@ -38,5 +39,8 @@ class ConfigController(rest.RestController):
     servicegroups = servicegroup.ServiceGroupsController()
     hostgroups = hostgroups.HostGroupsController()
     contactgroups = contactgroups.ContactGroupsController()
+    businessimpactmodulations = (businessimpactmodulations.
+                                 BusinessImpactModulationsController())
+
     # notificationways = NotificationWayController()
     # engine = EngineController()
