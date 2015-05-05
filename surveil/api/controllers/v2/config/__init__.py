@@ -12,7 +12,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+
 from surveil.api.controllers.v2.config import businessimpactmodulations
+from surveil.api.controllers.v2.config import checkmodulations
 from surveil.api.controllers.v2.config import commands
 from surveil.api.controllers.v2.config import contactgroups
 from surveil.api.controllers.v2.config import contacts
@@ -24,6 +26,7 @@ from surveil.api.controllers.v2.config import reload_config
 from surveil.api.controllers.v2.config import servicegroup
 from surveil.api.controllers.v2.config import services
 from surveil.api.controllers.v2.config import timeperiods
+
 
 from pecan import rest
 
@@ -40,7 +43,18 @@ class ConfigController(rest.RestController):
     servicegroups = servicegroup.ServiceGroupsController()
     hostgroups = hostgroups.HostGroupsController()
     contactgroups = contactgroups.ContactGroupsController()
+<<<<<<< HEAD
     businessimpactmodulations = (businessimpactmodulations.
                                  BusinessImpactModulationsController())
     notificationways = notificationways.NotificationWaysController()
+=======
+<<<<<<< HEAD
+    checkmodulations = checkmodulations.CheckModulationsController()
+    # notificationways = NotificationWayController()
+=======
+    businessimpactmodulations = (businessimpactmodulations.
+                                 BusinessImpactModulationsController())
+    notificationways = notificationways.NotificationWaysController()
+>>>>>>> bbe0ecc7684e5b68d9ae4f217faa0ba86ab257e9
+>>>>>>> 8d51277... Config API: add check modulation
     # engine = EngineController()
