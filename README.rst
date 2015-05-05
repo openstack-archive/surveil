@@ -43,6 +43,7 @@ After running :bash:`sudo docker-compose up`, you should be able to acces all
 services at the ports configured in the docker-compose.yml file.
 
 * Surveil API: http://localhost:8080/v1/hello
+* Bansho (surveil web interface): http://localhost:8888 (any login info is fine)
 * InfluxDB: http://localhost:8083 (user:root pw:root)
 * Grafana: http://localhost:80 (user:admin pw:admin)
 * Shinken WebUI: http://localhost:7767/all (user:admin pw:admin)
