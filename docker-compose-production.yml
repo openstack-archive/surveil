@@ -1,6 +1,6 @@
 surveil:
   #build: .
-  image: savoirfairelinux/surveil:0.1.0
+  image: savoirfairelinux/surveil:0.2.0
   links:
    - mongo
    - influxdb
@@ -12,7 +12,7 @@ surveil:
 
 shinken:
   #build: tools/docker/shinken_container/
-  image: savoirfairelinux/surveil-shinken:0.1.0
+  image: savoirfairelinux/surveil-shinken:0.2.0
   links:
     - mongo
     - influxdb
@@ -52,7 +52,7 @@ grafana:
     - influxdb
 
 bansho:
-  image: savoirfairelinux/bansho:0.2.0
+  image: savoirfairelinux/bansho:0.3.0
   environment:
     BANSHO_BACKEND: "surveil"
     BANSHO_SURVEIL_URL: "http://surveil:8080/"
