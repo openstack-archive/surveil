@@ -2,12 +2,11 @@ FROM ubuntu:trusty
 
 MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
-RUN apt-get update
 RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev nagios-nrpe-server
 # libffi-devand libssl-dev are for python-cryptography
 
 ### Shinken
-RUN apt-get install -y python-pip
+RUN apt-get update && apt-get install -y python-pip
 RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/2.4-RC3.zip
 RUN apt-get install -y python-pycurl
 RUN shinken --init
@@ -21,14 +20,14 @@ RUN shinken install ws-arbiter
 RUN pip install pymongo==2.8 && shinken install mod-mongodb
 
 ## plugins
-RUN apt-get install -y nagios-plugins nagios-nrpe-plugin
+RUN apt-get update && apt-get install -y nagios-plugins nagios-nrpe-plugin
 # run permissions for user `shinken`
 RUN chmod u+s /usr/lib/nagios/plugins/check_icmp
 RUN chmod u+s /bin/ping
 RUN chmod u+s /bin/ping6
 
 # Download plugins
-RUN apt-get install -y subversion && \
+RUN apt-get update && apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-glance /plugins/check_glance && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-keystone /plugins/check_keystone && \
     apt-get remove -y subversion
