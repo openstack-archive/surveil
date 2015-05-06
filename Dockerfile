@@ -35,9 +35,10 @@ RUN cd /opt/surveil && python setup.py develop
 
 #Set to 'surveil' or 'keystone'
 ENV SURVEIL_AUTH_BACKEND=surveil
-ENV SURVEIL_KEYSTONE_ENDPOINT=127.0.0.1
+ENV SURVEIL_KEYSTONE_ENDPOINT=http://198.72.123.131:5000/v2.0/
 ENV SURVEIL_KEYSTONE_USERNAME=admin
 ENV SURVEIL_KEYSTONE_PASSWORD=password
+ENV SURVEIL_KEYSTONE_ENDPOINT=http://198.72.123.131:5000/v2.0/
 
 CMD cd /opt/surveil && \
     ./setup.sh && \
