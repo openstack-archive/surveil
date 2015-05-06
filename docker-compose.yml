@@ -9,8 +9,8 @@ surveil:
   environment:
     PBR_VERSION: "DEV"
   volumes:
-   - ./surveil:/surveil/surveil
-  command: bash -c "cd /surveil/ && python setup.py develop && ((sleep 40 && surveil-init --demo) &) && sleep 20 && surveil-api --reload"
+   - ./opt/surveil:/surveil/surveil
+  command: bash -c "cd /opt/surveil && ./setup.sh && python setup.py develop && ((sleep 40 && surveil-init --demo) &) && sleep 20 && surveil-api --reload"
 
 shinken:
   build: tools/docker/shinken_container/
