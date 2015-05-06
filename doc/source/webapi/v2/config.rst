@@ -54,6 +54,11 @@ Business impact modulations
 .. rest-controller:: surveil.api.controllers.v2.config.businessimpactmodulations:BusinessImpactModulationsController
    :webprefix: /v2/config/businessimpactmodulations
 
+Notification ways
+=================
+
+.. rest-controller:: surveil.api.controllers.v2.config.notificationways:NotificationWaysController
+   :webprefix: /v2/config/notificationways
 
 types documentation
 ===================
@@ -68,4 +73,7 @@ types documentation
    :members:
 
 .. autotype:: surveil.api.datamodel.config.businessimpactmodulation.BuisnessImpactModulation
+   :members:
+
+.. autotype:: surveil.api.datamodel.config.notificationway.NotificationWay
    :members:

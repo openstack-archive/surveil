@@ -18,6 +18,7 @@ from surveil.api.controllers.v2.config import contactgroups
 from surveil.api.controllers.v2.config import contacts
 from surveil.api.controllers.v2.config import hostgroups
 from surveil.api.controllers.v2.config import hosts
+from surveil.api.controllers.v2.config import notificationways
 from surveil.api.controllers.v2.config import realms
 from surveil.api.controllers.v2.config import reload_config
 from surveil.api.controllers.v2.config import servicegroup
@@ -41,6 +42,5 @@ class ConfigController(rest.RestController):
     contactgroups = contactgroups.ContactGroupsController()
     businessimpactmodulations = (businessimpactmodulations.
                                  BusinessImpactModulationsController())
-
-    # notificationways = NotificationWayController()
+    notificationways = notificationways.NotificationWaysController()
     # engine = EngineController()
