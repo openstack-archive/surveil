@@ -2,12 +2,11 @@ FROM ubuntu:trusty
 
 MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
-RUN apt-get update
 RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev nagios-nrpe-server
 # libffi-devand libssl-dev are for python-cryptography
 
 ### Shinken
-RUN apt-get install -y python-pip
+RUN apt-get update && apt-get install -y python-pip
 RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/2.4-RC3.zip
 RUN apt-get install -y python-pycurl
 RUN shinken --init
