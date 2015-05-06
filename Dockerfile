@@ -33,8 +33,9 @@ ENV PBR_VERSION=PROD
 # We are using develop so that the code can be mounted when in DEV.
 RUN cd /opt/surveil && python setup.py develop
 
-#Set to 'surveil-auth' for surveil-specific auth or set to 'authtoken' for Keystone authentication
-ENV SURVEIL_AUTH_BACKEND=surveil-auth
+#Set to 'surveil' or 'keystone'
+ENV SURVEIL_AUTH_BACKEND=surveil
+ENV SURVEIL_KEYSTONE_ENDPOINT=127.0.0.1
 
 CMD cd /opt/surveil && \
     ./setup.sh && \
