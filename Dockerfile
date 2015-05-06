@@ -20,16 +20,22 @@ RUN apt-get install -y subversion && \
 ADD requirements.txt surveil/requirements.txt
 RUN pip install -r /surveil/requirements.txt
 
-ADD setup.py /surveil/setup.py
-ADD setup.cfg /surveil/setup.cfg
-ADD README.rst /surveil/README.rst
+ADD tools/docker/surveil_container/setup.sh /opt/surveil/setup.sh
+ADD setup.py /opt/surveil/setup.py
+ADD setup.cfg /opt/surveil/setup.cfg
+ADD README.rst /opt/surveil/README.rst
 ADD etc/surveil /etc/surveil
-ADD surveil /surveil/surveil
+ADD surveil /opt/surveil/surveil
 
 #ADD .git /surveil/.git
 ENV PBR_VERSION=PROD
 
 # We are using develop so that the code can be mounted when in DEV.
-RUN cd surveil && python setup.py develop
+RUN cd /opt/surveil && python setup.py develop
 
-CMD surveil-api
+#Set to 'surveil-auth' for surveil-specific auth or set to 'authtoken' for Keystone authentication
+ENV SURVEIL_AUTH_BACKEND=surveil-auth
+
+CMD cd /opt/surveil && \
+    ./setup.sh && \
+    surveil-api
