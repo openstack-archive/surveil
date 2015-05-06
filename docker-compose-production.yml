@@ -1,7 +1,6 @@
 surveil:
-  extends:
-    file: docker-compose-common.yml
-    service: surveil
+  #build: .
+  image: savoirfairelinux/surveil:0.1.0
   links:
    - mongo
    - influxdb
@@ -12,9 +11,8 @@ surveil:
     PBR_VERSION: "PROD"
 
 shinken:
-  extends:
-    file: docker-compose-common.yml
-    service: shinken
+  #build: tools/docker/shinken_container/
+  image: savoirfairelinux/surveil-shinken:0.1.0
   links:
     - mongo
     - influxdb
@@ -22,9 +20,7 @@ shinken:
     - "7767:7767"
 
 mongo:
-  extends:
-    file: docker-compose-common.yml
-    service: mongo
+  image: mongo
   ports:
    - "27017:27017"
   command:
@@ -33,9 +29,7 @@ mongo:
    - ./container-data/mongodb:/data/db
 
 influxdb:
-  extends:
-    file: docker-compose-common.yml
-    service: influxdb
+  image: savoirfairelinux/influxdb
   environment:
     PRE_CREATE_DB: "db"
   ports:
@@ -45,19 +39,24 @@ influxdb:
    - ./container-data/influxdb:/data
 
 grafana:
-  extends:
-    file: docker-compose-common.yml
-    service: grafana
+  image: savoirfairelinux/grafana
+  environment:
+    INFLUXDB_HOST: "influxdb"
+    INFLUXDB_PORT: "8086"
+    INFLUXDB_NAME: "db"
+    INFLUXDB_USER: "root"
+    INFLUXDB_PASS: "root"
   ports:
-    - "80:80"
+    - "8888:80"
   links:
     - influxdb
 
 bansho:
-  extends:
-    file: docker-compose-common.yml
-    service: bansho
+  image: savoirfairelinux/bansho:0.2.0
+  environment:
+    BANSHO_BACKEND: "surveil"
+    BANSHO_SURVEIL_URL: "http://surveil:8080/"
   ports:
-    - "8888:8888"
+    - "80:8888"
   links:
     - surveil
