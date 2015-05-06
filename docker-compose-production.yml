@@ -10,7 +10,7 @@ surveil:
   environment:
     PBR_VERSION: "PROD"
     #SURVEIL_AUTH_BACKEND: "keystone"
-    #SURVEIL_KEYSTONE_ENDPOINT: "198.72.123.131"
+    #SURVEIL_KEYSTONE_ENDPOINT: "http://198.72.123.131:5000/v2.0/"
 
 shinken:
   #build: tools/docker/shinken_container/
