@@ -6,7 +6,7 @@ function setup_surveil_api {
         sed -i "s/pipeline =.*/pipeline = surveil-auth api-server/" /etc/surveil/api_paste.ini
     else
         echo -e "=> Setting up Surveil API for keystone authentication..."
-        sed -i "s/pipeline =.*/pipeline = auth-token api-server/" /etc/surveil/api_paste.ini
+        sed -i "s/pipeline =.*/pipeline = authtoken api-server/" /etc/surveil/api_paste.ini
         sed -i "s/auth_host=.*/auth_host=${SURVEIL_KEYSTONE_ENDPOINT}/" /etc/surveil/api_paste.ini
     fi
 }
