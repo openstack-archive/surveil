@@ -13,6 +13,7 @@
 # under the License.
 
 from surveil.api.controllers.v2.config import businessimpactmodulations
+from surveil.api.controllers.v2.config import checkmodulations
 from surveil.api.controllers.v2.config import commands
 from surveil.api.controllers.v2.config import contactgroups
 from surveil.api.controllers.v2.config import contacts
@@ -43,4 +44,5 @@ class ConfigController(rest.RestController):
     businessimpactmodulations = (businessimpactmodulations.
                                  BusinessImpactModulationsController())
     notificationways = notificationways.NotificationWaysController()
+    checkmodulations = checkmodulations.CheckModulationsController()
     # engine = EngineController()
