@@ -44,7 +44,7 @@ class HostHandler(handler.Handler):
         query = influxdb_query.build_influxdb_query(
             live_query,
             'HOST_STATE',
-            group_by=['host_name', 'address', 'childs'],
+            group_by=['host_name', 'address', 'childs', 'parents'],
             order_by=['time DESC'],
             limit=1
         )
@@ -81,6 +81,7 @@ class HostHandler(handler.Handler):
             "address": tags['address'],
             "description": tags['host_name'],
             "childs": json.loads(tags['childs']),
+            "parents": json.loads(tags['parents']),
 
             # Values
             "state": first_point['state'],
