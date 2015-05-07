@@ -27,7 +27,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
             "results": [
                 {
                     "series": [
-                        {"name": "HOST_STATE",
+                        {"name": "LIVE_HOST_STATE",
                          "tags": {"host_name": "localhost",
                                   "address": "127.0.0.1",
                                   "childs": '[]',
@@ -50,7 +50,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                               "HARD",
                               0]
                          ]},
-                        {"name": "HOST_STATE",
+                        {"name": "LIVE_HOST_STATE",
                          "tags": {"host_name": "test_keystone",
                                   "address": "127.0.0.1",
                                   "childs": '[]',
@@ -73,7 +73,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                               "HARD",
                               0]
                          ]},
-                        {"name": "HOST_STATE",
+                        {"name": "LIVE_HOST_STATE",
                          "tags": {"host_name": "ws-arbiter",
                                   "address": "127.0.0.1",
                                   "childs": '["test_keystone"]',
@@ -144,7 +144,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         self.assertItemsEqual(json.loads(response.body), expected)
         self.assertEqual(
             httpretty.last_request().querystring['q'],
-            ["SELECT * FROM HOST_STATE "
+            ["SELECT * FROM LIVE_HOST_STATE "
              "GROUP BY host_name, address, childs, parents "
              "ORDER BY time DESC LIMIT 1"]
         )
@@ -155,7 +155,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
             "results": [
                 {
                     "series": [
-                        {"name": "HOST_STATE",
+                        {"name": "LIVE_HOST_STATE",
                          "tags": {"host_name": "ws-arbiter",
                                   "address": "127.0.0.1",
                                   "childs": '["test_keystone"]',
@@ -204,7 +204,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
 
         self.assertEqual(
             httpretty.last_request().querystring['q'],
-            ["SELECT * FROM HOST_STATE WHERE host_name!='localhost' "
+            ["SELECT * FROM LIVE_HOST_STATE WHERE host_name!='localhost' "
              "AND description!='test_keystone' "
              "GROUP BY host_name, address, childs, parents "
              "ORDER BY time DESC "
@@ -216,7 +216,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         influx_response = json.dumps(
             {"results": [
                 {"series": [
-                    {"name": "HOST_STATE",
+                    {"name": "LIVE_HOST_STATE",
                      "tags": {"address": "localhost",
                               "childs": "[\"test_keystone\"]",
                               "parents": '["parent.com"]',
@@ -258,7 +258,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
 
         self.assertEqual(
             httpretty.last_request().querystring['q'],
-            ["SELECT * from HOST_STATE WHERE host_name='localhost'"
+            ["SELECT * from LIVE_HOST_STATE WHERE host_name='localhost'"
              " GROUP BY * "
              "ORDER BY time DESC "
              "LIMIT 1"]
@@ -324,7 +324,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         self.assertItemsEqual(json.loads(response.body), expected)
         self.assertEqual(
             httpretty.last_request().querystring['q'],
-            ["SELECT * from SERVICE_STATE "
+            ["SELECT * from LIVE_SERVICE_STATE "
              "WHERE host_name='ws-arbiter' "
              "AND service_description='check-ws-arbiter' "
              "GROUP BY * "

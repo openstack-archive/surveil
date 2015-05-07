@@ -26,7 +26,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
         self.influxdb_response = json.dumps({
             "results": [
                 {"series": [
-                    {"name": "SERVICE_STATE",
+                    {"name": "LIVE_SERVICE_STATE",
                      "tags": {"host_name": "test_keystone",
                               "service_description":
                                   "Check KeyStone service."},
@@ -49,7 +49,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
                           "SOFT",
                           0]
                      ]},
-                    {"name": "SERVICE_STATE",
+                    {"name": "LIVE_SERVICE_STATE",
                      "tags": {"host_name": "ws-arbiter",
                               "service_description": "check-ws-arbiter"},
                      "columns": [
@@ -107,7 +107,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
 
         self.assertEqual(
             httpretty.last_request().querystring['q'],
-            ["SELECT * FROM SERVICE_STATE GROUP BY host_name,"
+            ["SELECT * FROM LIVE_SERVICE_STATE GROUP BY host_name,"
              " service_description "
              "ORDER BY time DESC "
              "LIMIT 1"]
@@ -118,7 +118,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
         influxdb_response = json.dumps({
             "results": [
                 {"series": [
-                    {"name": "SERVICE_STATE",
+                    {"name": "LIVE_SERVICE_STATE",
                      "tags": {"host_name": "test_keystone",
                               "service_description":
                                   "Check KeyStone service."},

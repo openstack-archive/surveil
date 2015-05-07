@@ -26,7 +26,7 @@ class HostHandler(handler.Handler):
     def get(self, host_name):
         """Return a host."""
         cli = self.request.influxdb_client
-        query = ("SELECT * from HOST_STATE "
+        query = ("SELECT * from LIVE_HOST_STATE "
                  "WHERE host_name='%s' "
                  "GROUP BY * "
                  "ORDER BY time DESC "
@@ -43,7 +43,7 @@ class HostHandler(handler.Handler):
         cli = self.request.influxdb_client
         query = influxdb_query.build_influxdb_query(
             live_query,
-            'HOST_STATE',
+            'LIVE_HOST_STATE',
             group_by=['host_name', 'address', 'childs', 'parents'],
             order_by=['time DESC'],
             limit=1
