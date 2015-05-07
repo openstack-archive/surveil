@@ -10,7 +10,11 @@ surveil:
   environment:
     PBR_VERSION: "PROD"
     #SURVEIL_AUTH_BACKEND: "keystone"
-    #SURVEIL_KEYSTONE_ENDPOINT: "http://198.72.123.131:5000/v2.0/"
+    #SURVEIL_KEYSTONE_HOST: "198.72.123.131"
+    #SURVEIL_KEYSTONE_AUTH_PROTOCOL: "http"
+    #SURVEIL_KEYSTONE_ADMIN_USER: "admin"
+    #SURVEIL_KEYSTONE_ADMIN_PASSWORD: "password"
+    #SURVEIL_KEYSTONE_ADMIN_TENANT_NAME: "admin"
 
 shinken:
   #build: tools/docker/shinken_container/
