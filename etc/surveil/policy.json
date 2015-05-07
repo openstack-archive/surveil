@@ -1,6 +1,6 @@
 {
     "admin_required": "role:admin or is_admin:1",
-    "surveil_required": "role:surveil",
+    "surveil_required": "role:surveil or rule:admin_required",
 
     "surveil:admin": "rule:admin_required",
     "surveil:authenticated": "rule:surveil_required",
