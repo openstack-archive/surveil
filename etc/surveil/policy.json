@@ -3,7 +3,7 @@
     "surveil_required": "role:surveil",
 
     "surveil:admin": "rule:admin_required",
-    "surveil:authenticated": "rule:surveil_required",
+    "surveil:authenticated": "role:surveil or rule:admin_required",
 
     "surveil:break": "!",
     "surveil:pass": "@"
