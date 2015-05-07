@@ -6,10 +6,10 @@ function setup_surveil_api {
         sed -i "s/pipeline =.*/pipeline = surveil-auth api-server/" /etc/surveil/api_paste.ini
     else
         echo -e "=> Setting up Surveil API for keystone authentication..."
-        sed -i "s/pipeline =.*/pipeline = authtoken api-server/" /etc/surveil/api_paste.ini
-        sed -i "s/auth_uri=.*/auth_uri=${SURVEIL_KEYSTONE_ENDPOINT}/" /etc/surveil/api_paste.ini
-        sed -i "s/admin_user=.*/admin_user=${SURVEIL_KEYSTONE_USERNAME}/" /etc/surveil/api_paste.ini
-        sed -i "s/admin_password=.*/admin_password=${SURVEIL_KEYSTONE_PASSWORD}/" /etc/surveil/api_paste.ini
+        sed -i "s|pipeline =.*|pipeline = authtoken api-server|" /etc/surveil/api_paste.ini
+        sed -i "s|auth_uri=.*|auth_uri=${SURVEIL_KEYSTONE_ENDPOINT}|" /etc/surveil/api_paste.ini
+        sed -i "s|admin_user=.*|admin_user=${SURVEIL_KEYSTONE_USERNAME}|" /etc/surveil/api_paste.ini
+        sed -i "s|admin_password=.*|admin_password=${SURVEIL_KEYSTONE_PASSWORD}|" /etc/surveil/api_paste.ini
     fi
 }
 
