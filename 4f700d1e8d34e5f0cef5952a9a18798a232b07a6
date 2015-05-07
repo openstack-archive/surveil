@@ -1,0 +1,8 @@
+Verified+2: Jenkins
+Code-Review+2: Philippe Pepos Petitclerc <philippe.pepos-petitclerc@savoirfairelinux.com>
+Workflow+1: Philippe Pepos Petitclerc <philippe.pepos-petitclerc@savoirfairelinux.com>
+Submitted-by: Jenkins
+Submitted-at: Thu, 07 May 2015 19:38:29 +0000
+Reviewed-on: https://review.openstack.org/181126
+Project: stackforge/surveil
+Branch: refs/heads/master
