@@ -35,78 +35,88 @@ def main():
     # Create a basic config in mongodb
     mongo = pymongo.MongoClient(config.surveil_api_config['mongodb_uri'])
 
-    # Drop the current shinken config
-    mongo.drop_database('shinken')
+    if opts.demo is True:
+        # Drop the current shinken config
+        mongo.drop_database('shinken')
 
-    # Load the shinken packs
-    subprocess.call(
-        [
-            "surveil-pack-upload",
-            "--mongo-url=mongo",
-            "--mongo-port=27017",
-            "/packs/linux-keystone/",
-        ]
-    )
+    if mongo.surveil.init.count() == 0:
+        # Mark packs as uploaded
+        print("Uploading packs...")
+        mongo.surveil.init.insert({"source": "surveil-init script"})
 
-    subprocess.call(
-        [
-            "surveil-pack-upload",
-            "--mongo-url=mongo",
-            "--mongo-port=27017",
-            "/packs/linux-glance/",
-        ]
-    )
+        # Load the shinken packs
+        subprocess.call(
+            [
+                "surveil-pack-upload",
+                "--mongo-url=mongo",
+                "--mongo-port=27017",
+                "/packs/linux-keystone/",
+            ]
+        )
 
-    subprocess.call(
-        [
-            "surveil-pack-upload",
-            "--mongo-url=mongo",
-            "--mongo-port=27017",
-            "/packs/generic-host/",
-        ]
-    )
+        subprocess.call(
+            [
+                "surveil-pack-upload",
+                "--mongo-url=mongo",
+                "--mongo-port=27017",
+                "/packs/linux-glance/",
+            ]
+        )
 
-    # Reload the surveil config
+        subprocess.call(
+            [
+                "surveil-pack-upload",
+                "--mongo-url=mongo",
+                "--mongo-port=27017",
+                "/packs/generic-host/",
+            ]
+        )
+    else:
+        print("Skipping pack upload...")
+
     cli_surveil = sc.Client('http://localhost:8080/v2',
                             auth_url='http://localhost:8080/v2/auth',
                             version='2_0')
 
-    cli_surveil.config.hosts.create(
-        use="generic-host",
-        contact_groups="admins",
-        host_name="ws-arbiter",
-        address="localhost"
-    )
-    cli_surveil.config.services.create(
-        check_command="check_tcp!7760",
-        check_interval="5",
-        check_period="24x7",
-        contact_groups="admins",
-        contacts="admin",
-        host_name="ws-arbiter",
-        max_check_attempts="5",
-        notification_interval="30",
-        notification_period="24x7",
-        retry_interval="3",
-        service_description="check-ws-arbiter"
-    )
-
-    cli_surveil.config.hosts.create(
-        host_name='test_keystone',
-        use='linux-keystone',
-        address='127.0.0.1',
-        custom_fields={
-            "_OS_AUTH_URL": "bla",
-            "_OS_USERNAME": "bli",
-            "_OS_PASSWORD": "blo",
-            "_OS_TENANT":   "blu",
-            "_KS_SERVICES": "bly",
-            "parents": "localhost"
-        }
-    )
-
     # if --demo is specified, you get more hosts.
     if opts.demo is True:
+
+        # shinken's ws-arbiter
+        cli_surveil.config.hosts.create(
+            use="generic-host",
+            contact_groups="admins",
+            host_name="ws-arbiter",
+            address="localhost"
+        )
+        cli_surveil.config.services.create(
+            check_command="check_tcp!7760",
+            check_interval="5",
+            check_period="24x7",
+            contact_groups="admins",
+            contacts="admin",
+            host_name="ws-arbiter",
+            max_check_attempts="5",
+            notification_interval="30",
+            notification_period="24x7",
+            retry_interval="3",
+            service_description="check-ws-arbiter"
+        )
+
+        # Linux-keystone template
+        cli_surveil.config.hosts.create(
+            host_name='test_keystone',
+            use='linux-keystone',
+            address='127.0.0.1',
+            custom_fields={
+                "_OS_AUTH_URL": "bla",
+                "_OS_USERNAME": "bli",
+                "_OS_PASSWORD": "blo",
+                "_OS_TENANT":   "blu",
+                "_KS_SERVICES": "bly",
+                "parents": "localhost"
+            }
+        )
+
         # DOWN HOST (cant resolve)
         cli_surveil.config.hosts.create(
             host_name='srv-apache-01',
@@ -183,4 +193,5 @@ def main():
             service_description="iamadownservice"
         )
 
+    # Reload the shinken config
     cli_surveil.config.reload_config()

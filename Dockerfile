@@ -43,4 +43,5 @@ ENV SURVEIL_KEYSTONE_ADMIN_TENANT_NAME=admin
 
 CMD cd /opt/surveil && \
     ./setup.sh && \
+    ((sleep 40 && surveil-init --demo) &) && \
     surveil-api
