@@ -31,7 +31,8 @@ class TestHostController(functionalTest.FunctionalTest):
                 "host_name": "bogus-router", "address": "192.168.1.254",
                 "max_check_attempts": 5, "check_period": "24x7",
                 "contacts": "admin,carl", "contact_groups": "router-admins",
-                "notification_interval": 30, "notification_period": "24x7"
+                "notification_interval": 30, "notification_period": "24x7",
+                "_CRITICAL": "10"
             },
             {
                 "host_name": "bogus-router2", "address": "192.168.1.254",
@@ -72,6 +73,14 @@ class TestHostController(functionalTest.FunctionalTest):
     def test_get_all_hosts(self):
         response = self.get('/v2/config/hosts')
 
+        # Adjust self.host content to reflect custom_fields sub-dict
+        c_fields = {}
+        for h in self.hosts:
+            if '_CRITICAL' in h.keys():
+                c_fields['_CRITICAL'] = h['_CRITICAL']
+                h.pop('_CRITICAL')
+                h['custom_fields'] = c_fields
+
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
             self.hosts
@@ -90,6 +99,14 @@ class TestHostController(functionalTest.FunctionalTest):
         )
         response = self.get('/v2/config/hosts')
 
+        # Adjust self.host content to reflect custom_fields sub-dict
+        c_fields = {}
+        for h in self.hosts:
+            if '_CRITICAL' in h.keys():
+                c_fields['_CRITICAL'] = h['_CRITICAL']
+                h.pop('_CRITICAL')
+                h['custom_fields'] = c_fields
+
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
             self.hosts
@@ -104,6 +121,14 @@ class TestHostController(functionalTest.FunctionalTest):
             self.hosts[2]
         )
         self.assertEqual(response.status_int, 200)
+
+    def test_get_specific_host_custom_field(self):
+        response = self.get('/v2/config/hosts/bogus-router')
+        my_host = json.loads(response.body.decode())
+
+        self.assertIn("custom_fields", my_host.keys())
+        self.assertNotIn("_CRITICAL", my_host.keys())
+        self.assertIsNone(my_host.get("_CRITICAL"))
 
     def test_update_host(self):
         put_host = {
@@ -156,6 +181,56 @@ class TestHostController(functionalTest.FunctionalTest):
 
         self.assertTrue(new_host in hosts)
         self.assertEqual(response.status_int, 201)
+
+    def test_add_host_custom_fields(self):
+        my_host = {
+            "host_name": "custom_field_host", "address": "192.168.1.254",
+            "max_check_attempts": 5, "check_period": "24x7",
+            "contacts": "admin,carl", "contact_groups": "router-admins",
+            "notification_interval": 30, "notification_period": "24x7",
+            "_TEST_CUSTOM_FIELD": "10"
+        }
+
+        self.mongoconnection.shinken.hosts.insert(my_host)
+        mongo_host = self.mongoconnection.shinken.hosts.find_one(
+            {"host_name": "custom_field_host"}
+        )
+        # In-MongoDB representation should hold custom fields similarly to
+        # Shinken:
+        #
+        # define host {
+        #       _CUSTOM     value
+        # }
+        # (no "custom_fields" sub-dict)
+        self.assertNotIn("custom_fields", mongo_host.keys())
+        self.assertIn("_TEST_CUSTOM_FIELD", mongo_host.keys())
+        self.assertIsNotNone(mongo_host["_TEST_CUSTOM_FIELD"])
+
+    def test_post_add_host_custom_fields(self):
+        my_host = {
+            "host_name": "custom_field_host", "address": "192.168.1.254",
+            "max_check_attempts": 5, "check_period": "24x7",
+            "contacts": "admin,carl", "contact_groups": "router-admins",
+            "notification_interval": 30, "notification_period": "24x7",
+            "custom_fields": {
+                "_TEST_CUSTOM_FIELD": "10"
+            }
+        }
+
+        self.post_json('/v2/config/hosts', my_host)
+        mongo_host = self.mongoconnection.shinken.hosts.find_one(
+            {"host_name": "custom_field_host"}
+        )
+        # In-MongoDB representation should hold custom fields similarly to
+        # Shinken:
+        #
+        # define host {
+        #       _CUSTOM     value
+        # }
+        # (no "custom_fields" sub-dict)
+        self.assertNotIn("custom_fields", mongo_host.keys())
+        self.assertIn("_TEST_CUSTOM_FIELD", mongo_host.keys())
+        self.assertIsNotNone(mongo_host["_TEST_CUSTOM_FIELD"])
 
     def test_get_associated_services(self):
         response = self.get('/v2/config/hosts/bogus-router/services')
