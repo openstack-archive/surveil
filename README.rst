@@ -12,11 +12,11 @@ and flexible monitoring for OpenStack.
 Project Info
 ############
 
- * Wiki: https://wiki.openstack.org/wiki/Surveil
- * IRC: #surveil at freenode
- * Documentation: https://surveil.readthedocs.org/
- * Open Gerrit Changesets: https://review.openstack.org/#/q/status:open+surveil,n,z
- * Bug tracker: https://bugs.launchpad.net/surveil
+* Wiki: https://wiki.openstack.org/wiki/Surveil
+* IRC: #surveil at freenode
+* Documentation: https://surveil.readthedocs.org/
+* Open Gerrit Changesets: https://review.openstack.org/#/q/status:open+surveil,n,z
+* Bug tracker: https://bugs.launchpad.net/surveil
 
 Getting Started
 ###############
