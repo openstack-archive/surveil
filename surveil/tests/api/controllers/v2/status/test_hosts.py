@@ -30,7 +30,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                         {"name": "HOST_STATE",
                          "tags": {"host_name": "localhost",
                                   "address": "127.0.0.1",
-                                  "childs": '[]'},
+                                  "childs": '[]',
+                                  "parents": '["parent.com"]'},
                          "columns": [
                              "time",
                              "last_check",
@@ -52,7 +53,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                         {"name": "HOST_STATE",
                          "tags": {"host_name": "test_keystone",
                                   "address": "127.0.0.1",
-                                  "childs": '[]'},
+                                  "childs": '[]',
+                                  "parents": '["parent.com"]'},
                          "columns": [
                              "time",
                              "last_check",
@@ -74,7 +76,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                         {"name": "HOST_STATE",
                          "tags": {"host_name": "ws-arbiter",
                                   "address": "127.0.0.1",
-                                  "childs": '["test_keystone"]'},
+                                  "childs": '["test_keystone"]',
+                                  "parents": '["parent.com"]'},
                          "columns": [
                              "time",
                              "last_check",
@@ -110,6 +113,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
             {"description": "localhost",
              "address": "127.0.0.1",
              "childs": [],
+             "parents": ['parent.com'],
              "last_state_change": 1429405765,
              "plugin_output": "OK - localhost: rta 0.033ms, lost 0%",
              "last_check": 1429405764,
@@ -119,6 +123,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
             {"description": "test_keystone",
              "address": "127.0.0.1",
              "childs": [],
+             "parents": ['parent.com'],
              "last_state_change": 1429405765,
              "plugin_output": "OK - 127.0.0.1: rta 0.032ms, lost 0%",
              "last_check": 1429405763,
@@ -128,6 +133,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
             {"description": "ws-arbiter",
              "address": "127.0.0.1",
              "childs": ['test_keystone'],
+             "parents": ['parent.com'],
              "last_state_change": 1429405765,
              "plugin_output": "OK - localhost: rta 0.030ms, lost 0%",
              "last_check": 1429405764,
@@ -139,7 +145,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         self.assertEqual(
             httpretty.last_request().querystring['q'],
             ["SELECT * FROM HOST_STATE "
-             "GROUP BY host_name, address, childs ORDER BY time DESC LIMIT 1"]
+             "GROUP BY host_name, address, childs, parents ORDER BY time DESC LIMIT 1"]
         )
 
     @httpretty.activate
@@ -151,7 +157,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                         {"name": "HOST_STATE",
                          "tags": {"host_name": "ws-arbiter",
                                   "address": "127.0.0.1",
-                                  "childs": '["test_keystone"]'},
+                                  "childs": '["test_keystone"]',
+                                  "parents": '["parent.com"]'},
                          "columns": [
                              "time",
                              "last_check",
@@ -198,7 +205,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
             httpretty.last_request().querystring['q'],
             ["SELECT * FROM HOST_STATE WHERE host_name!='localhost' "
              "AND description!='test_keystone' "
-             "GROUP BY host_name, address, childs "
+             "GROUP BY host_name, address, childs, parents "
              "ORDER BY time DESC "
              "LIMIT 1"]
         )
@@ -211,6 +218,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     {"name": "HOST_STATE",
                      "tags": {"address": "localhost",
                               "childs": "[\"test_keystone\"]",
+                              "parents": '["parent.com"]',
                               "host_name": "localhost"},
                      "columns": ["time",
                                  "acknowledged",
@@ -235,6 +243,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         response = self.get("/v2/status/hosts/localhost")
 
         expected = {"childs": ["test_keystone"],
+                    "parents": ['parent.com'],
                     "description": "localhost",
                     "last_state_change": 1429812192,
                     "acknowledged": 0,
