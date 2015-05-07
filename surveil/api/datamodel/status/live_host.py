@@ -28,6 +28,9 @@ class LiveHost(types.Base):
     childs = wsme.wsattr([wtypes.text], mandatory=False)
     """The childs of the host"""
 
+    parents = wsme.wsattr([wtypes.text], mandatory=False)
+    """The parents of the host"""
+
     description = wsme.wsattr(wtypes.text, mandatory=False)
     """The description of the host"""
 
@@ -52,6 +55,7 @@ class LiveHost(types.Base):
             host_name='CoolHost',
             address="127.0.0.1",
             childs=['surveil.com'],
+            parents=['parent.com'],
             description='Very Nice Host',
             state=0,
             acknowledged=1,
