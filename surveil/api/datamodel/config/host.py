@@ -56,7 +56,10 @@ class Host(types.Base):
 
         # Custom fields start with '_'. Detect them ans assign them.
         custom_fields = [i for i in kwargs.items()
-                         if isinstance(i[0], str) and i[0][0] == '_']
+                         if (isinstance(i[0], str)
+                             or isinstance(i[0], unicode))
+                         and i[0][0] == '_']
+
         if len(custom_fields) > 0:
             self.custom_fields = {}
             for item in custom_fields:
