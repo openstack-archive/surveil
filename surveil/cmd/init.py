@@ -71,6 +71,16 @@ def main():
                 "/packs/generic-host/",
             ]
         )
+
+        subprocess.call(
+            [
+                "surveil-pack-upload",
+                "--mongo-url=mongo",
+                "--mongo-port=27017",
+                "/packs/linux-nova/",
+            ]
+        )
+
     else:
         print("Skipping pack upload...")
 
