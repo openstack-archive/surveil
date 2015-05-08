@@ -6,8 +6,8 @@ RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev li
 # libffi-devand libssl-dev are for python-cryptography
 
 ### Shinken
-RUN apt-get update && apt-get install -y python-pip
-RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/2.4-RC3.zip
+RUN apt-get update && apt-get install -y python-pip git
+RUN useradd shinken && pip install git+https://github.com/gst/shinken@scheduler_tick_hook
 RUN apt-get install -y python-pycurl
 RUN shinken --init
 
@@ -18,6 +18,11 @@ RUN shinken install booster-nrpe
 RUN pip install influxdb && shinken install mod-influxdb
 RUN shinken install ws-arbiter
 RUN pip install pymongo==2.8 && shinken install mod-mongodb
+
+RUN cd /opt && \
+    git clone  https://github.com/savoirfairelinux/mod-mongo-live-config.git && \
+    cd /var/lib/shinken/modules && \
+    ln -s /opt/mod-mongo-live-config/src/mod_mongo_live_config
 
 ## plugins
 RUN apt-get update && apt-get install -y nagios-plugins nagios-nrpe-plugin
