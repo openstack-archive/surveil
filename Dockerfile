@@ -15,6 +15,7 @@ RUN apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/packs/generic-host /packs/generic-host && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/packs/linux-glance /packs/linux-glance && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/packs/linux-keystone /packs/linux-keystone && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/packs/linux-nova /packs/linux-nova && \
     apt-get remove -y subversion
 
 ADD requirements.txt surveil/requirements.txt
