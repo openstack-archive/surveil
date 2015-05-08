@@ -40,7 +40,7 @@ RUN cd /plugins/check_glance && sudo pip install --upgrade .
 RUN cd /plugins/check_keystone && sudo pip install --upgrade .
 
 ## packs
-RUN sh  -c 'gpg --recv-keys --keyserver pgp.mit.edu 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
+RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
     sh -c "echo 'deb http://deb.kaji-project.org/ubuntu14.04/ plugins main' >> /etc/apt/sources.list.d/kaji.list" && \
     apt-get update && \
     apt-get install -y --force-yes monitoring-packs-sfl-generic-host monitoring-packs-sfl-linux-system-nrpe
