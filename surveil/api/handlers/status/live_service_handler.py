@@ -25,7 +25,7 @@ class ServiceHandler(handler.Handler):
     def get(self, host_name, service_name):
         """Return a specific service."""
         cli = self.request.influxdb_client
-        query = ("SELECT * from SERVICE_STATE "
+        query = ("SELECT * from LIVE_SERVICE_STATE "
                  "WHERE host_name='%s' "
                  "AND service_description='%s' "
                  "GROUP BY * "
@@ -43,7 +43,7 @@ class ServiceHandler(handler.Handler):
         cli = self.request.influxdb_client
         query = influxdb_query.build_influxdb_query(
             live_query,
-            'SERVICE_STATE',
+            'LIVE_SERVICE_STATE',
             group_by=['host_name', 'service_description'],
             order_by=['time DESC'],
             limit=1
