@@ -47,7 +47,7 @@ class LiveService(types.Base):
     def sample(cls):
         return cls(
             host_name='Webserver',
-            service_name='Apache',
+            service_description='Apache',
             description='Serves Stuff',
             state=0,
             last_check=1429220785,
