@@ -12,83 +12,29 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import print_function
-import json
-
-from surveil.api.datamodel.status import live_host
+from surveil.api.datamodel.config import host
 from surveil.api.handlers import handler
-from surveil.api.handlers.status import influxdb_query
 
 
 class HostHandler(handler.Handler):
-    """Fulfills a request on the live hosts."""
+    """Fulfills a request on the host resource."""
 
     def get(self, host_name):
         """Return a host."""
-        cli = self.request.influxdb_client
-        query = ("SELECT * from LIVE_HOST_STATE "
-                 "WHERE host_name='%s' "
-                 "GROUP BY * "
-                 "ORDER BY time DESC "
-                 "LIMIT 1") % host_name
-        response = cli.query(query)
 
-        host = live_host.LiveHost(
-            **self._host_dict_from_influx_item(response.items()[0])
+        h = self.request.mongo_connection.shinken_live.hosts.find_one(
+            {"host_name": host_name}, {'_id': 0}
         )
-        return host
+        return host.Host(**h)
 
-    def get_all(self, live_query=None):
-        """Return all live hosts."""
-        cli = self.request.influxdb_client
-        query = influxdb_query.build_influxdb_query(
-            live_query,
-            'LIVE_HOST_STATE',
-            group_by=['host_name', 'address', 'childs', 'parents'],
-            order_by=['time DESC'],
-            limit=1
-        )
-        response = cli.query(query)
 
-        host_dicts = []
-
-        for item in response.items():
-            host_dict = self._host_dict_from_influx_item(item)
-            host_dicts.append(host_dict)
-
-        if live_query:
-            host_dicts = influxdb_query.filter_fields(
-                host_dicts,
-                live_query
-            )
-
-        hosts = []
-        for host_dict in host_dicts:
-            host = live_host.LiveHost(**host_dict)
-            hosts.append(host)
-
+    def get_all(self):
+        """Return all hosts."""
+        hosts = [h for h
+                 in self.request.mongo_connection.
+                 shinken_live.hosts.find(
+                     {"register": {"$ne": "0"}},  # Don't return templates
+                     {'_id': 0}
+                 )]
+        hosts = [host.Host(**h) for h in hosts]
         return hosts
-
-    def _host_dict_from_influx_item(self, item):
-        points = item[1]
-        first_point = next(points)
-
-        tags = item[0][1]
-
-        host_dict = {
-            # TAGS
-            "host_name": tags['host_name'],
-            "address": tags['address'],
-            "description": tags['host_name'],
-            "childs": json.loads(tags['childs']),
-            "parents": json.loads(tags['parents']),
-
-            # Values
-            "state": first_point['state'],
-            "acknowledged": int(first_point['acknowledged']),
-            "last_check": int(first_point['last_check']),
-            "last_state_change": int(first_point['last_state_change']),
-            "plugin_output": first_point['output']
-        }
-
-        return host_dict
