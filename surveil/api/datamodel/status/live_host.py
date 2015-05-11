@@ -37,7 +37,7 @@ class LiveHost(types.Base):
     state = wsme.wsattr(int, mandatory=False)
     """The current state of the host"""
 
-    acknowledged = wsme.wsattr(int, mandatory=False)
+    acknowledged = wsme.wsattr(bool, mandatory=False)
     """Wether or not the problem, if any, has been acknowledged"""
 
     last_check = wsme.wsattr(int, mandatory=False)
@@ -58,7 +58,7 @@ class LiveHost(types.Base):
             parents=['parent.com'],
             description='Very Nice Host',
             state=0,
-            acknowledged=1,
+            acknowledged=True,
             last_check=1429220785,
             last_state_change=1429220785,
             plugin_output='PING OK - Packet loss = 0%, RTA = 0.02 ms'

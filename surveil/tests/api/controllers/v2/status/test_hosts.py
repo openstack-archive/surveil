@@ -15,8 +15,6 @@
 import copy
 import json
 
-import httpretty
-
 from surveil.tests.api import functionalTest
 
 
@@ -24,83 +22,50 @@ class TestStatusHosts(functionalTest.FunctionalTest):
 
     def setUp(self):
         super(TestStatusHosts, self).setUp()
-        self.influxdb_response = json.dumps({
-            "results": [
-                {
-                    "series": [
-                        {"name": "LIVE_HOST_STATE",
-                         "tags": {"host_name": "localhost",
-                                  "address": "127.0.0.1",
-                                  "childs": '[]',
-                                  "parents": '["parent.com"]'},
-                         "columns": [
-                             "time",
-                             "last_check",
-                             "last_state_change",
-                             "output",
-                             "state",
-                             "state_type",
-                             "acknowledged"
-                         ],
-                         "values":[
-                             ["2015-04-19T01:09:24Z",
-                              1.429405764e+09,
-                              1.429405765316929e+09,
-                              "OK - localhost: rta 0.033ms, lost 0%",
-                              0,
-                              "HARD",
-                              0]
-                         ]},
-                        {"name": "LIVE_HOST_STATE",
-                         "tags": {"host_name": "test_keystone",
-                                  "address": "127.0.0.1",
-                                  "childs": '[]',
-                                  "parents": '["parent.com"]'},
-                         "columns": [
-                             "time",
-                             "last_check",
-                             "last_state_change",
-                             "output",
-                             "state",
-                             "state_type",
-                             "acknowledged"
-                         ],
-                         "values":[
-                             ["2015-04-19T01:09:23Z",
-                              1.429405763e+09,
-                              1.429405765317144e+09,
-                              "OK - 127.0.0.1: rta 0.032ms, lost 0%",
-                              0,
-                              "HARD",
-                              0]
-                         ]},
-                        {"name": "LIVE_HOST_STATE",
-                         "tags": {"host_name": "ws-arbiter",
-                                  "address": "127.0.0.1",
-                                  "childs": '["test_keystone"]',
-                                  "parents": '["parent.com"]'},
-                         "columns": [
-                             "time",
-                             "last_check",
-                             "last_state_change",
-                             "output",
-                             "state",
-                             "state_type",
-                             "acknowledged"
-                         ],
-                         "values":[
-                             ["2015-04-19T01:09:24Z",
-                              1.429405764e+09,
-                              1.429405765317063e+09,
-                              "OK - localhost: rta 0.030ms, lost 0%",
-                              0,
-                              "HARD",
-                              0]
-                         ]}
-                    ]
-                }
-            ]
-        })
+        self.host = [
+            {
+                "display_name": "localhost",
+                "address": "127.0.0.1",
+                "childs": [],
+                "parents": ['parent.com'],
+                "last_chk": 1.429405764e+09,
+                "last_state_change": 1.429405765316929e+09,
+                "plugin_output": "OK - localhost: rta 0.033ms, lost 0%",
+                "state": 0,
+                "state_type": "HARD",
+                "problem_has_been_acknowledged": True,
+                "host_name": "localhost",
+            },
+            {
+                "display_name": "test_keystone",
+                "address": "127.0.0.1",
+                "childs": [],
+                "parents": ['parent.com'],
+                "last_chk": 1.429405763e+09,
+                "last_state_change": 1.429405765317144e+09,
+                "plugin_output":  "OK - 127.0.0.1: rta 0.032ms, lost 0%",
+                "state": 0,
+                "state_type": "HARD",
+                "problem_has_been_acknowledged": True,
+                "host_name": "test_keystone",
+            },
+            {
+                "display_name": "ws-arbiter",
+                "address": "127.0.0.1",
+                "childs": ['test_keystone'],
+                "parents": ['parent.com'],
+                "last_chk": 1.429405764e+09,
+                "last_state_change": 1.429405765317063e+09,
+                "plugin_output": "OK - localhost: rta 0.030ms, lost 0%",
+                "state": 0,
+                "state_type": "HARD",
+                "problem_has_been_acknowledged": True,
+                "host_name": "ws-arbiter",
+            },
+        ]
+        self.mongoconnection.shinken_live.hosts.insert(
+            copy.deepcopy(self.host)
+        )
 
         self.services = [
             {
@@ -121,17 +86,14 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "last_state_change": 1429220785,
                 "plugin_output": 'Hi there'
             },
+
         ]
         self.mongoconnection.shinken_live.services.insert(
             copy.deepcopy(self.services)
         )
 
-    @httpretty.activate
-    def test_get_all_hosts(self):
-        httpretty.register_uri(httpretty.GET,
-                               "http://influxdb:8086/query",
-                               body=self.influxdb_response)
 
+    def test_get_all_hosts(self):
         response = self.get("/v2/status/hosts")
 
         expected = [
@@ -143,7 +105,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "plugin_output": "OK - localhost: rta 0.033ms, lost 0%",
              "last_check": 1429405764,
              "state": 0,
-             "acknowledged": 0,
+             "acknowledged": True,
              "host_name": "localhost"},
             {"description": "test_keystone",
              "address": "127.0.0.1",
@@ -153,7 +115,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "plugin_output": "OK - 127.0.0.1: rta 0.032ms, lost 0%",
              "last_check": 1429405763,
              "state": 0,
-             "acknowledged": 0,
+             "acknowledged": True,
              "host_name": "test_keystone"},
             {"description": "ws-arbiter",
              "address": "127.0.0.1",
@@ -163,60 +125,19 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "plugin_output": "OK - localhost: rta 0.030ms, lost 0%",
              "last_check": 1429405764,
              "state": 0,
-             "acknowledged": 0,
+             "acknowledged": True,
              "host_name": "ws-arbiter"}]
 
         self.assertItemsEqual(json.loads(response.body), expected)
-        self.assertEqual(
-            httpretty.last_request().querystring['q'],
-            ["SELECT * FROM LIVE_HOST_STATE "
-             "GROUP BY host_name, address, childs, parents "
-             "ORDER BY time DESC LIMIT 1"]
-        )
 
-    @httpretty.activate
+
     def test_query_hosts(self):
-        influxdb_response = json.dumps({
-            "results": [
-                {
-                    "series": [
-                        {"name": "LIVE_HOST_STATE",
-                         "tags": {"host_name": "ws-arbiter",
-                                  "address": "127.0.0.1",
-                                  "childs": '["test_keystone"]',
-                                  "parents": '["parent.com"]'},
-                         "columns": [
-                             "time",
-                             "last_check",
-                             "last_state_change",
-                             "output",
-                             "state",
-                             "state_type",
-                             "acknowledged"
-                         ],
-                         "values":[
-                             ["2015-04-19T01:09:24Z",
-                              1.429405764e+09,
-                              1.429405765317063e+09,
-                              "OK - localhost: rta 0.030ms, lost 0%",
-                              0,
-                              "HARD",
-                              0]
-                         ]}
-                    ]
-                }
-            ]
-        })
-        httpretty.register_uri(httpretty.GET,
-                               "http://influxdb:8086/query",
-                               body=influxdb_response)
-
         query = {
             'fields': ['host_name', 'last_check'],
             'filters': json.dumps({
                 "isnot": {
                     "host_name": ['localhost'],
-                    "description": ["test_keystone"]
+                    "description": ['test_keystone']
                 }
             })
         }
@@ -227,44 +148,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
 
         self.assertItemsEqual(json.loads(response.body), expected)
 
-        self.assertEqual(
-            httpretty.last_request().querystring['q'],
-            ["SELECT * FROM LIVE_HOST_STATE WHERE host_name!='localhost' "
-             "AND description!='test_keystone' "
-             "GROUP BY host_name, address, childs, parents "
-             "ORDER BY time DESC "
-             "LIMIT 1"]
-        )
 
-    @httpretty.activate
     def test_get_specific_host(self):
-        influx_response = json.dumps(
-            {"results": [
-                {"series": [
-                    {"name": "LIVE_HOST_STATE",
-                     "tags": {"address": "localhost",
-                              "childs": "[\"test_keystone\"]",
-                              "parents": '["parent.com"]',
-                              "host_name": "localhost"},
-                     "columns": ["time",
-                                 "acknowledged",
-                                 "last_check",
-                                 "last_state_change",
-                                 "output",
-                                 "state",
-                                 "state_type"],
-                     "values":[["2015-04-23T18:03:11Z",
-                                0,
-                                1.429812191e+09,
-                                1.429812192166997e+09,
-                                "OK - localhost: rta 0.044ms, lost 0%",
-                                0,
-                                "HARD"]]}]}]}
-        )
-
-        httpretty.register_uri(httpretty.GET,
-                               "http://influxdb:8086/query",
-                               body=influx_response)
 
         response = self.get("/v2/status/hosts/localhost")
 
@@ -272,7 +157,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     "parents": ['parent.com'],
                     "description": "localhost",
                     "last_state_change": 1429812192,
-                    "acknowledged": 0,
+                    "acknowledged": True,
                     "plugin_output": "OK - localhost: rta 0.044ms, lost 0%",
                     "last_check": 1429812191,
                     "state": 0,
@@ -281,13 +166,6 @@ class TestStatusHosts(functionalTest.FunctionalTest):
 
         self.assertItemsEqual(json.loads(response.body), expected)
 
-        self.assertEqual(
-            httpretty.last_request().querystring['q'],
-            ["SELECT * from LIVE_HOST_STATE WHERE host_name='localhost'"
-             " GROUP BY * "
-             "ORDER BY time DESC "
-             "LIMIT 1"]
-        )
 
     def test_get_specific_host_service(self):
         response = self.get(
@@ -296,7 +174,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         expected = {'description': 'check-ws-arbiter',
                     'last_state_change': 1429823532,
                     'plugin_output': ('TCP OK - 0.000 second '
-                                      'response time on port 7760'),
+                                        'response time on port 7760'),
                     'last_check': 1429823531,
                     'state': 'OK',
                     'host_name': 'ws-arbiter',
