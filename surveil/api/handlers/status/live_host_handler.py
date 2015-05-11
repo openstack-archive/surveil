@@ -18,7 +18,7 @@ import json
 from surveil.api.datamodel.status import live_host
 from surveil.api.handlers import handler
 from surveil.api.handlers.status import fields_filter
-from surveil.api.handlers.status import influxdb_query
+from surveil.api.handlers.status import mongodb_query
 
 
 class HostHandler(handler.Handler):
@@ -26,36 +26,35 @@ class HostHandler(handler.Handler):
 
     def get(self, host_name):
         """Return a host."""
-        cli = self.request.influxdb_client
-        query = ("SELECT * from LIVE_HOST_STATE "
-                 "WHERE host_name='%s' "
-                 "GROUP BY * "
-                 "ORDER BY time DESC "
-                 "LIMIT 1") % host_name
-        response = cli.query(query)
-
-        host = live_host.LiveHost(
-            **self._host_dict_from_influx_item(response.items()[0])
+        h = self.request.mongo_connection.shinken_live.hosts.find_one(
+            {"host_name": host_name}, {'_id': 0}
         )
-        return host
+
+        host_dicts=[]
+        for item in h:
+            host_dict = self._host_dict_from_mongo_item(item)
+            host_dicts.append(host_dict)
+
+        return host_dicts
+
+
 
     def get_all(self, live_query=None):
         """Return all live hosts."""
-        cli = self.request.influxdb_client
-        query = influxdb_query.build_influxdb_query(
-            live_query,
-            'LIVE_HOST_STATE',
-            group_by=['host_name', 'address', 'childs', 'parents'],
-            order_by=['time DESC'],
-            limit=1
-        )
-        response = cli.query(query)
+        if live_query:
+            query = mongodb_query.build_mongodb_query(live_query)
+        else:
+            query = {}
+
+        response = (self.request.mongo_connection.
+                      shinken_live.hosts.find(query))
 
         host_dicts = []
 
-        for item in response.items():
-            host_dict = self._host_dict_from_influx_item(item)
+        for item in response:
+            host_dict = self._host_dict_from_mongo_item(item)
             host_dicts.append(host_dict)
+
 
         if live_query:
             host_dicts = fields_filter.filter_fields(
@@ -70,26 +69,27 @@ class HostHandler(handler.Handler):
 
         return hosts
 
-    def _host_dict_from_influx_item(self, item):
-        points = item[1]
-        first_point = next(points)
+    def _host_dict_from_mongo_item(self, mongo_item):
+        last_chk = mongo_item.pop('last_chk', None)
+        if last_chk:
+            mongo_item['last_check'] = int(last_chk)
 
-        tags = item[0][1]
+        last_state_change = mongo_item.pop('last_state_change', None)
+        if last_state_change:
+            mongo_item['last_state_change'] = int(last_state_change)
 
-        host_dict = {
-            # TAGS
-            "host_name": tags['host_name'],
-            "address": tags['address'],
-            "description": tags['host_name'],
-            "childs": json.loads(tags['childs']),
-            "parents": json.loads(tags['parents']),
+        output = mongo_item.pop('output', None)
+        if output:
+            mongo_item['plugin_output'] = output
 
-            # Values
-            "state": first_point['state'],
-            "acknowledged": int(first_point['acknowledged']),
-            "last_check": int(first_point['last_check']),
-            "last_state_change": int(first_point['last_state_change']),
-            "plugin_output": first_point['output']
-        }
+        childs = mongo_item.pop('childs', None)
+        if childs:
+            mongo_item['childs'] = json.loads(childs)
 
-        return host_dict
+        parents = mongo_item.pop('parents', None)
+        if parents:
+            mongo_item['parents'] = json.loads(parents)
+
+
+
+        return mongo_item
