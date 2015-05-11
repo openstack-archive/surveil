@@ -28,7 +28,7 @@ class LiveService(types.Base):
     description = wsme.wsattr(wtypes.text, mandatory=False)
     """The description of the sevice"""
 
-    state = wsme.wsattr(int, mandatory=False)
+    state = wsme.wsattr(wtypes.text, mandatory=False)
     """The current state of the service"""
 
     acknowledged = wsme.wsattr(int, mandatory=False)
@@ -47,7 +47,7 @@ class LiveService(types.Base):
     def sample(cls):
         return cls(
             host_name='Webserver',
-            service_name='Apache',
+            service_description='Apache',
             description='Serves Stuff',
             state=0,
             last_check=1429220785,
