@@ -26,13 +26,13 @@ class LiveQuery(types.Base):
     filters = wsme.wsattr(wtypes.text, mandatory=True)
     "The filter expression encoded in json."
 
-    fields = wsme.wsattr(wtypes.text, mandatory=False)
+    fields = wsme.wsattr([wtypes.text], mandatory=False)
     "List of fields to include in the response."
 
     @classmethod
     def sample(cls):
         return cls(
-            fields=json.dumps(['host_name', 'last_check']),
+            fields=['host_name', 'last_check'],
             filters=json.dumps({
                 "isnot": {
                     "state": ["0", "1"],
