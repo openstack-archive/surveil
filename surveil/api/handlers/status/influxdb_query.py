@@ -14,24 +14,6 @@
 
 import json
 
-import wsme
-
-
-def filter_fields(item_list, live_query):
-    filtered_items = []
-
-    if live_query.fields != wsme.Unset:
-        fields = json.loads(live_query.fields)
-        for item in item_list:
-            filtered_item = {}
-            for field in fields:
-                filtered_item[field] = item[field]
-            filtered_items.append(filtered_item)
-    else:
-        filtered_items = item_list
-
-    return filtered_items
-
 
 def build_influxdb_query(live_query,
                          measurement,

@@ -12,56 +12,48 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import print_function
+import json
 
 from surveil.api.datamodel.status import live_service
 from surveil.api.handlers import handler
-from surveil.api.handlers.status import influxdb_query
+from surveil.api.handlers.status import mongodb_query
+
+import wsme
 
 
 class ServiceHandler(handler.Handler):
     """Fulfills a request on live services."""
 
-    def get(self, host_name, service_name):
+    def get(self, host_name, service_description):
         """Return a specific service."""
-        cli = self.request.influxdb_client
-        query = ("SELECT * from LIVE_SERVICE_STATE "
-                 "WHERE host_name='%s' "
-                 "AND service_description='%s' "
-                 "GROUP BY * "
-                 "ORDER BY time DESC "
-                 "LIMIT 1") % (host_name, service_name)
-        response = cli.query(query)
-
-        host = live_service.LiveService(
-            **self._service_dict_from_influx_item(response.items()[0])
+        mongo_s = self.request.mongo_connection.shinken_live.services.find_one(
+            {"host_name": host_name,
+             "service_description": service_description},
         )
-        return host
+        return live_service.LiveService(**mongo_s)
 
     def get_all(self, live_query=None):
         """Return all live services."""
-        cli = self.request.influxdb_client
-        query = influxdb_query.build_influxdb_query(
-            live_query,
-            'LIVE_SERVICE_STATE',
-            group_by=['host_name', 'service_description'],
-            order_by=['time DESC'],
-            limit=1
-        )
-
-        response = cli.query(query)
-
-        service_dicts = []
-
-        for item in response.items():
-            service_dict = self._service_dict_from_influx_item(item)
-            service_dicts.append(service_dict)
 
         if live_query:
-            service_dicts = influxdb_query.filter_fields(
-                service_dicts,
-                live_query
-            )
+            lq_filters, lq_fields = _translate_live_query(live_query)
+        else:
+            lq_filters = {}
+            lq_fields = {}
+
+        query, fields = mongodb_query.build_mongodb_query(lq_filters,
+                                                          lq_fields)
+
+        if fields != {}:
+            mongo_dicts = (self.request.mongo_connection.
+                           shinken_live.services.find(query, fields))
+        else:
+            mongo_dicts = (self.request.mongo_connection.
+                           shinken_live.services.find(query))
+
+        service_dicts = [
+            _service_dict_from_mongo_item(s) for s in mongo_dicts
+        ]
 
         services = []
         for service_dict in service_dicts:
@@ -70,20 +62,54 @@ class ServiceHandler(handler.Handler):
 
         return services
 
-    def _service_dict_from_influx_item(self, item):
-        tags = item[0][1]
-        points = item[1]
-        first_point = next(points)
 
-        service_dict = {
-            "service_description": tags['service_description'],
-            "host_name": tags['host_name'],
-            "description": tags['service_description'],
-            "state": first_point['state'],
-            "acknowledged": int(first_point['acknowledged']),
-            "last_check": int(first_point['last_check']),
-            "last_state_change": int(first_point['last_state_change']),
-            "plugin_output": first_point['output']
-        }
+def _translate_live_query(live_query):
+    #  Mappings
+    mapping = {
+        "last_check": "last_chk",
+        "description": "service_description",
+        "plugin_output": "output",
+        "acknowledged": "problem_has_been_acknowledged",
+    }
 
-        return service_dict
+    #  Load the fields
+    if live_query.fields != wsme.Unset:
+        fields = live_query.fields
+    else:
+        fields = []
+
+    #  Translate the fields
+    lq_fields = []
+    for field in fields:
+        lq_fields.append(mapping.get(field, field))
+
+    #  Load the filters
+    filters = json.loads(live_query.filters)
+
+    #  Translate the filters
+    for filter in filters.values():
+        for field in filter.keys():
+            value = filter.pop(field)
+            filter[mapping.get(field, field)] = value
+
+    return filters, lq_fields
+
+
+def _service_dict_from_mongo_item(mongo_item):
+    last_chk = mongo_item.pop('last_chk', None)
+    if last_chk is not None:
+        mongo_item['last_check'] = int(last_chk)
+
+    last_state_change = mongo_item.pop('last_state_change', None)
+    if last_state_change is not None:
+        mongo_item['last_state_change'] = int(last_state_change)
+
+    output = mongo_item.pop('output', None)
+    if output is not None:
+        mongo_item['plugin_output'] = output
+
+    acknowledged = mongo_item.pop('problem_has_been_acknowledged', None)
+    if acknowledged is not None:
+        mongo_item['acknowledged'] = acknowledged
+
+    return mongo_item

@@ -1,0 +1,38 @@
+# Copyright 2015 - Savoir-Faire Linux inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+
+def build_mongodb_query(lq_filters, lq_fields):
+    #  Build the query
+    query = {}
+    for filter_name, filter_data in lq_filters.items():
+        for field, values in filter_data.items():
+            query[field] = {
+                _get_mongo_filter(filter_name): values
+            }
+
+    #  Build the required fields
+    fields = {}
+    for field in lq_fields:
+        fields[field] = 1
+
+    return query, fields
+
+
+def _get_mongo_filter(livequery_filter):
+    filters = {
+        "is": "$in",
+        "isnot": "$nin"
+    }
+    return filters[livequery_filter]
