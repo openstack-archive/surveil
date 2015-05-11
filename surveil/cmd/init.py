@@ -81,6 +81,15 @@ def main():
             ]
         )
 
+        subprocess.call(
+            [
+                "surveil-pack-upload",
+                "--mongo-url=mongo",
+                "--mongo-port=27017",
+                "/packs/linux-cinder/",
+            ]
+        )
+
     else:
         print("Skipping pack upload...")
 
