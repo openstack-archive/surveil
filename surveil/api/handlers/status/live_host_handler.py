@@ -17,6 +17,7 @@ import json
 
 from surveil.api.datamodel.status import live_host
 from surveil.api.handlers import handler
+from surveil.api.handlers.status import fields_filter
 from surveil.api.handlers.status import influxdb_query
 
 
@@ -57,7 +58,7 @@ class HostHandler(handler.Handler):
             host_dicts.append(host_dict)
 
         if live_query:
-            host_dicts = influxdb_query.filter_fields(
+            host_dicts = fields_filter.filter_fields(
                 host_dicts,
                 live_query
             )

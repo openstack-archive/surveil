@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import copy
 import json
 
 import httpretty
@@ -100,6 +101,30 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 }
             ]
         })
+
+        self.services = [
+            {
+                "host_name": 'Webserver',
+                "service_description": 'Apache',
+                "description": 'Serves Stuff',
+                "state": 0,
+                "last_check": 1429220785,
+                "last_state_change": 1429220785,
+                "plugin_output": 'HTTP OK - GOT NICE RESPONSE'
+            },
+            {
+                "host_name": 'someserver',
+                "service_description": 'servicesomething',
+                "description": 'Serves  lots of Stuff',
+                "state": 1,
+                "last_check": 1429220785,
+                "last_state_change": 1429220785,
+                "plugin_output": 'Hi there'
+            },
+        ]
+        self.mongoconnection.shinken_live.services.insert(
+            copy.deepcopy(self.services)
+        )
 
     @httpretty.activate
     def test_get_all_hosts(self):
@@ -264,70 +289,16 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "LIMIT 1"]
         )
 
-    @httpretty.activate
     def test_get_specific_host_service(self):
-        influx_response = json.dumps(
-            {"results": [
-                {"series": [
-                    {"name": "SERVICE_STATE",
-                     "tags": {"host_name": "ws-arbiter",
-                              "service_description": "check-ws-arbiter"},
-                     "columns": ["time",
-                                 "acknowledged",
-                                 "last_check",
-                                 "last_state_change",
-                                 "output",
-                                 "state",
-                                 "state_type"],
-                     "values":[
-                         ["2015-04-23T21:12:11Z",
-                          0,
-                          1.429823531e+09,
-                          1.42982353221745e+09,
-                          "TCP OK - 0.000 second response time on port 7760",
-                          0,
-                          "HARD"],
-                         ["2015-04-23T21:17:11Z",
-                          0,
-                          1.429823831e+09,
-                          1.42982353221745e+09,
-                          "TCP OK - 0.000 second response time on port 7760",
-                          0,
-                          "HARD"],
-                         ["2015-04-23T21:22:10Z",
-                          0,
-                          1.42982413e+09,
-                          1.42982353221745e+09,
-                          "TCP OK - 0.000 second response time on port 7760",
-                          0,
-                          "HARD"]]}]}]}
-        )
-
-        httpretty.register_uri(httpretty.GET,
-                               "http://influxdb:8086/query",
-                               body=influx_response)
-
         response = self.get(
-            "/v2/status/hosts/ws-arbiter/services/check-ws-arbiter"
+            "/v2/status/hosts/someserver/services/servicesomething"
         )
-
         expected = {'description': 'check-ws-arbiter',
                     'last_state_change': 1429823532,
-                    'acknowledged': 0,
                     'plugin_output': ('TCP OK - 0.000 second '
                                       'response time on port 7760'),
                     'last_check': 1429823531,
                     'state': 0,
                     'host_name': 'ws-arbiter',
                     'service_description': 'check-ws-arbiter'}
-
         self.assertItemsEqual(json.loads(response.body), expected)
-        self.assertEqual(
-            httpretty.last_request().querystring['q'],
-            ["SELECT * from LIVE_SERVICE_STATE "
-             "WHERE host_name='ws-arbiter' "
-             "AND service_description='check-ws-arbiter' "
-             "GROUP BY * "
-             "ORDER BY time DESC "
-             "LIMIT 1"]
-        )
