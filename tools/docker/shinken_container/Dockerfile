@@ -39,15 +39,17 @@ RUN apt-get update && apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-glance /plugins/check_glance && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-keystone /plugins/check_keystone && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-nova /plugins/check_nova && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-cinder /plugins/check_cinder && \
     apt-get remove -y subversion
 
 ## Install plugins dependencies
 RUN pip install shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
-RUN cd /plugins/check_glance && sudo pip install --upgrade .
-RUN cd /plugins/check_keystone && sudo pip install --upgrade .
-RUN cd /plugins/check_nova && sudo pip install --upgrade .
+RUN cd /plugins/check_glance && sudo pip install .
+RUN cd /plugins/check_keystone && sudo pip install .
+RUN cd /plugins/check_nova && sudo pip install .
+RUN cd /plugins/check_cinder && sudo pip install .
 
 ## packs
 RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
