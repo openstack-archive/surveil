@@ -21,33 +21,6 @@ from surveil.tests import base
 
 class LiveQueryFilterTest(base.BaseTestCase):
 
-    def test_filter_fields(self):
-        items = [
-            {"description": "test_keystone",
-             "last_state_change": 1429400986,
-             "plugin_output": "OK - 127.0.0.1: rta 0.045ms, lost 0%",
-             "last_check": 1429400984, "state": 2,
-             "host_name": "test_keystone"},
-            ]
-        query = live_query.LiveQuery(
-            fields=json.dumps(['host_name', 'last_check']),
-            filters=json.dumps({
-                "isnot": {
-                    "state": [0, 1],
-                    "description": ["test_keystone"]
-                }
-            })
-        )
-
-        result = influxdb_query.filter_fields(
-            items,
-            query
-        )
-
-        expected = [{"last_check": 1429400984, "host_name": "test_keystone"}]
-
-        self.assertItemsEqual(result, expected)
-
     def test_build_where_clause(self):
         filters = {
             "is": {
@@ -77,7 +50,7 @@ class LiveQueryFilterTest(base.BaseTestCase):
 
     def test_build_influx_query(self):
         query = live_query.LiveQuery(
-            fields=json.dumps(['host_name', 'last_check']),
+            fields=['host_name', 'last_check'],
             filters=json.dumps({}),
         )
         measurement = 'ALERT'
@@ -95,7 +68,7 @@ class LiveQueryFilterTest(base.BaseTestCase):
 
     def test_build_influx_query_orderby(self):
         query = live_query.LiveQuery(
-            fields=json.dumps(['host_name', 'last_check']),
+            fields=['host_name', 'last_check'],
             filters=json.dumps({}),
         )
         measurement = 'ALERT'
