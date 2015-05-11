@@ -17,8 +17,9 @@ import json
 
 from surveil.api.datamodel.status import live_host
 from surveil.api.handlers import handler
-from surveil.api.handlers.status import fields_filter
-from surveil.api.handlers.status import influxdb_query
+from surveil.api.handlers.status import mongodb_query
+
+import wsme
 
 
 class HostHandler(handler.Handler):
@@ -26,42 +27,34 @@ class HostHandler(handler.Handler):
 
     def get(self, host_name):
         """Return a host."""
-        cli = self.request.influxdb_client
-        query = ("SELECT * from LIVE_HOST_STATE "
-                 "WHERE host_name='%s' "
-                 "GROUP BY * "
-                 "ORDER BY time DESC "
-                 "LIMIT 1") % host_name
-        response = cli.query(query)
-
-        host = live_host.LiveHost(
-            **self._host_dict_from_influx_item(response.items()[0])
+        mongo_s = self.request.mongo_connection.shinken_live.hosts.find_one(
+            {"host_name": host_name}
         )
-        return host
+
+        return live_host.LiveHost(**_host_dict_from_mongo_item(mongo_s))
 
     def get_all(self, live_query=None):
         """Return all live hosts."""
-        cli = self.request.influxdb_client
-        query = influxdb_query.build_influxdb_query(
-            live_query,
-            'LIVE_HOST_STATE',
-            group_by=['host_name', 'address', 'childs', 'parents'],
-            order_by=['time DESC'],
-            limit=1
-        )
-        response = cli.query(query)
-
-        host_dicts = []
-
-        for item in response.items():
-            host_dict = self._host_dict_from_influx_item(item)
-            host_dicts.append(host_dict)
 
         if live_query:
-            host_dicts = fields_filter.filter_fields(
-                host_dicts,
-                live_query
-            )
+            lq_filters, lq_fields = _translate_live_query(live_query)
+        else:
+            lq_filters = {}
+            lq_fields = {}
+
+        query, fields = mongodb_query.build_mongodb_query(lq_filters,
+                                                          lq_fields)
+
+        if fields != {}:
+            mongo_dicts = (self.request.mongo_connection.
+                           shinken_live.hosts.find(query, fields))
+        else:
+            mongo_dicts = (self.request.mongo_connection.
+                           shinken_live.hosts.find(query))
+
+        host_dicts = [
+            _host_dict_from_mongo_item(s) for s in mongo_dicts
+        ]
 
         hosts = []
         for host_dict in host_dicts:
@@ -70,26 +63,54 @@ class HostHandler(handler.Handler):
 
         return hosts
 
-    def _host_dict_from_influx_item(self, item):
-        points = item[1]
-        first_point = next(points)
 
-        tags = item[0][1]
+def _translate_live_query(live_query):
+    #  Mappings
+    mapping = {
+        "last_check": "last_chk",
+        "description": "display_name",
+        "plugin_output": "output",
+        "acknowledged": "problem_has_been_acknoledged"
+    }
 
-        host_dict = {
-            # TAGS
-            "host_name": tags['host_name'],
-            "address": tags['address'],
-            "description": tags['host_name'],
-            "childs": json.loads(tags['childs']),
-            "parents": json.loads(tags['parents']),
+    #  Load the fields
+    if live_query.fields != wsme.Unset:
+        fields = live_query.fields
+    else:
+        fields = []
 
-            # Values
-            "state": first_point['state'],
-            "acknowledged": int(first_point['acknowledged']),
-            "last_check": int(first_point['last_check']),
-            "last_state_change": int(first_point['last_state_change']),
-            "plugin_output": first_point['output']
-        }
+    #  Translate the fields
+    lq_fields = []
+    for field in fields:
+        lq_fields.append(mapping.get(field, field))
 
-        return host_dict
+    #  Load the filters
+    filters = json.loads(live_query.filters)
+
+    #  Translate the filters
+    for filter in filters.values():
+        for field in filter.keys():
+            value = filter.pop(field)
+            filter[mapping.get(field, field)] = value
+
+    return filters, lq_fields
+
+
+def _host_dict_from_mongo_item(mongo_item):
+    """Create a dict from a mongodb item."""
+
+    mappings = [
+        ('last_chk', 'last_check', int),
+        ('last_state_change', 'last_state_change', int),
+        ('output', 'plugin_output', str),
+        ('problem_has_been_acknowledged', 'acknowledged', bool),
+        ('state', 'state', str),
+        ('display_name', 'description', str),
+    ]
+
+    for field in mappings:
+        value = mongo_item.pop(field[0], None)
+        if value is not None:
+            mongo_item[field[1]] = field[2](value)
+
+    return mongo_item
