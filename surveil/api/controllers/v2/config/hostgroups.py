@@ -15,6 +15,7 @@
 
 import pecan
 from pecan import rest
+import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import hostgroup
@@ -33,7 +34,7 @@ class HostGroupsController(rest.RestController):
         return host_groups
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(hostgroup.HostGroup, unicode)
+    @wsme_pecan.wsexpose(hostgroup.HostGroup, wtypes.text)
     def get_one(self, group_name):
         """Returns a host group."""
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
@@ -51,7 +52,7 @@ class HostGroupsController(rest.RestController):
         handler.create(data)
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(hostgroup.HostGroup, unicode, status_code=204)
+    @wsme_pecan.wsexpose(hostgroup.HostGroup, wtypes.text, status_code=204)
     def delete(self, group_name):
         """Returns a specific host group."""
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
@@ -59,7 +60,7 @@ class HostGroupsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(hostgroup.HostGroup,
-                         unicode,
+                         wtypes.text,
                          body=hostgroup.HostGroup,
                          status_code=204)
     def put(self, group_name, hostgroup):

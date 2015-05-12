@@ -42,7 +42,7 @@ class TestCheckModulationsController(functionalTest.FunctionalTest):
     def test_get_all_checkmodulations(self):
         response = self.get('/v2/config/checkmodulations')
 
-        self.assertItemsEqual(
+        self.assert_count_equal_backport(
             json.loads(response.body.decode()),
             [
                 {'checkmodulation_name': 'ping_day',

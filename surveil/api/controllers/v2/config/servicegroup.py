@@ -15,6 +15,7 @@
 
 import pecan
 from pecan import rest
+import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import servicegroup
@@ -33,7 +34,7 @@ class ServiceGroupsController(rest.RestController):
         return service_groups
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(servicegroup.ServiceGroup, unicode)
+    @wsme_pecan.wsexpose(servicegroup.ServiceGroup, wtypes.text)
     def get_one(self, group_name):
         """Returns a service group."""
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
@@ -51,7 +52,8 @@ class ServiceGroupsController(rest.RestController):
         handler.create(data)
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(servicegroup.ServiceGroup, unicode, status_code=204)
+    @wsme_pecan.wsexpose(servicegroup.ServiceGroup, wtypes.text,
+                         status_code=204)
     def delete(self, group_name):
         """Returns a specific service group."""
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
@@ -59,7 +61,7 @@ class ServiceGroupsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(servicegroup.ServiceGroup,
-                         unicode,
+                         wtypes.text,
                          body=servicegroup.ServiceGroup,
                          status_code=204)
     def put(self, group_name, servicegroup):
