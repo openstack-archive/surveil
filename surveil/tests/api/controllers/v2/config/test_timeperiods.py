@@ -42,7 +42,7 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
     def test_get_all_timeperiods(self):
         response = self.get('/v2/config/timeperiods')
 
-        self.assertItemsEqual(
+        self.assert_count_equal_backport(
             json.loads(response.body.decode()),
             [
                 {'timeperiod_name': 'misc-single-days',

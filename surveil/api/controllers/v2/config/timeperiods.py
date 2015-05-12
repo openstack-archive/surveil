@@ -15,6 +15,7 @@
 
 import pecan
 from pecan import rest
+import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import timeperiod
@@ -33,7 +34,7 @@ class TimePeriodsController(rest.RestController):
         return time_periods
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(timeperiod.TimePeriod, unicode)
+    @wsme_pecan.wsexpose(timeperiod.TimePeriod, wtypes.text)
     def get_one(self, timeperiod_name):
         """Returns a specific time period."""
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
@@ -51,7 +52,7 @@ class TimePeriodsController(rest.RestController):
         handler.create(data)
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(timeperiod.TimePeriod, unicode, status_code=204)
+    @wsme_pecan.wsexpose(timeperiod.TimePeriod, wtypes.text, status_code=204)
     def delete(self, timeperiod_name):
         """Returns a specific time period."""
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
@@ -59,7 +60,7 @@ class TimePeriodsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(timeperiod.TimePeriod,
-                         unicode,
+                         wtypes.text,
                          body=timeperiod.TimePeriod,
                          status_code=204)
     def put(self, timeperiod_name, timeperiod):

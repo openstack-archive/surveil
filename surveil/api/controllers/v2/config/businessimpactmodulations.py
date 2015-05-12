@@ -15,6 +15,7 @@
 
 import pecan
 from pecan import rest
+import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import businessimpactmodulation as mod
@@ -33,7 +34,7 @@ class BusinessImpactModulationsController(rest.RestController):
         return modulations
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(mod.BusinessImpactModulation, unicode)
+    @wsme_pecan.wsexpose(mod.BusinessImpactModulation, wtypes.text)
     def get_one(self, modulation_name):
         """Returns a specific business impact modulation."""
         handler = bh.BusinessImpactModulationHandler(pecan.request)
@@ -52,7 +53,7 @@ class BusinessImpactModulationsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(mod.BusinessImpactModulation,
-                         unicode,
+                         wtypes.text,
                          status_code=204)
     def delete(self, modulation_name):
         """Returns a specific business impact modulation."""
@@ -61,7 +62,7 @@ class BusinessImpactModulationsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(mod.BusinessImpactModulation,
-                         unicode,
+                         wtypes.text,
                          body=mod.BusinessImpactModulation,
                          status_code=204)
     def put(self, modulaion_name, modulation):

@@ -15,6 +15,7 @@
 
 import pecan
 from pecan import rest
+import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import notificationway
@@ -33,7 +34,7 @@ class NotificationWaysController(rest.RestController):
         return notificationsway
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(notificationway.NotificationWay, unicode)
+    @wsme_pecan.wsexpose(notificationway.NotificationWay, wtypes.text)
     def get_one(self, notificationway_name):
         """Returns a specific notification way."""
         handler = notificationway_handler.NotificationWayHandler(pecan.request)
@@ -53,7 +54,7 @@ class NotificationWaysController(rest.RestController):
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(
         notificationway.NotificationWay,
-        unicode,
+        wtypes.text,
         status_code=204
     )
     def delete(self, notificationway_name):
@@ -63,7 +64,7 @@ class NotificationWaysController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(notificationway.NotificationWay,
-                         unicode,
+                         wtypes.text,
                          body=notificationway.NotificationWay,
                          status_code=204)
     def put(self, notificationway_name, notificationway):
