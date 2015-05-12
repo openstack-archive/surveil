@@ -127,7 +127,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "acknowledged": True,
              "host_name": "ws-arbiter"}]
 
-        self.assertItemsEqual(json.loads(response.body), expected)
+        self.assert_count_equal_backport(json.loads(response.body.decode()),
+                                         expected)
 
     def test_query_hosts(self):
         query = {
@@ -144,7 +145,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
 
         expected = [{"host_name": "ws-arbiter", "last_check": 1429405764}]
 
-        self.assertItemsEqual(json.loads(response.body), expected)
+        self.assert_count_equal_backport(json.loads(response.body.decode()),
+                                         expected)
 
     def test_get_specific_host(self):
 
@@ -161,7 +163,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     "host_name": "localhost",
                     "address": "localhost"}
 
-        self.assertItemsEqual(json.loads(response.body), expected)
+        self.assert_count_equal_backport(json.loads(response.body.decode()),
+                                         expected)
 
     def test_get_specific_host_service(self):
         response = self.get(
@@ -175,4 +178,6 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     'state': 'OK',
                     'host_name': 'ws-arbiter',
                     'service_description': 'check-ws-arbiter'}
-        self.assertItemsEqual(json.loads(response.body), expected)
+        self.assert_count_equal_backport(json.loads(response.body.decode()),
+                                         expected)
+

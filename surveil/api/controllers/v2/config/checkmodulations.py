@@ -15,6 +15,7 @@
 
 import pecan
 from pecan import rest
+import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import checkmodulation
@@ -33,7 +34,7 @@ class CheckModulationsController(rest.RestController):
         return checkmodulations
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(checkmodulation.CheckModulation, unicode)
+    @wsme_pecan.wsexpose(checkmodulation.CheckModulation, wtypes.text)
     def get_one(self, checkmodulation_name):
         """Returns a specific check modulation."""
         handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
@@ -52,7 +53,7 @@ class CheckModulationsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(checkmodulation.CheckModulation,
-                         unicode, status_code=204)
+                         wtypes.text, status_code=204)
     def delete(self, checkmodulation_name):
         """Returns a specific check modulation."""
         handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
@@ -60,7 +61,7 @@ class CheckModulationsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(checkmodulation.CheckModulation,
-                         unicode,
+                         wtypes.text,
                          body=checkmodulation.CheckModulation,
                          status_code=204)
     def put(self, checkmodulation_name, checkmodulation):

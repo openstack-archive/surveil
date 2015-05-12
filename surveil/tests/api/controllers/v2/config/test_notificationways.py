@@ -51,7 +51,7 @@ class TestNotificationWayController(functionalTest.FunctionalTest):
     def test_get_all_notificationways(self):
         response = self.get('/v2/config/notificationways')
 
-        self.assertItemsEqual(
+        self.assert_count_equal_backport(
             json.loads(response.body.decode()),
             [
                 {

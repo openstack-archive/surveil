@@ -47,4 +47,4 @@ class FieldsFilterTest(base.BaseTestCase):
 
         expected = [{"last_check": 1429400984, "host_name": "test_keystone"}]
 
-        self.assertItemsEqual(result, expected)
+        self.assert_count_equal_backport(result, expected)

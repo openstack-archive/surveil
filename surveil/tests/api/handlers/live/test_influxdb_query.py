@@ -35,7 +35,7 @@ class LiveQueryFilterTest(base.BaseTestCase):
 
         expected = "WHERE state=0 AND description='test_keystone'"
 
-        self.assertItemsEqual(result, expected)
+        self.assert_count_equal_backport(result, expected)
 
     def test_build_where_clause_no_filters(self):
         filters = {}
@@ -46,7 +46,7 @@ class LiveQueryFilterTest(base.BaseTestCase):
 
         expected = ""
 
-        self.assertItemsEqual(result, expected)
+        self.assert_count_equal_backport(result, expected)
 
     def test_build_influx_query(self):
         query = live_query.LiveQuery(
@@ -64,7 +64,7 @@ class LiveQueryFilterTest(base.BaseTestCase):
 
         expected = "SELECT * FROM ALERT GROUP BY *, host_name LIMIT 10"
 
-        self.assertItemsEqual(result, expected)
+        self.assert_count_equal_backport(result, expected)
 
     def test_build_influx_query_orderby(self):
         query = live_query.LiveQuery(
@@ -86,4 +86,4 @@ class LiveQueryFilterTest(base.BaseTestCase):
                     "GROUP BY *, host_name "
                     "ORDER BY time DESC LIMIT 10")
 
-        self.assertItemsEqual(result, expected)
+        self.assert_count_equal_backport(result, expected)
