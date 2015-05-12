@@ -68,8 +68,8 @@ def _build_where_clause(filters):
     clause = []
     first = True
 
-    for filter_name, filter_data in filters.items():
-        for field, values in filter_data.items():
+    for filter_name, filter_data in sorted(filters.items()):
+        for field, values in sorted(filter_data.items()):
             for value in values:
                 if first:
                     clause.append('WHERE')

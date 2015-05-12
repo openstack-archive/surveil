@@ -103,7 +103,8 @@ class TestStatusServices(functionalTest.FunctionalTest):
              'service_description': 'check-ws-arbiter'}
         ]
 
-        self.assertEqual(json.loads(response.body), expected)
+        self.assertEqual(json.loads(response.body.decode()),
+                         expected)
 
         self.assertEqual(
             httpretty.last_request().querystring['q'],
@@ -168,4 +169,5 @@ class TestStatusServices(functionalTest.FunctionalTest):
              'service_description': 'Check KeyStone service.'}
         ]
 
-        self.assertEqual(json.loads(response.body), expected)
+        self.assertEqual(json.loads(response.body.decode()),
+                         expected)

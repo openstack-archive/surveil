@@ -42,7 +42,7 @@ class TestBusinessImpactModulationController(functionalTest.FunctionalTest):
     def test_get_all_modulations(self):
         response = self.get('/v2/config/businessimpactmodulations')
 
-        self.assertItemsEqual(
+        self.assert_count_equal_backport(
             json.loads(response.body.decode()),
             [
                 {'business_impact': 1,

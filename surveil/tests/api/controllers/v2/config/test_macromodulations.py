@@ -44,7 +44,7 @@ class TestMacroModulationController(functionalTest.FunctionalTest):
     def test_get_all_macromodulations(self):
         response = self.get('/v2/config/macromodulations')
 
-        self.assertItemsEqual(
+        self.assert_count_equal_backport(
             [
                 {
                     'macromodulation_name': 'HighDuringNight',
