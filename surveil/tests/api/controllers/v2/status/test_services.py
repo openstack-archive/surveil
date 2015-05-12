@@ -74,7 +74,8 @@ class TestStatusServices(functionalTest.FunctionalTest):
             },
         ]
 
-        self.assertItemsEqual(json.loads(response.body), expected)
+        self.assertEqual(json.loads(response.body.decode()),
+                         expected)
 
     def test_query_services(self):
         query = {
@@ -97,4 +98,5 @@ class TestStatusServices(functionalTest.FunctionalTest):
              'service_description': 'Apache'}
         ]
 
-        self.assertEqual(json.loads(response.body), expected)
+        self.assertEqual(json.loads(response.body.decode()),
+                         expected)
