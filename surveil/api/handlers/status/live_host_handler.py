@@ -12,7 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import print_function
 import json
 
 from surveil.api.datamodel.status import live_host
@@ -70,7 +69,7 @@ def _translate_live_query(live_query):
         "last_check": "last_chk",
         "description": "display_name",
         "plugin_output": "output",
-        "acknowledged": "problem_has_been_acknoledged"
+        "acknowledged": "problem_has_been_acknowledged"
     }
 
     #  Load the fields
