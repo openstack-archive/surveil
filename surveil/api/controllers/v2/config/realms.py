@@ -15,6 +15,7 @@
 
 import pecan
 from pecan import rest
+import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import realm
@@ -33,7 +34,7 @@ class RealmsController(rest.RestController):
         return realms
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(realm.Realm, unicode)
+    @wsme_pecan.wsexpose(realm.Realm, wtypes.text)
     def get_one(self, realm_name):
         """Returns a specific realm."""
         handler = realm_handler.RealmHandler(pecan.request)
@@ -51,7 +52,7 @@ class RealmsController(rest.RestController):
         handler.create(data)
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(realm.Realm, unicode, status_code=204)
+    @wsme_pecan.wsexpose(realm.Realm, wtypes.text, status_code=204)
     def delete(self, realm_name):
         """Deletes a specific realm."""
         handler = realm_handler.RealmHandler(pecan.request)
@@ -59,7 +60,7 @@ class RealmsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(realm.Realm,
-                         unicode,
+                         wtypes.text,
                          body=realm.Realm,
                          status_code=204)
     def put(self, realm_name, realm):

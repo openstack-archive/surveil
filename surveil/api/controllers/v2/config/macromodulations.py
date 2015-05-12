@@ -15,6 +15,7 @@
 
 import pecan
 from pecan import rest
+import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import macromodulation
@@ -33,7 +34,7 @@ class MacroModulationController(rest.RestController):
         return modulations
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(macromodulation.MacroModulation, unicode)
+    @wsme_pecan.wsexpose(macromodulation.MacroModulation, wtypes.text)
     def get_one(self, timeperiod_name):
         """Returns a specific macro modulation."""
         handler = macromodulation_handler.MacroModulationHandler(pecan.request)
@@ -52,7 +53,7 @@ class MacroModulationController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(macromodulation.MacroModulation,
-                         unicode,
+                         wtypes.text,
                          status_code=204)
     def delete(self, modulation_name):
         """Returns a specific macro modulation."""
@@ -61,7 +62,7 @@ class MacroModulationController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(macromodulation.MacroModulation,
-                         unicode,
+                         wtypes.text,
                          body=macromodulation.MacroModulation,
                          status_code=204)
     def put(self, modulation_name, modulation):

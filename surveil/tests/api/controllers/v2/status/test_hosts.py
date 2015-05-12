@@ -141,7 +141,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "acknowledged": 0,
              "host_name": "ws-arbiter"}]
 
-        self.assertItemsEqual(json.loads(response.body), expected)
+        self.assert_count_equal_backport(json.loads(response.body.decode()),
+                                         expected)
         self.assertEqual(
             httpretty.last_request().querystring['q'],
             ["SELECT * FROM LIVE_HOST_STATE "
@@ -200,7 +201,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
 
         expected = [{"host_name": "ws-arbiter", "last_check": 1429405764}]
 
-        self.assertItemsEqual(json.loads(response.body), expected)
+        self.assert_count_equal_backport(json.loads(response.body.decode()),
+                                         expected)
 
         self.assertEqual(
             httpretty.last_request().querystring['q'],
@@ -254,7 +256,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     "host_name": "localhost",
                     "address": "localhost"}
 
-        self.assertItemsEqual(json.loads(response.body), expected)
+        self.assert_count_equal_backport(json.loads(response.body.decode()),
+                                         expected)
 
         self.assertEqual(
             httpretty.last_request().querystring['q'],
@@ -321,7 +324,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     'host_name': 'ws-arbiter',
                     'service_description': 'check-ws-arbiter'}
 
-        self.assertItemsEqual(json.loads(response.body), expected)
+        self.assert_count_equal_backport(json.loads(response.body.decode()),
+                                         expected)
         self.assertEqual(
             httpretty.last_request().querystring['q'],
             ["SELECT * from LIVE_SERVICE_STATE "
