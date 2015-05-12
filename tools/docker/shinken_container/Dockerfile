@@ -46,10 +46,10 @@ RUN apt-get update && apt-get install -y subversion && \
 RUN pip install shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
-RUN cd /plugins/check_glance && sudo pip install .
-RUN cd /plugins/check_keystone && sudo pip install .
-RUN cd /plugins/check_nova && sudo pip install .
-RUN cd /plugins/check_cinder && sudo pip install .
+RUN cd /plugins/check_glance && sudo python setup.py install
+RUN cd /plugins/check_keystone && sudo python setup.py install
+RUN cd /plugins/check_nova && sudo python setup.py install
+RUN cd /plugins/check_cinder && sudo python setup.py install
 
 ## packs
 RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
