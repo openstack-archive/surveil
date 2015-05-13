@@ -16,11 +16,13 @@ from pecan import rest
 
 from surveil.api.controllers.v2.actions import acknowledge
 from surveil.api.controllers.v2.actions import downtime
+from surveil.api.controllers.v2.actions import recheck
 
 
 class ActionsController(rest.RestController):
     acknowledge = acknowledge.AcknowledgeController()
     downtime = downtime.DowntimeController()
+    recheck = recheck.RecheckController()
     # externalcommands = ExternalCommandsController()
     # engine = EngineController()
     pass
