@@ -32,8 +32,9 @@ class TestAcknowledgeController(functionalTest.FunctionalTest):
 
         self.assertEqual(response.status_int, 200)
 
-        self.assertEqual(httpretty.last_request().body,
-                         'action=add&host_name=localhost')
+        self.assert_count_equal_backport(httpretty.last_request().body.decode()
+                                         .split('&'),
+                                         ['host_name=localhost', 'action=add'])
         self.assertEqual(httpretty.last_request().path,
                          '/acknowledge')
 
@@ -50,7 +51,9 @@ class TestAcknowledgeController(functionalTest.FunctionalTest):
 
         self.assertEqual(response.status_int, 200)
 
-        self.assertEqual(httpretty.last_request().body,
-                         'duration=86400&action=delete&host_name=localhost')
+        self.assert_count_equal_backport(httpretty.last_request().body.decode()
+                                         .split('&'),
+                                         ['host_name=localhost',
+                                          'action=delete'])
         self.assertEqual(httpretty.last_request().path,
                          '/downtime')
