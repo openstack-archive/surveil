@@ -15,7 +15,7 @@ RUN shinken --init
 RUN shinken install webui
 RUN shinken install auth-cfg-password
 RUN shinken install booster-nrpe
-RUN pip install influxdb && shinken install mod-influxdb
+RUN pip install influxdb==2.3.0 && shinken install mod-influxdb
 RUN shinken install ws-arbiter
 RUN pip install pymongo==2.8 && shinken install mod-mongodb
 
