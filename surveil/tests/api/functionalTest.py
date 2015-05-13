@@ -98,7 +98,8 @@ class FunctionalTest(base.BaseTestCase):
             return func
 
         for action in ('get', 'post', 'put', 'delete',
-                       'post', 'post_json', 'put_json'):
+                       'post', 'post_json', 'put_json',
+                       'delete_json'):
             setattr(self, action, make_action(action))
 
     def tearDown(self):
