@@ -2,7 +2,7 @@ FROM ubuntu:trusty
 
 MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
-RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev nagios-nrpe-server
+RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev nagios-nrpe-server wget
 # libffi-devand libssl-dev are for python-cryptography
 
 ### Shinken
@@ -15,10 +15,31 @@ RUN shinken --init
 RUN shinken install webui
 RUN shinken install auth-cfg-password
 RUN shinken install booster-nrpe
-RUN pip install influxdb==2.3.0 && shinken install mod-influxdb
-RUN shinken install ws-arbiter
-RUN pip install pymongo==2.8 && shinken install mod-mongodb
 
+# mod-mongodb
+RUN pip install pymongo==2.8
+RUN cd /tmp && \
+    wget -O mod-mongodb.tar.gz https://github.com/shinken-monitoring/mod-mongodb/archive/0169cb63e0ba2dadd9d07e3c1d52298af977fde5.tar.gz && \
+    tar -zxvf mod-mongodb.tar.gz && \
+    mv /tmp/mod-mongodb-*/module /var/lib/shinken/modules/mod-mongodb && \
+    rm -rfv /tmp/mod-mongodb*
+
+# mod-influxdb
+RUN pip install influxdb==2.3.0
+RUN cd /tmp && \
+    wget -O mod-influxdb.tar.gz https://github.com/savoirfairelinux/mod-influxdb/archive/28c1bf1a34748002ad8ee1404123579373ce82fd.tar.gz && \
+    tar -zxvf mod-influxdb.tar.gz && \
+    mv /tmp/mod-influxdb-*/module /var/lib/shinken/modules/mod-influxdb && \
+    rm -rfv /tmp/mod-influxdb*
+
+# mod-ws-arbiter
+RUN cd /tmp && \
+    wget -O mod-ws-arbiter.tar.gz https://github.com/shinken-monitoring/mod-ws-arbiter/archive/ebae7950be9452ab80ec58575e9887d9b2a15d2a.tar.gz && \
+    tar -zxvf mod-ws-arbiter.tar.gz && \
+    mv /tmp/mod-ws-arbiter-*/module /var/lib/shinken/modules/ws-arbiter && \
+    rm -rfv /tmp/mod-ws-arbiter*
+
+# mod-mongo-live-config
 RUN cd /opt && \
     git clone  https://github.com/savoirfairelinux/mod-mongo-live-config.git && \
     cd mod-mongo-live-config && \
