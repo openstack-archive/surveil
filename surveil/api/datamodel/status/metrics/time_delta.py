@@ -12,13 +12,24 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from pecan import rest
+import wsme
+import wsme.types as wtypes
 
-from surveil.api.controllers.v2.status import hosts as v2_hosts
-from surveil.api.controllers.v2.status import services as v2_services
+from surveil.api.datamodel import types
 
 
-class StatusController(rest.RestController):
-    # events = EventsController()
-    hosts = v2_hosts.HostsController()
-    services = v2_services.ServicesController()
+class TimeDelta(types.Base):
+    """Hold a time in JSON."""
+
+    begin = wsme.wsattr(wtypes.text, mandatory=True)
+    "The begin time of a measure in RFC3339."
+
+    end = wsme.wsattr(wtypes.text, mandatory=True)
+    "The end time of a measure in RFC3339."
+
+    @classmethod
+    def sample(cls):
+        return cls(
+            begin='2015-01-29T21:50:44Z',
+            end='2015-01-29T22:50:44Z'
+        )
