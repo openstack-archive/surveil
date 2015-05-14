@@ -18,36 +18,8 @@ Project Info
 * Open Gerrit Changesets: https://review.openstack.org/#/q/status:open+surveil,n,z
 * Bug tracker: https://bugs.launchpad.net/surveil
 
-Getting Started
+
+Getting started
 ###############
 
-Developpement environnement
----------------------------
-
-Surveil's developpement environnement is based on Docker and docker-compose.
-
-You can install docker-compose with the following command:
-
-    :bash:`sudo pip install -U docker-compose`
-
-You will then be able to use the environment with the following commands:
-
-* :bash:`sudo docker-compose up`: Launch Surveil and its dependencies in containers.
-* :bash:`sudo docker-compose down`: Kill the active docker containers, if any.
-* :bash:`sudo docker-compose rm`: Remove all containers, if any.
-* :bash:`sudo docker-compose`: Build the docker images.
-
-Configuration for the different services running in the Docker containers are
-stored in tools/docker.
-
-After running :bash:`sudo docker-compose up`, you should be able to acces all
-services at the ports configured in the docker-compose.yml file.
-
-* Surveil API: http://localhost:8080/v1/hello
-* Bansho (surveil web interface): http://localhost:8888 (any login info is fine)
-* InfluxDB: http://localhost:8083 (user:root pw:root)
-* Grafana: http://localhost:80 (user:admin pw:admin)
-* Shinken WebUI: http://localhost:7767/all (user:admin pw:admin)
-
-The Surveil container mounts your local project folder and pecan reloads every
-time the project files change thus providing a proper development environment.
+There is a getting started guide available `here <https://surveil.readthedocs.org>`_.
