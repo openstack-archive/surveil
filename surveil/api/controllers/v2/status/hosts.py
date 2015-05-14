@@ -17,12 +17,14 @@ from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.controllers.v2 import logs
-from surveil.api.controllers.v2.status import metrics
 from surveil.api.datamodel.status import live_host
 from surveil.api.datamodel.status import live_query
 from surveil.api.datamodel.status import live_service
+from surveil.api.datamodel.status.metrics import live_metric
+from surveil.api.datamodel.status.metrics import time_delta
 from surveil.api.handlers.status import live_host_handler
 from surveil.api.handlers.status import live_service_handler
+from surveil.api.handlers.status.metrics import live_metric_handler
 from surveil.common import util
 
 
@@ -65,7 +67,23 @@ class HostServicesController(rest.RestController):
         return HostServiceController(service_name), remainder
 
 
+class HostServiceMetricsController(rest.RestController):
+
+    @pecan.expose()
+    def _lookup(self, metric_name, *remainder):
+        return HostServiceMetricController(metric_name), remainder
+
+
+class HostMetricsController(rest.RestController):
+
+    @pecan.expose()
+    def _lookup(self, metric_name, *remainder):
+        return HostMetricController(metric_name), remainder
+
+
 class HostServiceController(rest.RestController):
+
+    metrics = HostServiceMetricsController()
 
     def __init__(self, service_name):
         pecan.request.context['service_name'] = service_name
@@ -83,6 +101,72 @@ class HostServiceController(rest.RestController):
         return service
 
 
+class HostServiceMetricController(rest.RestController):
+
+    def __init__(self, metric_name):
+        pecan.request.context['metric_name'] = metric_name
+        self.metric_name = metric_name
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(live_metric.LiveMetric)
+    def get(self):
+        """Return the last measure for the metric name
+
+            of the service name on the host name.
+            """
+        handler = live_metric_handler.MetricHandler(pecan.request)
+        metric = handler.get(
+            self.metric_name,
+            pecan.request.context['host_name'],
+            pecan.request.context['service_name']
+        )
+        return metric
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose([live_metric.LiveMetric], body=time_delta.TimeDelta)
+    def post(self, time):
+        """Given a LiveQuery, returns all matching s."""
+        handler = live_metric_handler.MetricHandler(pecan.request)
+        metrics = handler.get_all(time_delta=time,
+                                  metric_name=self.metric_name,
+                                  host_name=pecan.request.context['host_name'],
+                                  service_description=pecan.request.
+                                  context['service_name'])
+        return metrics
+
+
+class HostMetricController(rest.RestController):
+
+    def __init__(self, metric_name):
+        pecan.request.context['metric_name'] = metric_name
+        self.metric_name = metric_name
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(live_metric.LiveMetric)
+    def get(self):
+        """Return the last measure for the metric name
+
+        of the service name on the host name
+        """
+        handler = live_metric_handler.MetricHandler(pecan.request)
+        metric = handler.get(
+            self.metric_name,
+            pecan.request.context['host_name']
+        )
+        return metric
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose([live_metric.LiveMetric], body=time_delta.TimeDelta)
+    def post(self, time):
+        """Given a LiveQuery, returns all matching s."""
+        handler = live_metric_handler.MetricHandler(pecan.request)
+        metrics = handler.get_all(time_delta=time,
+                                  metric_name=self.metric_name,
+                                  host_name=pecan.request.context['host_name']
+                                  )
+        return metrics
+
+
 class HostController(rest.RestController):
 
     services = HostServicesController()
@@ -90,7 +174,7 @@ class HostController(rest.RestController):
     # externalcommands = ExternalCommandsController()
     # config = config.ConfigController()
     events = logs.LogsController()
-    metrics = metrics.MetricsController()
+    metrics = HostMetricsController()
 
     def __init__(self, host_name):
         pecan.request.context['host_name'] = host_name

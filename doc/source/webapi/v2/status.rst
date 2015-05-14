@@ -20,9 +20,6 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.status.hosts:ConfigController
    :webprefix: /v2/status/hosts/(host_name)/config
 
-.. rest-controller:: surveil.api.controllers.v2.status.metrics:MetricsController
-   :webprefix: /v2/status/hosts/(host_name)/metrics
-
 .. rest-controller:: surveil.api.controllers.v2.logs:LogsController
    :webprefix: /v2/status/hosts/(host_name)/events
 
@@ -44,15 +41,6 @@ Services
 .. rest-controller:: surveil.api.controllers.v2.status.services:ServicesController
    :webprefix: /v2/status/services
 
-
-Metrics
-=======
-
-.. rest-controller:: surveil.api.controllers.v2.status.metrics:MetricsController
-   :webprefix: /v2/status/metrics
-
-.. rest-controller:: surveil.api.controllers.v2.status.metrics:MetricController
-   :webprefix: /v2/status/metrics/
 
 types documentation
 ===================
