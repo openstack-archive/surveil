@@ -11,6 +11,7 @@ surveil:
   volumes:
    - ./surveil:/opt/surveil/surveil
   command: bash -c "cd /opt/surveil && ./setup.sh && python setup.py develop && ((sleep 40 && surveil-init --demo) &) && sleep 20 && surveil-api --reload"
+#  privileged: true # Fedora users might want to uncomment this if they face permission issues
 
 shinken:
   build: tools/docker/shinken_container/
