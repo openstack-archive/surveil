@@ -17,9 +17,9 @@ RUN shinken install auth-cfg-password
 
 # mod-booster-nrpe
 RUN cd /tmp && \
-    wget -O mod-booster-nrpe.tar.gz https://github.com/shinken-monitoring/mod-booster-nrpe/archive/8eee9eb1397f104be4604c67e23b6485528d7844.tar.gz && \
+    wget -O mod-booster-nrpe.tar.gz https://github.com/shinken-monitoring/mod-booster-nrpe/archive/de7099706855e32c1962c77740be0fae446d15f5.tar.gz && \
     tar -zxvf mod-booster-nrpe.tar.gz && \
-    mv /tmp/mod-booster-nrpe-*/booster_nrpe /var/lib/shinken/modules/mod-booster-nrpe && \
+    mv /tmp/mod-booster-nrpe-*/module /var/lib/shinken/modules/mod-booster-nrpe && \
     rm -rfv /tmp/mod-booster-nrpe*
 
 # mod-mongodb
