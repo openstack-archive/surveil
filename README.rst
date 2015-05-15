@@ -22,4 +22,4 @@ Project Info
 Getting started
 ###############
 
-There is a getting started guide available `here <https://surveil.readthedocs.org>`_.
+There is a getting started guide available `here <https://surveil.readthedocs.org/en/latest/getting_started.html>`_.
