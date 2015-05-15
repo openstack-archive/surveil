@@ -1,6 +1,6 @@
 surveil:
   #build: .
-  image: savoirfairelinux/surveil:0.4.0
+  image: savoirfairelinux/surveil:0.4.1
   links:
    - mongo
    - influxdb
@@ -18,7 +18,7 @@ surveil:
 
 shinken:
   #build: tools/docker/shinken_container/
-  image: savoirfairelinux/surveil-shinken:0.4.0
+  image: savoirfairelinux/surveil-shinken:0.4.1
   links:
     - mongo
     - influxdb
