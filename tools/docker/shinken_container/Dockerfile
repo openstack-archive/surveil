@@ -56,11 +56,12 @@ RUN chmod u+s /bin/ping
 RUN chmod u+s /bin/ping6
 
 # Download plugins
+ENV MONITORING_TOOLS_VERSION 0.1.0
 RUN apt-get update && apt-get install -y subversion && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-glance /plugins/check_glance && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-keystone /plugins/check_keystone && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-nova /plugins/check_nova && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/trunk/plugins/check-cinder /plugins/check_cinder && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-glance /plugins/check_glance && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-keystone /plugins/check_keystone && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-nova /plugins/check_nova && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-cinder /plugins/check_cinder && \
     apt-get remove -y subversion
 
 ## Install plugins dependencies
