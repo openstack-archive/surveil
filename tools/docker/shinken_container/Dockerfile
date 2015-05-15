@@ -14,7 +14,13 @@ RUN shinken --init
 ## modules
 RUN shinken install webui
 RUN shinken install auth-cfg-password
-RUN shinken install booster-nrpe
+
+# mod-booster-nrpe
+RUN cd /tmp && \
+    wget -O mod-booster-nrpe.tar.gz https://github.com/shinken-monitoring/mod-booster-nrpe/archive/8eee9eb1397f104be4604c67e23b6485528d7844.tar.gz && \
+    tar -zxvf mod-booster-nrpe.tar.gz && \
+    mv /tmp/mod-booster-nrpe-*/booster_nrpe /var/lib/shinken/modules/mod-booster-nrpe && \
+    rm -rfv /tmp/mod-booster-nrpe*
 
 # mod-mongodb
 RUN pip install pymongo==2.8
