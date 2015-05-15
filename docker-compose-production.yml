@@ -1,6 +1,6 @@
 surveil:
   #build: .
-  image: savoirfairelinux/surveil:0.4.1
+  image: savoirfairelinux/surveil:0.4.2
   links:
    - mongo
    - influxdb
@@ -18,7 +18,7 @@ surveil:
 
 shinken:
   #build: tools/docker/shinken_container/
-  image: savoirfairelinux/surveil-shinken:0.4.1
+  image: savoirfairelinux/surveil-shinken:0.4.2
   links:
     - mongo
     - influxdb
@@ -35,7 +35,7 @@ mongo:
    - ./container-data/mongodb:/data/db
 
 influxdb:
-  image: savoirfairelinux/influxdb
+  image: savoirfairelinux/influxdb:0.9.0-rc30
   environment:
     PRE_CREATE_DB: "db"
   ports:
