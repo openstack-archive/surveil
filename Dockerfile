@@ -20,8 +20,8 @@ RUN apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-nova /packs/linux-nova && \
     apt-get remove -y subversion
 
-ADD requirements.txt surveil/requirements.txt
-RUN pip install -r /surveil/requirements.txt
+ADD requirements.txt /opt/surveil/requirements.txt
+RUN pip install -r /opt/surveil/requirements.txt
 
 ADD tools/docker/surveil_container/setup.sh /opt/surveil/setup.sh
 ADD setup.py /opt/surveil/setup.py
