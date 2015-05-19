@@ -1,10 +1,10 @@
 surveil:
   #build: .
-  image: savoirfairelinux/surveil:0.4.2
+  image: savoirfairelinux/surveil:0.4.3
   links:
    - mongo
    - influxdb
-   - shinken
+   - alignak
   ports:
    - "8080:8080"
   environment:
@@ -16,9 +16,9 @@ surveil:
     #SURVEIL_KEYSTONE_ADMIN_PASSWORD: "password"
     #SURVEIL_KEYSTONE_ADMIN_TENANT_NAME: "admin"
 
-shinken:
-  #build: tools/docker/shinken_container/
-  image: savoirfairelinux/surveil-shinken:0.4.2
+alignak:
+  #build: tools/docker/alignak_container/
+  image: savoirfairelinux/surveil-alignak:0.4.3
   links:
     - mongo
     - influxdb

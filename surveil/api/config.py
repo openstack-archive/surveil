@@ -26,7 +26,7 @@ server = {
 # as long as is it in the same format.
 surveil_api_config = {
     "mongodb_uri": "mongodb://mongo:27017",
-    "ws_arbiter_url": "http://shinken:7760",
+    "ws_arbiter_url": "http://alignak:7760",
     "influxdb_uri": "influxdb://root:root@influxdb:8086/db"
 }
 

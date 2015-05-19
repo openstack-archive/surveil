@@ -4,8 +4,8 @@ MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
 RUN apt-get update && apt-get install -y vim python-pip python3-pip python-dev libffi-dev libssl-dev git python-pycurl
 
-# Surveil needs shinken (as a lib)
-RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/2.2-RC1.zip
+# Surveil needs alignak (as a lib)
+RUN useradd shinken && pip install https://github.com/Alignak-monitoring/alignak/archive/396d10105827f8c75686811991829548e6778e11.zip
 
 # python-surveilclient (used by surveil-init)
 RUN pip install python-surveilclient==0.5.1

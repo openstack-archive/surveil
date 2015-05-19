@@ -5,7 +5,7 @@ MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev nagios-nrpe-server wget
 # libffi-devand libssl-dev are for python-cryptography
 
-### Shinken
+### Alignak
 RUN apt-get update && apt-get install -y python-pip git
 RUN useradd shinken && pip install https://github.com/gst/shinken/archive/19df05f2da13bdc6957ef1adf0660aa9f61c89f7.zip
 RUN apt-get install -y python-pycurl
