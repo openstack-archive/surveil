@@ -18,6 +18,7 @@ Project Info
 * Open Gerrit Changesets: https://review.openstack.org/#/q/status:open+surveil,n,z
 * Bug tracker: https://bugs.launchpad.net/surveil
 * Bansho (Surveil Web UI): https://github.com/stackforge/bansho
+* Puppet module: https://github.com/stackforge/puppet-surveil
 
 
 Getting started
