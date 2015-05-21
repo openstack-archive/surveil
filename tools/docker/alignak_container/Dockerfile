@@ -46,13 +46,11 @@ RUN cd /tmp && \
     rm -rfv /tmp/mod-ws-arbiter*
 
 # mod-mongo-live-config
-RUN cd /opt && \
-    git clone  https://github.com/savoirfairelinux/mod-mongo-live-config.git && \
-    cd mod-mongo-live-config && \
-    git checkout 39e43d9a1a2f80c7db6db085ed0df388dc1fef23 && \
-    git reset --hard && \
-    cd /var/lib/shinken/modules && \
-    ln -s /opt/mod-mongo-live-config/src/mod_mongo_live_config
+RUN cd /tmp && \
+    wget -O mod-mongo-live-config.tar.gz https://github.com/savoirfairelinux/mod-mongo-live-config/archive/0.2.0.tar.gz && \
+    tar -zxvf mod-mongo-live-config.tar.gz && \
+    mv /tmp/mod-mongo-live-config/mod_mongo_live_config /var/lib/shinken/modules/ && \
+    rm -rfv /tmp/mod-mongo-live-config
 
 ## plugins
 RUN apt-get update && apt-get install -y nagios-plugins nagios-nrpe-plugin
