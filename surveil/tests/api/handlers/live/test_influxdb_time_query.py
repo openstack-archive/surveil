@@ -27,7 +27,7 @@ class InfluxdbTimeQueryTest(base.BaseTestCase):
         result = influxdb_time_query.build_influxdb_query(query_metric_name,
                                                           query_time
                                                           )
-        expected = ("SELECT max,min,value,warning,critical,unit "
+        expected = ("SELECT * "
                     "FROM metric_pl "
                     "WHERE time >= '2015-01-29T21:50:44Z' "
                     "AND time <= '2015-01-29T22:50:44Z' "
@@ -46,7 +46,7 @@ class InfluxdbTimeQueryTest(base.BaseTestCase):
                                                           query_time,
                                                           query_host_name
                                                           )
-        expected = ("SELECT max,min,value,warning,critical,unit "
+        expected = ("SELECT * "
                     "FROM metric_pl "
                     "WHERE time >= '2015-01-29T21:50:44Z' "
                     "AND time <= '2015-01-29T22:50:44Z' "
@@ -69,7 +69,7 @@ class InfluxdbTimeQueryTest(base.BaseTestCase):
             query_host_name,
             query_service_description
         )
-        expected = ("SELECT max,min,value,warning,critical,unit "
+        expected = ("SELECT * "
                     "FROM metric_pl "
                     "WHERE time >= '2015-01-29T21:50:44Z' "
                     "AND time <= '2015-01-29T22:50:44Z' "

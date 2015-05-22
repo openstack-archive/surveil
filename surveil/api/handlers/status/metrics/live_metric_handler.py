@@ -26,15 +26,13 @@ class MetricHandler(handler.Handler):
         cli = self.request.influxdb_client
 
         if service_description is None:
-            query = ("SELECT max,min,warning,critical,value,unit "
-                     "FROM metric_%s "
+            query = ("SELECT * FROM metric_%s "
                      "WHERE host_name= '%s' "
                      "GROUP BY service_description "
                      "ORDER BY time DESC "
                      "LIMIT 1" % (metric_name, host_name))
         else:
-            query = ("SELECT max,min,warning,critical,value,unit "
-                     "FROM metric_%s "
+            query = ("SELECT * FROM metric_%s "
                      "WHERE host_name= '%s' "
                      "AND service_description= '%s'"
                      "ORDER BY time DESC "
@@ -42,7 +40,7 @@ class MetricHandler(handler.Handler):
 
         response = cli.query(query)
         metric = live_metric.LiveMetric(
-            **self._metric_dict_from_influx_item(response.items()[0],
+            **self._metric_dict_from_influx_item(next(response.items()[0][1]),
                                                  metric_name)
         )
 
@@ -63,7 +61,7 @@ class MetricHandler(handler.Handler):
 
         metric_dicts = []
 
-        for item in response.items():
+        for item in response[None]:
             metric_dict = self._metric_dict_from_influx_item(item, metric_name)
             metric_dicts.append(metric_dict)
 
@@ -75,8 +73,6 @@ class MetricHandler(handler.Handler):
         return metrics
 
     def _metric_dict_from_influx_item(self, item, metric_name):
-        points = item[1]
-        first_point = next(points)
         metric_dict = {"metric_name": str(metric_name)}
         mappings = [
             ('min', str),
@@ -88,7 +84,7 @@ class MetricHandler(handler.Handler):
         ]
 
         for field in mappings:
-            value = first_point.get(field[0], None)
+            value = item.get(field[0], None)
             if value is not None:
                 metric_dict[field[0]] = field[1](value)
 
