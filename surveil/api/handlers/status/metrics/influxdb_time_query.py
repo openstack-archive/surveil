@@ -19,7 +19,7 @@ def build_influxdb_query(metric_name,
                          service_description=None
                          ):
     group_by = []
-    query = ['SELECT max,min,warning,critical,value,unit FROM metric_%s'
+    query = ['SELECT * FROM metric_%s'
              % metric_name]
     begin = time_delta.begin
     end = time_delta.end

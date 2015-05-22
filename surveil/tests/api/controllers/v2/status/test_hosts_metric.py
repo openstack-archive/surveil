@@ -76,7 +76,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
                               "20",
                               "0",
                               "6",
-                              "10"]
+                              "10"],
                          ]}
                     ]
                 }
@@ -104,7 +104,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
             expected)
         self.assertEqual(
             httpretty.last_request().querystring['q'],
-            ["SELECT max,min,warning,critical,value,unit FROM metric_load1 "
+            ["SELECT * FROM metric_load1 "
              "WHERE host_name= 'srv-monitoring-01' "
              "GROUP BY service_description "
              "ORDER BY time DESC LIMIT 1"]
@@ -128,7 +128,12 @@ class TestHostMetric(functionalTest.FunctionalTest):
                                  "30",
                                  "0",
                                  "0.6",
-                                 "15"]]}]}]
+                                 "15"],
+                                ["2015-04-19T01:09:25Z",
+                                 "40",
+                                 "4",
+                                 "10",
+                                 "10"]]}]}]
 
         })
         httpretty.register_uri(httpretty.GET,
@@ -136,7 +141,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
                                body=self.influxdb_response)
 
         time = {'begin': '2015-04-19T00:09:24Z',
-                'end': '2015-04-19T02:09:24Z'}
+                'end': '2015-04-19T02:09:25Z'}
 
         response = self.post_json("/v2/status/hosts/srv-monitoring-01/"
                                   "services/load/metrics/load1",
@@ -147,6 +152,12 @@ class TestHostMetric(functionalTest.FunctionalTest):
                      "critical": "30",
                      "warning": "15",
                      "value": "0.6"
+                     },
+                    {"metric_name": 'load1',
+                     "min": "4",
+                     "critical": "40",
+                     "warning": "10",
+                     "value": "10"
                      }]
 
         self.assert_count_equal_backport(
@@ -154,9 +165,9 @@ class TestHostMetric(functionalTest.FunctionalTest):
             expected)
         self.assertEqual(
             httpretty.last_request().querystring['q'],
-            ["SELECT max,min,warning,critical,value,unit FROM metric_load1 "
+            ["SELECT * FROM metric_load1 "
              "WHERE time >= '2015-04-19T00:09:24Z' "
-             "AND time <= '2015-04-19T02:09:24Z' "
+             "AND time <= '2015-04-19T02:09:25Z' "
              "AND host_name ='srv-monitoring-01' "
              "AND service_description ='load' "
              "ORDER BY time DESC"
