@@ -29,17 +29,6 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.logs:LogsController
    :webprefix: /v2/status/hosts/(host_name)/events
 
-.. rest-controller:: surveil.api.controllers.v2.logs.acknowledgements:AcknowledgementsController
-   :webprefix: /v2/status/hosts/(host_name)/events/acknowledgements
-
-.. rest-controller:: surveil.api.controllers.v2.logs.comments:CommentsController
-   :webprefix: /v2/status/hosts/(host_name)/events/comments
-
-.. rest-controller:: surveil.api.controllers.v2.logs.downtimes:DowntimesController
-   :webprefix: /v2/status/hosts/(host_name)/events/downtimes
-
-.. rest-controller:: surveil.api.controllers.v2.logs.notifications:NotificationsController
-   :webprefix: /v2/status/hosts/(host_name)/events/notifications
 
 Services
 ========
@@ -58,4 +47,7 @@ types documentation
    :members:
 
 .. autotype:: surveil.api.datamodel.status.live_query.LiveQuery
+   :members:
+
+.. autotype:: surveil.api.datamodel.logs.log.Log
    :members:
