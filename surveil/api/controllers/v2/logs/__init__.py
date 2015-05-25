@@ -14,31 +14,28 @@
 
 import pecan
 from pecan import rest
+import wsmeext.pecan as wsme_pecan
 
-
-from surveil.api.controllers.v2.logs import acknowledgements
-from surveil.api.controllers.v2.logs import comments
-from surveil.api.controllers.v2.logs import downtimes
-from surveil.api.controllers.v2.logs import notifications
+from surveil.api.datamodel.logs import log
+from surveil.api.datamodel.status import live_query
+from surveil.api.handlers.logs import log_handler
 from surveil.common import util
 
 
 class LogsController(rest.RestController):
-    acknowledgements = acknowledgements.AcknowledgementsController()
-    comments = comments.CommentsController()
-    downtimes = downtimes.DowntimesController()
-    notifications = notifications.NotificationsController()
 
-    # @wsme_pecan.wsexpose([Host])
     @util.policy_enforce(['authenticated'])
-    @pecan.expose()
+    @wsme_pecan.wsexpose([log.Log])
     def get_all(self):
-        """Returns all events from a specific host."""
-        host_name = pecan.request.context.get("host_name")
-        if host_name is not None:
-            return "All events for %s" % host_name
-        return "ALLL Events"
+        """Returns all hosts."""
+        handler = log_handler.LogHandler(pecan.request)
+        logs = handler.get_all()
+        return logs
 
-    # @pecan.expose()
-    # def _lookup(self, host_name, *remainder):
-    #    return EventController(host_name), remainder
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose([log.Log], body=live_query.LiveQuery)
+    def post(self, query):
+        """Given a LiveQuery, returns all matching logs."""
+        handler = log_handler.LogHandler(pecan.request)
+        logs = handler.get_all(live_query=query)
+        return logs
