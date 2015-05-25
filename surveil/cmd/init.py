@@ -90,6 +90,15 @@ def main():
             ]
         )
 
+        subprocess.call(
+            [
+                "surveil-pack-upload",
+                "--mongo-url=mongo",
+                "--mongo-port=27017",
+                "/packs/linux-openstackceilometer/",
+            ]
+        )
+
     else:
         print("Skipping pack upload...")
 
@@ -131,6 +140,21 @@ def main():
                 "_OS_USERNAME": "bli",
                 "_OS_PASSWORD": "blo",
                 "_OS_TENANT":   "blu",
+                "_KS_SERVICES": "bly",
+                "parents": "localhost"
+            }
+        )
+
+        # Linux-openstackceilometer template
+        cli_surveil.config.hosts.create(
+            host_name='openstackceilometer-host',
+            use='linux-openstackceilometer',
+            address='127.0.0.1',
+            custom_fields={
+                "_OS_AUTH_URL": "bla",
+                "_OS_USERNAME": "bli",
+                "_OS_PASSWORD": "blo",
+                "_OS_TENANT_NAME":   "blu",
                 "_KS_SERVICES": "bly",
                 "parents": "localhost"
             }

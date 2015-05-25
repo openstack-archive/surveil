@@ -18,6 +18,7 @@ RUN apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-cinder /packs/linux-cinder && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-keystone /packs/linux-keystone && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-nova /packs/linux-nova && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/branches/linux_openstackceilometer/packs/linux-openstackceilometer /packs/linux-openstackceilometer && \
     apt-get remove -y subversion
 
 ADD requirements.txt /opt/surveil/requirements.txt
