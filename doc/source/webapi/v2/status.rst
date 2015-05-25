@@ -35,23 +35,13 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.status.hosts:HostServiceMetricsController
    :webprefix: /v2/status/hosts/(host_name)/services/(service_description)/metrics
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts:HostServiceMetricController
-   :webprefix: /v2/status/hosts/(host_name)/services/(service_description)/metrics
-
 .. rest-controller:: surveil.api.controllers.v2.logs:LogsController
    :webprefix: /v2/status/hosts/(host_name)/events
 
-.. rest-controller:: surveil.api.controllers.v2.logs.acknowledgements:AcknowledgementsController
-   :webprefix: /v2/status/hosts/(host_name)/events/acknowledgements
+.. rest-controller:: surveil.api.controllers.v2.status.events:EventsController
+   :webprefix: /v2/status/events/
 
-.. rest-controller:: surveil.api.controllers.v2.logs.comments:CommentsController
-   :webprefix: /v2/status/hosts/(host_name)/events/comments
 
-.. rest-controller:: surveil.api.controllers.v2.logs.downtimes:DowntimesController
-   :webprefix: /v2/status/hosts/(host_name)/events/downtimes
-
-.. rest-controller:: surveil.api.controllers.v2.logs.notifications:NotificationsController
-   :webprefix: /v2/status/hosts/(host_name)/events/notifications
 
 Services
 ========
@@ -77,3 +67,7 @@ types documentation
 
 .. autotype:: surveil.api.datamodel.status.metrics.time_delta.TimeDelta
    :members:
+
+.. autotype:: surveil.api.datamodel.status.event.Event
+   :members:
+

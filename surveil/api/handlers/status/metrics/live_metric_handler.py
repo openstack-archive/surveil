@@ -11,11 +11,12 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+import json
 
-
+from surveil.api.datamodel.status import live_query
 from surveil.api.datamodel.status.metrics import live_metric
 from surveil.api.handlers import handler
-from surveil.api.handlers.status.metrics import influxdb_time_query
+from surveil.api.handlers.status import influxdb_query
 
 
 class MetricHandler(handler.Handler):
@@ -75,16 +76,29 @@ class MetricHandler(handler.Handler):
 
         return metrics
 
-    def get_all(self, metric_name, time_delta, host_name=None,
+    def get_all(self, metric_name, time_delta, host_name,
                 service_description=None):
         """Return all metrics."""
+        filters = {
+            "is": {
+                "host_name": [host_name]
+            }
+        }
+
+        if service_description:
+            filters["is"]["service_description"] = [service_description]
+
+        query = live_query.LiveQuery(
+            filters=json.dumps(filters)
+        )
+        order_by = ["time desc"]
 
         cli = self.request.influxdb_client
-        query = influxdb_time_query.build_influxdb_query(
-            metric_name,
-            time_delta,
-            host_name,
-            service_description
+        query = influxdb_query.build_influxdb_query(
+            query,
+            "metric_" + metric_name,
+            time_delta=time_delta,
+            order_by=order_by
         )
         response = cli.query(query)
 
@@ -128,3 +142,14 @@ class MetricHandler(handler.Handler):
                     metric_dict[field[0]] = field[1](value)
 
         return metric_dict
+
+    def _metrics_name_from_influx_item(self, item):
+
+        metric_name = {}
+        mappings = [('metric_name', 'name', str), ]
+        for field in mappings:
+            value = item.get(field[1], None)
+            if value is not None:
+                metric_name[field[0]] = field[2](value)
+
+        return metric_name
