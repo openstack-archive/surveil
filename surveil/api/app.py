@@ -53,6 +53,7 @@ def app_factory(global_config, **local_conf):
 
 
 class VersionSelectorApplication(object):
+
     def __init__(self):
         pc = get_pecan_config()
 
