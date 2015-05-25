@@ -15,6 +15,7 @@
 import json
 
 from surveil.api.datamodel.status import live_query
+from surveil.api.datamodel.status.metrics import time_delta
 from surveil.api.handlers.status import influxdb_query
 from surveil.tests import base
 
@@ -33,9 +34,9 @@ class LiveQueryFilterTest(base.BaseTestCase):
             filters
         )
 
-        expected = "WHERE state=0 AND description='test_keystone'"
+        expected = ["WHERE", "description='test_keystone'", "AND", "state=0"]
 
-        self.assert_count_equal_backport(result, expected)
+        self.assertEqual(result, expected)
 
     def test_build_where_clause_no_filters(self):
         filters = {}
@@ -49,10 +50,7 @@ class LiveQueryFilterTest(base.BaseTestCase):
         self.assert_count_equal_backport(result, expected)
 
     def test_build_influx_query(self):
-        query = live_query.LiveQuery(
-            fields=['host_name', 'last_check'],
-            filters=json.dumps({}),
-        )
+        query = {}
         measurement = 'ALERT'
         group_by = ['*', 'host_name']
         limit = 10
@@ -64,12 +62,11 @@ class LiveQueryFilterTest(base.BaseTestCase):
 
         expected = "SELECT * FROM ALERT GROUP BY *, host_name LIMIT 10"
 
-        self.assert_count_equal_backport(result, expected)
+        self.assertEqual(expected, result)
 
     def test_build_influx_query_orderby(self):
         query = live_query.LiveQuery(
-            fields=['host_name', 'last_check'],
-            filters=json.dumps({}),
+            fields=['host_name', 'last_check']
         )
         measurement = 'ALERT'
         group_by = ['*', 'host_name']
@@ -86,4 +83,86 @@ class LiveQueryFilterTest(base.BaseTestCase):
                     "GROUP BY *, host_name "
                     "ORDER BY time DESC LIMIT 10")
 
-        self.assert_count_equal_backport(result, expected)
+        self.assertEqual(expected, result)
+
+    def test_build_query_basic(self):
+        query_time = time_delta.TimeDelta(begin='2015-01-29T21:50:44Z',
+                                          end='2015-01-29T22:50:44Z')
+
+        query = live_query.LiveQuery()
+        group_by = ['host_name', 'service_description']
+        order_by = ['time DESC']
+
+        result = influxdb_query.build_influxdb_query(query,
+                                                     "metric_pl",
+                                                     time_delta=query_time,
+                                                     group_by=group_by,
+                                                     order_by=order_by
+                                                     )
+        expected = ("SELECT * "
+                    "FROM metric_pl "
+                    "WHERE time >= '2015-01-29T21:50:44Z' "
+                    "AND time <= '2015-01-29T22:50:44Z' "
+                    "GROUP BY host_name, "
+                    "service_description ORDER BY time DESC")
+
+        self.assertEqual(result, expected)
+
+    def test_build_query_host_name(self):
+        query_time = time_delta.TimeDelta(begin='2015-01-29T21:50:44Z',
+                                          end='2015-01-29T22:50:44Z')
+        query = live_query.LiveQuery(
+            fields=['host_name'],
+            filters=json.dumps({
+                "is": {
+                    "host_name": ["localhost"]
+                }
+            })
+        )
+        group_by = ['service_description']
+        order_by = ['time DESC']
+
+        result = influxdb_query.build_influxdb_query(query,
+                                                     "metric_pl",
+                                                     time_delta=query_time,
+                                                     group_by=group_by,
+                                                     order_by=order_by
+                                                     )
+        expected = ("SELECT * "
+                    "FROM metric_pl "
+                    "WHERE time >= '2015-01-29T21:50:44Z' "
+                    "AND time <= '2015-01-29T22:50:44Z' "
+                    "AND host_name='localhost' "
+                    "GROUP BY service_description "
+                    "ORDER BY time DESC")
+
+        self.assertEqual(result, expected)
+
+    def test_build_query_complete(self):
+        query_time = time_delta.TimeDelta(begin='2015-01-29T21:50:44Z',
+                                          end='2015-01-29T22:50:44Z', )
+        query = live_query.LiveQuery(
+            fields=['host_name'],
+            filters=json.dumps({
+                "is": {
+                    "host_name": ["localhost"],
+                    "service_description": ["mySQL"]
+                }
+            })
+        )
+        order_by = ['time DESC']
+        result = influxdb_query.build_influxdb_query(query,
+                                                     "metric_pl",
+                                                     time_delta=query_time,
+                                                     order_by=order_by
+                                                     )
+
+        expected = ("SELECT * "
+                    "FROM metric_pl "
+                    "WHERE time >= '2015-01-29T21:50:44Z' "
+                    "AND time <= '2015-01-29T22:50:44Z' "
+                    "AND host_name='localhost' "
+                    "AND service_description='mySQL' "
+                    "ORDER BY time DESC")
+
+        self.assertEqual(result, expected)
