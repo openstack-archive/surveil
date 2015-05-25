@@ -1,4 +1,4 @@
-# Copyright 2014 - Savoir-Faire Linux inc.
+# Copyright 2015 - Savoir-Faire Linux inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -13,15 +13,20 @@
 # under the License.
 
 import pecan
+import wsmeext.pecan as wsme_pecan
 from pecan import rest
 
+from surveil.api.datamodel.logs import alert
+from surveil.api.handlers.logs import alert_handler
 from surveil.common import util
 
 
-class DowntimesController(rest.RestController):
+class AlertsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
-    @pecan.expose()
+    @wsme_pecan.wsexpose([alert.Alert])
     def get_all(self):
-        """Returns all downtimes from a specific host."""
-        return "ALLL DT"
+        """Returns all alerts"""
+        handler = alert_handler.AlertHandler(pecan.request)
+        alerts = handler.get_all()
+        return alerts
