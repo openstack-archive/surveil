@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev li
 
 ### Alignak
 RUN apt-get update && apt-get install -y python-pip git
-RUN useradd shinken && pip install https://github.com/gst/shinken/archive/19df05f2da13bdc6957ef1adf0660aa9f61c89f7.zip
+RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/601a9cd74ddbc2082f44a8275788d965b700ab3f.zip
 RUN apt-get install -y python-pycurl
 RUN shinken --init
 
