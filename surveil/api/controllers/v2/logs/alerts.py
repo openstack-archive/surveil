@@ -1,4 +1,4 @@
-# Copyright 2014 - Savoir-Faire Linux inc.
+# Copyright 2015 - Savoir-Faire Linux inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -13,17 +13,25 @@
 # under the License.
 
 import pecan
+import wsmeext.pecan as wsme_pecan
 from pecan import rest
 
+from surveil.api.datamodel.logs import alert
+from surveil.api.handlers.logs import alert_handler
 from surveil.common import util
 
 
-class NotificationsController(rest.RestController):
+class Controller(rest.RestController):
 
-    # curl -X GET  http://127.0.0.1:8080/v2/titilambert/myproject/builds/
-    # @wsme_pecan.wsexpose([Host])
     @util.policy_enforce(['authenticated'])
-    @pecan.expose()
+    @wsme_pecan.wsexpose([alert.Alert])
     def get_all(self):
-        """Returns all notifications from a specific host."""
-        return "ALLL notifs"
+        """Returns all alerts"""
+
+        handler = alert_handler.AlertHandler(pecan.request)
+
+        host_name = pecan.request.context.get("host_name")
+        service_description = pecan.request.context.get("service_description")
+        alerts = handler.get_all(host_name, service_description)
+
+        return alerts

@@ -17,16 +17,25 @@ import json
 
 def build_influxdb_query(live_query,
                          measurement,
+                         time_delta,
                          group_by=[],
                          order_by=[],
                          limit=None):
 
     query = ['SELECT * FROM', measurement]
 
-    if live_query:
+    is_where_append = False
+    if live_query and live_query.filters:
         filters = json.loads(live_query.filters)
-        if filters:
-            query.append(_build_where_clause(filters))
+        query.append(_build_where_clause(filters))
+        is_where_append = True
+
+    if time_delta:
+        if not is_where_append:
+            query.append('WHERE')
+        begin = time_delta.begin
+        end = time_delta.end
+        query.append("time >= '%s' AND time <= '%s'" % (begin, end))
 
     if group_by:
         query.append('GROUP BY')

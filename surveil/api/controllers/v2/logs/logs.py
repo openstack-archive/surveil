@@ -15,15 +15,25 @@
 import pecan
 from pecan import rest
 
+
+from surveil.api.controllers.v2.logs import alerts
+from surveil.api.controllers.v2.logs import downtimes
+from surveil.api.controllers.v2.logs import flappings
+from surveil.api.controllers.v2.logs import notifications
 from surveil.common import util
 
 
-class CommentsController(rest.RestController):
+class LogsController(rest.RestController):
+    alerts = alerts.AlertsController()
+    downtimes = downtimes.DowntimesController()
+    flappings = flappings.FlappingsController()
+    notifications = notifications.NotificationsController()
 
-    # curl -X GET  http://127.0.0.1:8080/v2/titilambert/myproject/builds/
-    # @wsme_pecan.wsexpose([Host])
     @util.policy_enforce(['authenticated'])
     @pecan.expose()
     def get_all(self):
-        """Returns all comments from a specific host."""
-        return "ALLL Comments"
+
+        print pecan.request
+        # @pecan.expose()
+        # def _lookup(self, host_name, *remainder):
+        #    return EventController(host_name), remainder
