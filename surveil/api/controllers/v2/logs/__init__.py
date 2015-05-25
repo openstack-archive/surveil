@@ -17,6 +17,7 @@ from pecan import rest
 
 
 from surveil.api.controllers.v2.logs import acknowledgements
+from surveil.api.controllers.v2.logs import alerts
 from surveil.api.controllers.v2.logs import comments
 from surveil.api.controllers.v2.logs import downtimes
 from surveil.api.controllers.v2.logs import notifications
@@ -25,6 +26,7 @@ from surveil.common import util
 
 class LogsController(rest.RestController):
     acknowledgements = acknowledgements.AcknowledgementsController()
+    alerts = alerts.AlertsController()
     comments = comments.CommentsController()
     downtimes = downtimes.DowntimesController()
     notifications = notifications.NotificationsController()

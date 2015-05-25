@@ -18,6 +18,7 @@ def build_influxdb_query(metric_name,
                          host_name=None,
                          service_description=None
                          ):
+    query = ['SELECT * FROM', measurement]
     group_by = []
     query = ['SELECT * FROM metric_%s'
              % metric_name]
