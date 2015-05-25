@@ -17,16 +17,18 @@ import json
 
 def build_influxdb_query(live_query,
                          measurement,
+                         time_delta=None,
                          group_by=[],
                          order_by=[],
                          limit=None):
 
     query = ['SELECT * FROM', measurement]
 
-    if live_query:
+    filters = {}
+    if live_query and live_query.filters:
         filters = json.loads(live_query.filters)
-        if filters:
-            query.append(_build_where_clause(filters))
+
+    query += _build_where_clause(filters, time_delta)
 
     if group_by:
         query.append('GROUP BY')
@@ -42,13 +44,21 @@ def build_influxdb_query(live_query,
     return ' '.join(query)
 
 
-def _build_where_clause(filters):
+def _build_where_clause(filters, time_delta=None):
     filters_conversion = {
         'is': '=',
         'isnot': '!='
     }
     clause = []
     first = True
+
+    if time_delta:
+        clause.append('WHERE')
+        first = False
+
+        begin = time_delta.begin
+        end = time_delta.end
+        clause.append("time >= '%s' AND time <= '%s'" % (begin, end))
 
     for filter_name, filter_data in sorted(filters.items()):
         for field, values in sorted(filter_data.items()):
@@ -69,4 +79,4 @@ def _build_where_clause(filters):
                                    value))
                 first = False
 
-    return ' '.join(clause)
+    return clause

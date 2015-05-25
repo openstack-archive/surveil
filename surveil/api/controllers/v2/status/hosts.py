@@ -17,7 +17,7 @@ from pecan import rest
 import requests
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.controllers.v2 import logs
+from surveil.api.controllers.v2.status import events
 from surveil.api.datamodel import checkresult
 from surveil.api.datamodel.status import live_host
 from surveil.api.datamodel.status import live_query
@@ -241,7 +241,7 @@ class HostController(rest.RestController):
     # See init for controller creation. We need host_name to instanciate it
     # externalcommands = ExternalCommandsController()
     # config = config.ConfigController()
-    events = logs.LogsController()
+    events = events.EventsController()
     metrics = HostMetricsController()
     results = HostCheckResultsSubController()
 
