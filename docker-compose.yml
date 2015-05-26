@@ -20,6 +20,11 @@ alignak:
     - influxdb
   ports:
     - "7767:7767"
+  environment:
+    SURVEIL_OS_AUTH_URL: "http://keystone:5000/v2.0"
+    SURVEIL_OS_USERNAME: "admin"
+    SURVEIL_OS_PASSWORD: "password"
+    SURVEIL_OS_TENANT_NAME: "admin"
 
 mongo:
   image: mongo
