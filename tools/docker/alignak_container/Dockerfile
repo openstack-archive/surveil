@@ -52,6 +52,13 @@ RUN cd /tmp && \
     mv /tmp/mod-mongo-live-config-*/mod_mongo_live_config /var/lib/shinken/modules/mod_mongo_live_config && \
     rm -rfv /tmp/mod-mongo-live-config*
 
+# mod-ceilometer
+RUN cd /tmp && \
+    wget -O mod-ceilometer.tar.gz https://github.com/savoirfairelinux/mod-ceilometer/archive/921717db5ca83a3d642e92be3367c78bd5c2256b.tar.gz && \
+    tar -zxvf mod-ceilometer.tar.gz && \
+    mv /tmp/mod-ceilometer-*/module /var/lib/shinken/modules/mod-ceilometer && \
+    rm -rfv /tmp/mod-ceilometer*
+
 ## plugins
 RUN apt-get update && apt-get install -y nagios-plugins nagios-nrpe-plugin
 # run permissions for user `shinken`
@@ -86,6 +93,7 @@ RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --e
     apt-get install -y --force-yes monitoring-packs-sfl-generic-host monitoring-packs-sfl-linux-system-nrpe
 
 ## configuration
+ADD setup.sh /setup.sh
 RUN rm -rf /etc/shinken
 ADD etc/shinken /etc/shinken
 RUN chown -R root:shinken /etc/shinken
@@ -99,4 +107,10 @@ EXPOSE 7767
 # ws-arbiter
 EXPOSE 7760
 
-CMD /usr/bin/supervisord
+# OpenStack Authentication credentials. Used for sending data to Ceilometer
+ENV SURVEIL_OS_AUTH_URL=http://keystone:5000/v2.0
+ENV SURVEIL_OS_USERNAME=admin
+ENV SURVEIL_OS_PASSWORD=password
+ENV SURVEIL_OS_TENANT_NAME=admin
+
+CMD ./setup.sh && /usr/bin/supervisord
