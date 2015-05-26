@@ -52,6 +52,13 @@ RUN cd /tmp && \
     mv /tmp/mod-mongo-live-config-*/mod_mongo_live_config /var/lib/shinken/modules/mod_mongo_live_config && \
     rm -rfv /tmp/mod-mongo-live-config*
 
+# mod-ceilometer
+RUN cd /tmp && \
+    wget -O mod-ceilometer.tar.gz https://github.com/savoirfairelinux/mod-ceilometer/archive/921717db5ca83a3d642e92be3367c78bd5c2256b.tar.gz && \
+    tar -zxvf mod-ceilometer.tar.gz && \
+    mv /tmp/mod-ceilometer-*/module /var/lib/shinken/modules/mod-ceilometer && \
+    rm -rfv /tmp/mod-ceilometer*
+
 ## plugins
 RUN apt-get update && apt-get install -y nagios-plugins nagios-nrpe-plugin
 # run permissions for user `shinken`
