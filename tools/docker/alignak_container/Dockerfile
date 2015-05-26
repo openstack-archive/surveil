@@ -60,7 +60,7 @@ RUN chmod u+s /bin/ping
 RUN chmod u+s /bin/ping6
 
 # Download plugins
-ENV MONITORING_TOOLS_VERSION 0.1.0
+ENV MONITORING_TOOLS_VERSION 0.2.0
 RUN apt-get update && apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-glance /plugins/check_glance && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-keystone /plugins/check_keystone && \
