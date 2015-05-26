@@ -37,13 +37,15 @@ ENV PBR_VERSION=PROD
 # We are using develop so that the code can be mounted when in DEV.
 RUN cd /opt/surveil && python setup.py develop
 
-#Set to 'surveil' or 'keystone'
+# Set to 'surveil' or 'keystone'
 ENV SURVEIL_AUTH_BACKEND=surveil
 ENV SURVEIL_KEYSTONE_HOST=198.72.123.131
 ENV SURVEIL_KEYSTONE_AUTH_PROTOCOL=http
-ENV SURVEIL_KEYSTONE_ADMIN_USER=admin
-ENV SURVEIL_KEYSTONE_ADMIN_PASSWORD=password
-ENV SURVEIL_KEYSTONE_ADMIN_TENANT_NAME=admin
+
+# OpenStack Authentication credentials. Used for Keystone authentication
+ENV SURVEIL_OS_USERNAME=admin
+ENV SURVEIL_OS_PASSWORD=password
+ENV SURVEIL_OS_TENANT_NAME=admin
 
 CMD cd /opt/surveil && \
     ./setup.sh && \
