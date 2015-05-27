@@ -7,8 +7,6 @@ RUN apt-get update && apt-get install -y vim python-pip python3-pip python-dev l
 # Surveil needs alignak (as a lib)
 RUN useradd shinken && pip install https://github.com/Alignak-monitoring/alignak/archive/396d10105827f8c75686811991829548e6778e11.zip
 
-# python-surveilclient (used by surveil-init)
-RUN pip install python-surveilclient==0.5.1
 
 # Download packs
 ENV MONITORING_TOOLS_VERSION 0.1.0
