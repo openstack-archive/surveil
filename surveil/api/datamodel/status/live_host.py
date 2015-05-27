@@ -50,7 +50,7 @@ class LiveHost(types.Base):
     """Plugin output of the last check"""
 
     long_output = wsme.wsattr(wtypes.text, mandatory=False)
-    """Plugin long ouput of the last check"""
+    """Plugin long output of the last check"""
 
     @classmethod
     def sample(cls):
