@@ -13,6 +13,7 @@
 # under the License.
 
 import sys
+import time
 import unittest
 
 
@@ -32,3 +33,23 @@ class BaseTestCase(unittest.TestCase):
             )
 
         return result
+
+    def try_for_x_seconds(self,
+                          function,
+                          time_to_wait=108,
+                          message="Function did not succeed",
+                          cooldown=10,
+                          exception=Exception):
+        """Returns True if the functions raises no exception"""
+
+        now = time.time()
+        while True:
+            if time.time() < (now + time_to_wait):
+                try:
+                    function()
+                    return True
+                except exception:
+                    pass
+                time.sleep(cooldown)
+            else:
+                raise Exception(message)
