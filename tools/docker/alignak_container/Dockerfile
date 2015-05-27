@@ -7,19 +7,30 @@ RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev li
 
 ### Alignak
 RUN apt-get update && apt-get install -y python-pip git
-RUN useradd shinken && pip install https://github.com/naparuba/shinken/archive/601a9cd74ddbc2082f44a8275788d965b700ab3f.zip
+RUN useradd alignak && pip install https://github.com/Alignak-monitoring/alignak/archive/d7f457d5ed94f08d9a6a38809106d3e0d35a1712.tar.gz
 RUN apt-get install -y python-pycurl
-RUN shinken --init
+RUN alignak --init
 
 ## modules
-RUN shinken install webui
-RUN shinken install auth-cfg-password
+# mod-webui
+RUN cd /tmp && \
+    wget -O mod-webui.tar.gz https://github.com/shinken-monitoring/mod-webui/archive/3215d6c775326d1fb3afb161eb279dfb44e45986.tar.gz && \
+    tar -zxvf mod-webui.tar.gz && \
+    mv /tmp/mod-webui-*/module /var/lib/alignak/modules/webui && \
+    rm -rfv /tmp/mod-webui*
+
+# auth-cfg-password
+RUN cd /tmp && \
+    wget -O mod-auth-cfg-password.tar.gz https://github.com/shinken-monitoring/mod-auth-cfg-password/archive/6079d31974305b74e332424df44efecc9dfeabfc.tar.gz && \
+    tar -zxvf mod-auth-cfg-password.tar.gz && \
+    mv /tmp/mod-auth-cfg-password-*/module /var/lib/alignak/modules/auth-cfg-password && \
+    rm -rfv /tmp/mod-auth-cfg-password*
 
 # mod-booster-nrpe
 RUN cd /tmp && \
     wget -O mod-booster-nrpe.tar.gz https://github.com/shinken-monitoring/mod-booster-nrpe/archive/de7099706855e32c1962c77740be0fae446d15f5.tar.gz && \
     tar -zxvf mod-booster-nrpe.tar.gz && \
-    mv /tmp/mod-booster-nrpe-*/module /var/lib/shinken/modules/mod-booster-nrpe && \
+    mv /tmp/mod-booster-nrpe-*/module /var/lib/alignak/modules/mod-booster-nrpe && \
     rm -rfv /tmp/mod-booster-nrpe*
 
 # mod-mongodb
@@ -27,7 +38,7 @@ RUN pip install pymongo==3.0.2
 RUN cd /tmp && \
     wget -O mod-mongodb.tar.gz https://github.com/shinken-monitoring/mod-mongodb/archive/5396fded1c56d57202236d1236703a160aec7375.tar.gz && \
     tar -zxvf mod-mongodb.tar.gz && \
-    mv /tmp/mod-mongodb-*/module /var/lib/shinken/modules/mod-mongodb && \
+    mv /tmp/mod-mongodb-*/module /var/lib/alignak/modules/mod-mongodb && \
     rm -rfv /tmp/mod-mongodb*
 
 # mod-influxdb
@@ -35,26 +46,26 @@ RUN pip install influxdb==2.3.0
 RUN cd /tmp && \
     wget -O mod-influxdb.tar.gz https://github.com/savoirfairelinux/mod-influxdb/archive/28c1bf1a34748002ad8ee1404123579373ce82fd.tar.gz && \
     tar -zxvf mod-influxdb.tar.gz && \
-    mv /tmp/mod-influxdb-*/module /var/lib/shinken/modules/mod-influxdb && \
+    mv /tmp/mod-influxdb-*/module /var/lib/alignak/modules/mod-influxdb && \
     rm -rfv /tmp/mod-influxdb*
 
 # mod-ws-arbiter
 RUN cd /tmp && \
     wget -O mod-ws-arbiter.tar.gz https://github.com/shinken-monitoring/mod-ws-arbiter/archive/ebae7950be9452ab80ec58575e9887d9b2a15d2a.tar.gz && \
     tar -zxvf mod-ws-arbiter.tar.gz && \
-    mv /tmp/mod-ws-arbiter-*/module /var/lib/shinken/modules/ws-arbiter && \
+    mv /tmp/mod-ws-arbiter-*/module /var/lib/alignak/modules/ws-arbiter && \
     rm -rfv /tmp/mod-ws-arbiter*
 
 # mod-mongo-live-config
 RUN cd /tmp && \
     wget -O mod-mongo-live-config.tar.gz https://github.com/savoirfairelinux/mod-mongo-live-config/archive/0.2.0.tar.gz && \
     tar -zxvf mod-mongo-live-config.tar.gz && \
-    mv /tmp/mod-mongo-live-config-*/mod_mongo_live_config /var/lib/shinken/modules/mod_mongo_live_config && \
+    mv /tmp/mod-mongo-live-config-*/mod_mongo_live_config /var/lib/alignak/modules/mod_mongo_live_config && \
     rm -rfv /tmp/mod-mongo-live-config*
 
 ## plugins
 RUN apt-get update && apt-get install -y nagios-plugins nagios-nrpe-plugin
-# run permissions for user `shinken`
+# run permissions for user `alignak`
 RUN chmod u+s /usr/lib/nagios/plugins/check_icmp
 RUN chmod u+s /bin/ping
 RUN chmod u+s /bin/ping6
@@ -86,14 +97,14 @@ RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --e
     apt-get install -y --force-yes monitoring-packs-sfl-generic-host monitoring-packs-sfl-linux-system-nrpe
 
 ## configuration
-RUN rm -rf /etc/shinken
-ADD etc/shinken /etc/shinken
-RUN chown -R root:shinken /etc/shinken
+RUN rm -rf /etc/alignak
+ADD etc/alignak /etc/alignak
+RUN chown -R root:alignak /etc/alignak
 
 ### Supervisor
 ADD etc/supervisor /etc/supervisor
 
-# Shinken WEBUI
+# Alignak WEBUI
 EXPOSE 7767
 
 # ws-arbiter
