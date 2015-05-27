@@ -11,14 +11,14 @@ RUN useradd shinken && pip install https://github.com/Alignak-monitoring/alignak
 RUN pip install python-surveilclient==0.5.1
 
 # Download packs
-ENV MONITORING_TOOLS_VERSION 0.1.0
+ENV MONITORING_TOOLS_VERSION 0.2.0
 RUN apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/generic-host /packs/generic-host && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-glance /packs/linux-glance && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-cinder /packs/linux-cinder && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-keystone /packs/linux-keystone && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-nova /packs/linux-nova && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/branches/linux_openstackceilometer/packs/linux-openstackceilometer /packs/linux-openstackceilometer && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-openstackceilometer /packs/linux-openstackceilometer && \
     apt-get remove -y subversion
 
 ADD requirements.txt /opt/surveil/requirements.txt
