@@ -9,3 +9,7 @@ oslo.policy>=0.3.0
 keystonemiddleware
 PasteDeploy
 influxdb==2.0.1
+pika
+python-surveilclient==0.5.1
+six
+
