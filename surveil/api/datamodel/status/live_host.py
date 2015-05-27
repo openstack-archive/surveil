@@ -52,6 +52,9 @@ class LiveHost(types.Base):
     long_output = wsme.wsattr(wtypes.text, mandatory=False)
     """Plugin long output of the last check"""
 
+    services = wsme.wsattr([wtypes.text], mandatory=False)
+    """The services of the host"""
+
     @classmethod
     def sample(cls):
         return cls(
@@ -65,5 +68,6 @@ class LiveHost(types.Base):
             last_check=1429220785,
             last_state_change=1429220785,
             plugin_output='PING OK - Packet loss = 0%, RTA = 0.02 ms',
-            long_output='The ping was great\nI love epic ping-pong games'
+            long_output='The ping was great\nI love epic ping-pong games',
+            services=['load', 'cpu', 'disk_usage']
         )

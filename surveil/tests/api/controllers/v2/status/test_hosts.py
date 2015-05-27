@@ -36,6 +36,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "state_type": "HARD",
                 "problem_has_been_acknowledged": True,
                 "host_name": "localhost",
+                "services": ["load", "cpu"],
             },
             {
                 "display_name": "test_keystone",
@@ -50,6 +51,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "state_type": "HARD",
                 "problem_has_been_acknowledged": True,
                 "host_name": "test_keystone",
+                "services": ["apache"],
             },
             {
                 "display_name": "ws-arbiter",
@@ -64,6 +66,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "state_type": "HARD",
                 "problem_has_been_acknowledged": True,
                 "host_name": "ws-arbiter",
+                "services": [],
             },
         ]
         self.mongoconnection.shinken_live.hosts.insert(
@@ -111,6 +114,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "last_check": 1429405764,
              "state": "OK",
              "acknowledged": True,
+             "services": ["load", "cpu"],
              "host_name": "localhost"},
             {"description": "test_keystone",
              "address": "127.0.0.1",
@@ -122,6 +126,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "last_check": 1429405763,
              "state": "OK",
              "acknowledged": True,
+             "services": ["apache"],
              "host_name": "test_keystone"},
             {"description": "ws-arbiter",
              "address": "127.0.0.1",
@@ -133,6 +138,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "last_check": 1429405764,
              "state": "OK",
              "acknowledged": True,
+             "services": [],
              "host_name": "ws-arbiter"}]
 
         self.assert_count_equal_backport(json.loads(response.body.decode()),
@@ -170,6 +176,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     "last_check": 1429812191,
                     "state": "OK",
                     "host_name": "localhost",
+                    "services": ["load", "cpu"],
                     "address": "localhost"}
 
         self.assert_count_equal_backport(json.loads(response.body.decode()),
