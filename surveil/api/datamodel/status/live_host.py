@@ -49,6 +49,9 @@ class LiveHost(types.Base):
     plugin_output = wsme.wsattr(wtypes.text, mandatory=False)
     """Plugin output of the last check"""
 
+    long_output = wsme.wsattr(wtypes.text, mandatory=False)
+    """Plugin long ouput of the last check"""
+
     @classmethod
     def sample(cls):
         return cls(
@@ -61,5 +64,6 @@ class LiveHost(types.Base):
             acknowledged=True,
             last_check=1429220785,
             last_state_change=1429220785,
-            plugin_output='PING OK - Packet loss = 0%, RTA = 0.02 ms'
+            plugin_output='PING OK - Packet loss = 0%, RTA = 0.02 ms',
+            long_output='The ping was great\nI love epic ping-pong games'
         )
