@@ -49,3 +49,4 @@ CMD cd /opt/surveil && \
     ./setup.sh && \
     ((sleep 40 && surveil-init) &) && \
     surveil-api
+test
