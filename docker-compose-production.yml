@@ -16,6 +16,25 @@ surveil:
     #SURVEIL_OS_PASSWORD: "password"
     #SURVEIL_OS_TENANT_NAME: "admin"
 
+rabbitconsumer:
+  build: .
+  links:
+    - surveil
+  environment:
+    PBR_VERSION: "PROD"
+    #SURVEIL_API_URL: "http://surveil:8080/v2"
+    #SURVEIL_AUTH_URL: "http://surveil:8080/v2/auth"
+    #SURVEIL_VERSION: "2_0"
+    #RABBIT_HOST: "192.168.49.239"
+    #RABBIT_PORT: 5672
+    #QUEUE: "test"
+    #RABBIT_USER: "admin"
+    #RABBIT_PASSWORD: "admin"
+    #SURVEIL_OS_AUTH_URL: "http://keystone:5000/v2.0"
+    #SURVEIL_OS_USERNAME: "admin"
+    #SURVEIL_OS_PASSWORD: "password"
+    #SURVEIL_TENANT_NAME: "admin"
+
 alignak:
   #build: tools/docker/alignak_container/
   image: savoirfairelinux/surveil-alignak:0.4.4
