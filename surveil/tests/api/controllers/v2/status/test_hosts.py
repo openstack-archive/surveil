@@ -31,6 +31,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "last_chk": 1.429405764e+09,
                 "last_state_change": 1.429405765316929e+09,
                 "plugin_output": "OK - localhost: rta 0.033ms, lost 0%",
+                "long_output": "This is\na\nlong\noutput",
                 "state": "OK",
                 "state_type": "HARD",
                 "problem_has_been_acknowledged": True,
@@ -44,6 +45,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "last_chk": 1.429405763e+09,
                 "last_state_change": 1.429405765317144e+09,
                 "plugin_output":  "OK - 127.0.0.1: rta 0.032ms, lost 0%",
+                "long_output": "Another very\nlong\noutput",
                 "state": "OK",
                 "state_type": "HARD",
                 "problem_has_been_acknowledged": True,
@@ -57,6 +59,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "last_chk": 1.429405764e+09,
                 "last_state_change": 1.429405765317063e+09,
                 "plugin_output": "OK - localhost: rta 0.030ms, lost 0%",
+                "long_output": "What a;\nlong;\noutput;",
                 "state": "OK",
                 "state_type": "HARD",
                 "problem_has_been_acknowledged": True,
@@ -75,7 +78,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "state": 'OK',
                 "last_check": 1429220785,
                 "last_state_change": 1429220785,
-                "plugin_output": 'HTTP OK - GOT NICE RESPONSE'
+                "plugin_output": 'HTTP OK - GOT NICE RESPONSE',
+                "long_output": 'This has\n a long\noutput'
             },
             {
                 "host_name": 'someserver',
@@ -84,7 +88,8 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "state": 'OK',
                 "last_check": 1429220785,
                 "last_state_change": 1429220785,
-                "plugin_output": 'Hi there'
+                "plugin_output": 'Hi there',
+                "long_output": 'My output;\nis better;\nthan yours;'
             },
 
         ]
@@ -102,6 +107,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "parents": ['parent.com'],
              "last_state_change": 1429405765,
              "plugin_output": "OK - localhost: rta 0.033ms, lost 0%",
+             "long_output": "This is\na\nlong\noutput",
              "last_check": 1429405764,
              "state": "OK",
              "acknowledged": True,
@@ -112,6 +118,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "parents": ['parent.com'],
              "last_state_change": 1429405765,
              "plugin_output": "OK - 127.0.0.1: rta 0.032ms, lost 0%",
+             "long_output": "Another very\nlong\noutput",
              "last_check": 1429405763,
              "state": "OK",
              "acknowledged": True,
@@ -122,6 +129,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
              "parents": ['parent.com'],
              "last_state_change": 1429405765,
              "plugin_output": "OK - localhost: rta 0.030ms, lost 0%",
+             "long_output": "What a;\nlong;\noutput;",
              "last_check": 1429405764,
              "state": "OK",
              "acknowledged": True,
@@ -158,6 +166,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     "last_state_change": 1429812192,
                     "acknowledged": True,
                     "plugin_output": "OK - localhost: rta 0.044ms, lost 0%",
+                    "long_output": "This is\na\nlong\noutput",
                     "last_check": 1429812191,
                     "state": "OK",
                     "host_name": "localhost",
@@ -174,6 +183,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     'last_state_change': 1429823532,
                     'plugin_output': ('TCP OK - 0.000 second '
                                       'response time on port 7760'),
+                    "long_output": 'My output;\nis better;\nthan yours;',
                     'last_check': 1429823531,
                     'state': 'OK',
                     'host_name': 'ws-arbiter',

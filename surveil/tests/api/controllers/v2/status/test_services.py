@@ -31,6 +31,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
                 "last_chk": 1429220785,
                 "last_state_change": 1429220785,
                 "plugin_output": 'HTTP OK - GOT NICE RESPONSE',
+                "long_output": 'The response\nwas really\nnice',
                 "problem_has_been_acknowledged": True,
             },
             {
@@ -41,6 +42,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
                 "last_chk": 1429220785,
                 "last_state_change": 1429220785,
                 "plugin_output": 'Hi there',
+                "long_output": 'I am;\nthe servicessomthing;\noutput;',
                 "problem_has_been_acknowledged": False,
             },
         ]
@@ -60,6 +62,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
                 "last_check": 1429220785,
                 "last_state_change": 1429220785,
                 "plugin_output": 'HTTP OK - GOT NICE RESPONSE',
+                "long_output": 'The response\nwas really\nnice',
                 'acknowledged': True,
             },
             {
@@ -70,6 +73,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
                 "last_check": 1429220785,
                 "last_state_change": 1429220785,
                 "plugin_output": 'Hi there',
+                "long_output": 'I am;\nthe servicessomthing;\noutput;',
                 'acknowledged': False,
             },
         ]

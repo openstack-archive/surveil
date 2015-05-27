@@ -43,6 +43,9 @@ class LiveService(types.Base):
     plugin_output = wsme.wsattr(wtypes.text, mandatory=False)
     """Plugin output of the last check"""
 
+    long_output = wsme.wsattr(wtypes.text, mandatory=False)
+    """Plugin long ouput of the last check"""
+
     @classmethod
     def sample(cls):
         return cls(
@@ -54,4 +57,5 @@ class LiveService(types.Base):
             last_state_change=1429220785,
             plugin_output='HTTP OK - GOT NICE RESPONSE',
             acknowledged=True,
+            long_output='Serves /var/www/\nServes /home/webserver/www/'
         )
