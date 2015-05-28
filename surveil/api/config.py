@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from six.moves import configparser
 
 from surveil.api import hooks
 
@@ -21,13 +22,13 @@ server = {
     'host': '0.0.0.0'
 }
 
+config = configparser.ConfigParser()
+config.read("/etc/surveil/surveil.cfg")
 
-# In the future, surveil_api_config could be loaded from somewhere else,
-# as long as is it in the same format.
 surveil_api_config = {
-    "mongodb_uri": "mongodb://mongo:27017",
-    "ws_arbiter_url": "http://alignak:7760",
-    "influxdb_uri": "influxdb://root:root@influxdb:8086/db"
+    "mongodb_uri": config.get("surveil", "mongodb_uri"),
+    "ws_arbiter_url": config.get("surveil", "ws_arbiter_url"),
+    "influxdb_uri": config.get("surveil", "influxdb_uri")
 }
 
 app_hooks = [
