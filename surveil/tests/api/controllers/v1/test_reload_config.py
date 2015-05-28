@@ -12,21 +12,21 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import httpretty
-
 from surveil.tests.api import functionalTest
+
+import requests_mock
 
 
 class TestReloadConfigController(functionalTest.FunctionalTest):
 
-    @httpretty.activate
     def test_reload_config(self):
-        httpretty.register_uri(httpretty.POST,
-                               self.ws_arbiter_url + "/reload")
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.POST,
+                           self.ws_arbiter_url + "/reload")
 
-        response = self.app.post("/v1/reload_config")
-        self.assertEqual(response.status_int, 200)
-        self.assertEqual(
-            httpretty.last_request().path,
-            '/reload'
-        )
+            response = self.app.post("/v1/reload_config")
+            self.assertEqual(response.status_int, 200)
+            self.assertEqual(
+                m.last_request.path,
+                '/reload'
+            )

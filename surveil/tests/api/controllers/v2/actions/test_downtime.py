@@ -12,51 +12,52 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import httpretty
+
+import requests_mock
 
 from surveil.tests.api import functionalTest
 
 
 class TestDowntimeController(functionalTest.FunctionalTest):
 
-    @httpretty.activate
     def test_downtime_post(self):
-        httpretty.register_uri(httpretty.POST,
-                               self.ws_arbiter_url + "/downtime")
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.POST,
+                           self.ws_arbiter_url + "/downtime")
 
-        dt = {
-            "host_name": "localhost",
-            "duration": 86400
-        }
+            dt = {
+                "host_name": "localhost",
+                "duration": 86400
+            }
 
-        response = self.post_json("/v2/actions/downtime/", params=dt)
+            response = self.post_json("/v2/actions/downtime/", params=dt)
 
-        self.assertEqual(response.status_int, 200)
+            self.assertEqual(response.status_int, 200)
 
-        self.assert_count_equal_backport(httpretty.last_request().body.decode()
-                                         .split('&'),
-                                         ['host_name=localhost', 'action=add',
-                                          'duration=86400'])
-        self.assertEqual(httpretty.last_request().path,
-                         '/downtime')
+            self.assert_count_equal_backport(m.last_request.body.split('&'),
+                                             ['host_name=localhost',
+                                              'action=add',
+                                              'duration=86400'])
+            self.assertEqual(m.last_request.path,
+                             '/downtime')
 
-    @httpretty.activate
     def test_downtime_delete(self):
-        httpretty.register_uri(httpretty.POST,
-                               self.ws_arbiter_url + "/downtime")
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.POST,
+                           self.ws_arbiter_url + "/downtime")
 
-        dt = {
-            "host_name": "localhost",
-            "duration": 86400
-        }
+            dt = {
+                "host_name": "localhost",
+                "duration": 86400
+            }
 
-        response = self.delete_json("/v2/actions/downtime/", params=dt)
+            response = self.delete_json("/v2/actions/downtime/", params=dt)
 
-        self.assertEqual(response.status_int, 200)
+            self.assertEqual(response.status_int, 200)
 
-        self.assert_count_equal_backport(httpretty.last_request().body.decode()
-                                         .split('&'),
-                                         ['host_name=localhost',
-                                          'action=delete', 'duration=86400'])
-        self.assertEqual(httpretty.last_request().path,
-                         '/downtime')
+            self.assert_count_equal_backport(m.last_request.body.split('&'),
+                                             ['host_name=localhost',
+                                              'action=delete',
+                                              'duration=86400'])
+            self.assertEqual(m.last_request.path,
+                             '/downtime')
