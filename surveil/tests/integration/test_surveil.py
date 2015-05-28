@@ -23,7 +23,7 @@ class TestMergedIngegrationSurveil(
 
     def test_hello(self):
         self.assertEqual(
-            requests.get("http://localhost:8080/v2/hello").text,
+            requests.get("http://localhost:8999/v2/hello").text,
             'Hello World!'
         )
 
@@ -65,5 +65,34 @@ class TestSeparatedIntegrationSurveil(
                 cooldown=10,
                 exception=AssertionError,
                 message="Could not find host in status."
+            )
+        )
+
+    def test_delete_host(self):
+        self.test_create_host()
+
+        TestSeparatedIntegrationSurveil.client.config.hosts.delete(
+            'integrationhosttest'
+        )
+
+        TestSeparatedIntegrationSurveil.client.config.reload_config()
+
+        def function():
+            #  TODO(aviau): Use status API
+            status_hosts = (TestSeparatedIntegrationSurveil.
+                            client.config.hosts.list())
+            self.assertFalse(
+                any(host['host_name'].decode() != 'integrationhosttest'
+                    for host in status_hosts)
+
+            )
+
+        self.assertTrue(
+            self.try_for_x_seconds(
+                function,
+                time_to_wait=180,
+                cooldown=10,
+                exception=AssertionError,
+                message="Host was not deleted"
             )
         )
