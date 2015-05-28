@@ -1,0 +1,30 @@
+surveil:
+  build: .
+  links:
+   - mongo
+   - influxdb
+   - alignak
+  ports:
+   - "8999:8080"
+  command: bash -c "cd /opt/surveil && ./setup.sh && python setup.py develop && ((sleep 40 && surveil-init --demo) &) && sleep 20 && surveil-api --reload"
+
+alignak:
+  build: tools/docker/alignak_container/
+  links:
+    - mongo
+    - influxdb
+  environment:
+    SURVEIL_OS_AUTH_URL: "http://keystone:5000/v2.0"
+    SURVEIL_OS_USERNAME: "admin"
+    SURVEIL_OS_PASSWORD: "password"
+    SURVEIL_OS_TENANT_NAME: "admin"
+
+mongo:
+  image: mongo
+  command:
+      "mongod --nojournal --smallfiles"
+
+influxdb:
+  image: savoirfairelinux/influxdb
+  environment:
+    PRE_CREATE_DB: "db"
