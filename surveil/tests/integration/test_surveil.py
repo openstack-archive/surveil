@@ -67,3 +67,29 @@ class TestSeparatedIntegrationSurveil(
                 message="Could not find host in status."
             )
         )
+
+    def test_delete_host(self):
+        self.test_create_host()
+
+        TestSeparatedIntegrationSurveil.client.config.hosts.delete(
+            host_name='integrationhosttest',
+        )
+
+        def function():
+            status_hosts = (TestSeparatedIntegrationSurveil.
+                            client.status.hosts.list())
+            self.assertTrue(
+                all(host['host_name'].decode() != 'integrationhosttest'
+                    for host in status_hosts)
+
+            )
+
+        self.assertTrue(
+            self.try_for_x_seconds(
+                function,
+                time_to_wait=180,
+                cooldown=10,
+                exception=AssertionError,
+                message="Could not find host in status."
+            )
+        )
