@@ -38,7 +38,11 @@ class MergedIntegrationTest(base.BaseTestCase):
                 "../../../")
         )
         compose_file = os.path.join(surveil_dir, 'docker-compose.yml')
-        project_config = compose_config.load(compose_file)
+        project_config = compose_config.from_dictionary(
+            compose_config.load_yaml(compose_file),
+            working_dir=surveil_dir,
+            filename=compose_file
+        )
 
         cls.project = compose_project.Project.from_dicts(
             "surveilintegrationtest",
@@ -50,8 +54,8 @@ class MergedIntegrationTest(base.BaseTestCase):
         cls.project.up()
 
         cls.client = sclient.Client(
-            'http://localhost:8080/v2',
-            auth_url='http://localhost:8080/v2/auth',
+            'http://localhost:8999/v2',
+            auth_url='http://localhost:8999/v2/auth',
             version='2_0'
         )
 
