@@ -4,17 +4,23 @@
 Getting Started
 ###############
 
-Developpement environnement
+Development environment
 ---------------------------
 
-1. Starting the containers
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+0. Prerequisite
+~~~~~~~~~~~~~~~
 
-Surveil's developpement environnement is based on Docker and docker-compose.
+Surveil's development environment is based on Docker and docker-compose.
+
+First you need to install Docker refer to the project `installation documentation <https://docs.docker.com/installation/>`_
 
 You can install docker-compose with the following command:
 
     :bash:`sudo pip install -U docker-compose`
+
+
+1. Starting the containers
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You will then be able to use the environment with the following commands:
 
@@ -84,11 +90,24 @@ You can also use the CLI to view the configured hosts in the API with
 
 Adding a new host
 `````````````````
-Surveil ships with configuration templates (or packs). While it is possible possible to define services by yourself, it is suggested
-to use configuration templates. For example, the following command defines a host using the OpenStack Keystone template: ::
+The Surveil client provides function to add host
 
-    surveil config-host-create --host_name os-controller-1.cloud.mtl.sfl --address 172.20.1.21 --use linux-keystone --custom_fields '{"_OS_AUTH_URL":"http://145.50.1.61:5000/v2.0", "_OS_TENANT_NAME":"admin", "_OS_USERNAME":"admin", "_OS_PASSWORD":"password","_KS_SERVICES":"identity"}'
+:bash:`surveil config-host-create --host_name OpenStack --address openstack.org`
 
-This will create a ``os-controller-1.cloud.mtl.sfl`` host using the ``linux-keystone`` template. A service will be automatically
-defined to monitor the Keystone API with the authentication credentials provided. More documentation about configuration packs
-is available `here <http://sfl-monitoring-tools.readthedocs.org>`_.
+This will add a new host in Surveil config, but before you can see the new host status in
+the host status list with the client you need to tell Surveil that there's a new host
+to monitor. Simply type:
+
+:bash:`surveil config-reload`
+
+It will take between 5 to 10 secondes for Surveil to tell Alignak the config
+has changed. After this delay type again
+
+:bash:`surveil status-host-list`
+
+Using Bansho the web interface
+``````````````````````````````
+The Surveil client uses the Surveil API to query information concerning hosts
+and services. Bansho the web interface also use this API. To use Bansho simply
+open a browser  at http://localhost:8888/#/view?view=liveHosts and press login.
+
