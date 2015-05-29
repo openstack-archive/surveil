@@ -9,4 +9,3 @@ mongomock
 requests_mock
 sphinx_rtd_theme
 docker-compose
-python-surveilclient==0.6.0
