@@ -42,7 +42,8 @@ def main():
     if mongo.surveil.init.count() == 0:
         # Mark packs as uploaded
         print("Uploading packs...")
-        mongo.surveil.init.insert({"source": "surveil-init script"})
+        mongo.surveil.init.insert(
+            {"source": "surveil-init script"})
 
         # Load the shinken packs
         subprocess.call(
