@@ -58,7 +58,9 @@ class ServerManager:
             self.start_server()
 
     def create_subprocess(self):
-        self.server_process = subprocess.Popen(['surveil-api'])
+        self.server_process = subprocess.Popen(
+            ['/opt/surveil/env/bin/surveil-api']
+        )
 
     def start_server(self):
         pecan_app = app.load_app()

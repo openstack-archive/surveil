@@ -36,7 +36,7 @@ rabbitconsumer:
     #SURVEIL_OS_PASSWORD: "password"
     #SURVEIL_TENANT_NAME: "admin"
     #SURVEIL_DEFAULT_TAGS: "linux-openstackceilometer"
-  command: bash -c "cd /opt/surveil && ./setup.sh && python setup.py develop && surveil-rabbitMQ-consumer"
+  command: bash -c "cd /opt/surveil && ./setup.sh && /opt/surveil/env/bin/python setup.py develop && surveil-rabbitMQ-consumer"
 
 alignak:
   #build: tools/docker/alignak_container/
