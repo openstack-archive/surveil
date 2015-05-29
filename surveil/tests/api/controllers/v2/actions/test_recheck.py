@@ -12,28 +12,27 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import httpretty
+import requests_mock
 
 from surveil.tests.api import functionalTest
 
 
 class TestRecheckController(functionalTest.FunctionalTest):
 
-    @httpretty.activate
     def test_recheck_post(self):
-        httpretty.register_uri(httpretty.POST,
-                               self.ws_arbiter_url + "/recheck")
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.POST,
+                           self.ws_arbiter_url + "/recheck")
 
-        recheck = {
-            "host_name": "localhost",
-        }
+            recheck = {
+                "host_name": "localhost",
+            }
 
-        response = self.post_json("/v2/actions/recheck/", params=recheck)
+            response = self.post_json("/v2/actions/recheck/", params=recheck)
 
-        self.assertEqual(response.status_int, 200)
+            self.assertEqual(response.status_int, 200)
 
-        self.assert_count_equal_backport(httpretty.last_request().body.decode()
-                                         .split('&'),
-                                         ['host_name=localhost'])
-        self.assertEqual(httpretty.last_request().path,
-                         '/recheck')
+            self.assert_count_equal_backport(m.last_request.body.split('&'),
+                                             ['host_name=localhost'])
+            self.assertEqual(m.last_request.path,
+                             '/recheck')

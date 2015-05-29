@@ -12,48 +12,47 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import httpretty
+import requests_mock
 
 from surveil.tests.api import functionalTest
 
 
 class TestAcknowledgeController(functionalTest.FunctionalTest):
 
-    @httpretty.activate
     def test_acknowledge_add(self):
-        httpretty.register_uri(httpretty.POST,
-                               self.ws_arbiter_url + "/acknowledge")
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.POST,
+                           self.ws_arbiter_url + "/acknowledge")
 
-        ack = {
-            "host_name": "localhost"
-        }
+            ack = {
+                "host_name": "localhost"
+            }
 
-        response = self.post_json("/v2/actions/acknowledge/", params=ack)
+            response = self.post_json("/v2/actions/acknowledge/", params=ack)
 
-        self.assertEqual(response.status_int, 200)
+            self.assertEqual(response.status_int, 200)
 
-        self.assert_count_equal_backport(httpretty.last_request().body.decode()
-                                         .split('&'),
-                                         ['host_name=localhost', 'action=add'])
-        self.assertEqual(httpretty.last_request().path,
-                         '/acknowledge')
+            self.assert_count_equal_backport(m.last_request.body.split('&'),
+                                             ['host_name=localhost',
+                                              'action=add'])
+            self.assertEqual(m.last_request.path,
+                             '/acknowledge')
 
-    @httpretty.activate
     def test_acknowledge_delete(self):
-        httpretty.register_uri(httpretty.POST,
-                               self.ws_arbiter_url + "/downtime")
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.POST,
+                           self.ws_arbiter_url + "/downtime")
 
-        ack = {
-            "host_name": "localhost",
-        }
+            ack = {
+                "host_name": "localhost",
+            }
 
-        response = self.delete_json("/v2/actions/downtime/", params=ack)
+            response = self.delete_json("/v2/actions/downtime/", params=ack)
 
-        self.assertEqual(response.status_int, 200)
+            self.assertEqual(response.status_int, 200)
 
-        self.assert_count_equal_backport(httpretty.last_request().body.decode()
-                                         .split('&'),
-                                         ['host_name=localhost',
-                                          'action=delete'])
-        self.assertEqual(httpretty.last_request().path,
-                         '/downtime')
+            self.assert_count_equal_backport(m.last_request.body.split('&'),
+                                             ['host_name=localhost',
+                                              'action=delete'])
+            self.assertEqual(m.last_request.path,
+                             '/downtime')

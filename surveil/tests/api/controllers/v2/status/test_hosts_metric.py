@@ -14,7 +14,7 @@
 
 import json
 
-import httpretty
+import requests_mock
 
 from surveil.tests.api import functionalTest
 
@@ -83,34 +83,35 @@ class TestHostMetric(functionalTest.FunctionalTest):
             ]
         })
 
-    @httpretty.activate
     def test_get_metric_hosts(self):
-        httpretty.register_uri(httpretty.GET,
-                               "http://influxdb:8086/query",
-                               body=self.influxdb_response)
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.GET,
+                           "http://influxdb:8086/query",
+                           text=self.influxdb_response)
 
-        response = self.get("/v2/status/hosts/srv-monitoring-01/metrics/load1")
+            response = self.get(
+                "/v2/status/hosts/srv-monitoring-01/metrics/load1"
+                )
 
-        expected = {
-            "metric_name": "load1",
-            "min": "0",
-            "critical": "30",
-            "warning": "15",
-            "value": "0.6"
-        }
+            expected = {
+                "metric_name": "load1",
+                "min": "0",
+                "critical": "30",
+                "warning": "15",
+                "value": "0.6"
+            }
 
-        self.assert_count_equal_backport(
-            json.loads(response.body.decode()),
-            expected)
-        self.assertEqual(
-            httpretty.last_request().querystring['q'],
-            ["SELECT * FROM metric_load1 "
-             "WHERE host_name= 'srv-monitoring-01' "
-             "GROUP BY service_description "
-             "ORDER BY time DESC LIMIT 1"]
-        )
+            self.assert_count_equal_backport(
+                json.loads(response.body.decode()),
+                expected)
+            self.assertEqual(
+                m.last_request.qs['q'],
+                ["select * from metric_load1 "
+                 "where host_name= 'srv-monitoring-01' "
+                 "group by service_description "
+                 "order by time desc limit 1"]
+            )
 
-    @httpretty.activate
     def test_time_hosts(self):
         self.influxdb_response = json.dumps({
             "results": [
@@ -136,40 +137,42 @@ class TestHostMetric(functionalTest.FunctionalTest):
                                  "10"]]}]}]
 
         })
-        httpretty.register_uri(httpretty.GET,
-                               "http://influxdb:8086/query",
-                               body=self.influxdb_response)
 
-        time = {'begin': '2015-04-19T00:09:24Z',
-                'end': '2015-04-19T02:09:25Z'}
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.GET,
+                           "http://influxdb:8086/query",
+                           text=self.influxdb_response)
 
-        response = self.post_json("/v2/status/hosts/srv-monitoring-01/"
-                                  "services/load/metrics/load1",
-                                  params=time)
+            time = {'begin': '2015-04-19T00:09:24Z',
+                    'end': '2015-04-19T02:09:25Z'}
 
-        expected = [{"metric_name": 'load1',
-                     "min": "0",
-                     "critical": "30",
-                     "warning": "15",
-                     "value": "0.6"
-                     },
-                    {"metric_name": 'load1',
-                     "min": "4",
-                     "critical": "40",
-                     "warning": "10",
-                     "value": "10"
-                     }]
+            response = self.post_json("/v2/status/hosts/srv-monitoring-01/"
+                                      "services/load/metrics/load1",
+                                      params=time)
 
-        self.assert_count_equal_backport(
-            json.loads(response.body.decode()),
-            expected)
-        self.assertEqual(
-            httpretty.last_request().querystring['q'],
-            ["SELECT * FROM metric_load1 "
-             "WHERE time >= '2015-04-19T00:09:24Z' "
-             "AND time <= '2015-04-19T02:09:25Z' "
-             "AND host_name ='srv-monitoring-01' "
-             "AND service_description ='load' "
-             "ORDER BY time DESC"
-             ]
-        )
+            expected = [{"metric_name": 'load1',
+                         "min": "0",
+                         "critical": "30",
+                         "warning": "15",
+                         "value": "0.6"
+                         },
+                        {"metric_name": 'load1',
+                         "min": "4",
+                         "critical": "40",
+                         "warning": "10",
+                         "value": "10"
+                         }]
+
+            self.assert_count_equal_backport(
+                json.loads(response.body.decode()),
+                expected)
+            self.assertEqual(
+                m.last_request.qs['q'],
+                ["select * from metric_load1 "
+                 "where time >= '2015-04-19t00:09:24z' "
+                 "and time <= '2015-04-19t02:09:25z' "
+                 "and host_name ='srv-monitoring-01' "
+                 "and service_description ='load' "
+                 "order by time desc"
+                 ]
+            )
