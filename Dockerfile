@@ -35,7 +35,7 @@ ADD surveil /opt/surveil/surveil
 ENV PBR_VERSION=PROD
 
 # We are using develop so that the code can be mounted when in DEV.
-RUN pip install -U six
+RUN pip install -U six requests
 RUN cd /opt/surveil && python setup.py develop
 
 # Set to 'surveil' or 'keystone'

@@ -88,11 +88,12 @@ RUN apt-get update && apt-get install -y subversion && \
     apt-get remove -y subversion
 
 ## Install plugins dependencies
+RUN pip install "pbr>=0.6,!=0.7,<1.0"
 RUN pip install shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
-RUN cd /plugins/check_glance && sudo python setup.py install
 RUN cd /plugins/check_keystone && sudo python setup.py install
+RUN cd /plugins/check_glance && sudo python setup.py install
 RUN cd /plugins/check_nova && sudo python setup.py install
 RUN cd /plugins/check_cinder && sudo python setup.py install
 RUN cd /plugins/check_ceilometer && sudo python setup.py install
