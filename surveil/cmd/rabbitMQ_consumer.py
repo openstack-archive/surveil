@@ -77,6 +77,10 @@ def main():
         "SURVEIL_OS_TENANT_NAME": os.environ.get(
             'SURVEIL_OS_TENANT_NAME',
             config.get("rabbitconsumer", "SURVEIL_OS_TENANT_NAME")
+        ),
+        "SURVEIL_DEFAULT_TAGS": os.environ.get(
+            'SURVEIL_DEFAULT_TAGS',
+            config.get("rabbitconsumer", "SURVEIL_DEFAULT_TAGS")
         )
     }
 
@@ -142,10 +146,19 @@ def main():
                 "_OS_PASSWORD": daemon_config["SURVEIL_OS_PASSWORD"],
                 "_OS_INSTANCE_ID": event['payload']['instance_id']
             }
+
+            instance_tags = daemon_config["SURVEIL_DEFAULT_TAGS"]
+            surveil_metadata_tags = event['payload']['metadata'].get(
+                'surveil_tags',
+                None
+            )
+            if surveil_metadata_tags is not None:
+                instance_tags += ',' + surveil_metadata_tags
+
             c.config.hosts.create(
                 host_name=event['payload']['hostname'],
                 address=event['payload']['hostname'],
-                use='linux-openstackceilometer',
+                use=instance_tags,
                 custom_fields=custom_fields
             )
         elif event['event_type'] == 'compute.instance.delete.end':
