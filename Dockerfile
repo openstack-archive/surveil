@@ -2,11 +2,13 @@ FROM ubuntu:trusty
 
 MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
-RUN apt-get update && apt-get install -y vim python-pip python3-pip python-dev libffi-dev libssl-dev git python-pycurl
+RUN apt-get update && apt-get install -y vim python-pip python3-pip python-dev libffi-dev libssl-dev git python-pycurl python-virtualenv libcurl4-openssl-dev
+
+# VirtualEnv
+RUN virtualenv /opt/surveil/env
 
 # Surveil needs alignak (as a lib)
-RUN useradd shinken && pip install https://github.com/Alignak-monitoring/alignak/archive/396d10105827f8c75686811991829548e6778e11.zip
-
+RUN useradd shinken && /opt/surveil/env/bin/pip install pycurl https://github.com/Alignak-monitoring/alignak/archive/396d10105827f8c75686811991829548e6778e11.zip
 
 # Download packs
 ENV MONITORING_TOOLS_VERSION 0.2.0
@@ -20,7 +22,7 @@ RUN apt-get install -y subversion && \
     apt-get remove -y subversion
 
 ADD requirements.txt /opt/surveil/requirements.txt
-RUN pip install -r /opt/surveil/requirements.txt
+RUN /opt/surveil/env/bin/pip install -r /opt/surveil/requirements.txt
 
 ADD tools/docker/surveil_container/setup.sh /opt/surveil/setup.sh
 ADD setup.py /opt/surveil/setup.py
@@ -34,8 +36,8 @@ ENV PBR_VERSION=PROD
 RUN pip install -U six
 
 # We are using develop so that the code can be mounted when in DEV.
-RUN pip install -U six requests
-RUN cd /opt/surveil && python setup.py develop
+RUN /opt/surveil/env/bin/pip install -U six requests
+RUN cd /opt/surveil && /opt/surveil/env/bin/python setup.py develop
 
 # Set to 'surveil' or 'keystone'
 ENV SURVEIL_AUTH_BACKEND=surveil
@@ -49,5 +51,5 @@ ENV SURVEIL_OS_TENANT_NAME=admin
 
 CMD cd /opt/surveil && \
     ./setup.sh && \
-    ((sleep 40 && surveil-init) &) && \
-    surveil-api
+    ((sleep 40 && /opt/surveil/env/bin/surveil-init) &) && \
+    /opt/surveil/env/bin/surveil-api

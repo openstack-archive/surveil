@@ -42,12 +42,13 @@ def main():
     if mongo.surveil.init.count() == 0:
         # Mark packs as uploaded
         print("Uploading packs...")
-        mongo.surveil.init.insert({"source": "surveil-init script"})
+        mongo.surveil.init.insert(
+            {"source": "/opt/surveil/env/bin/surveil-init script"})
 
         # Load the shinken packs
         subprocess.call(
             [
-                "surveil-pack-upload",
+                "/opt/surveil/env/bin/surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
                 "/packs/linux-keystone/",
@@ -56,7 +57,7 @@ def main():
 
         subprocess.call(
             [
-                "surveil-pack-upload",
+                "/opt/surveil/env/bin/surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
                 "/packs/linux-glance/",
@@ -65,7 +66,7 @@ def main():
 
         subprocess.call(
             [
-                "surveil-pack-upload",
+                "/opt/surveil/env/bin/surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
                 "/packs/generic-host/",
@@ -74,7 +75,7 @@ def main():
 
         subprocess.call(
             [
-                "surveil-pack-upload",
+                "/opt/surveil/env/bin/surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
                 "/packs/linux-nova/",
@@ -83,7 +84,7 @@ def main():
 
         subprocess.call(
             [
-                "surveil-pack-upload",
+                "/opt/surveil/env/bin/surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
                 "/packs/linux-cinder/",
@@ -92,7 +93,7 @@ def main():
 
         subprocess.call(
             [
-                "surveil-pack-upload",
+                "/opt/surveil/env/bin/surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
                 "/packs/linux-openstackceilometer/",
