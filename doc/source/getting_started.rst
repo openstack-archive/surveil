@@ -4,17 +4,23 @@
 Getting Started
 ###############
 
-Developpement environnement
+Development environment
 ---------------------------
 
-1. Starting the containers
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+0. Prerequisite
+~~~~~~~~~~~~~~~
 
-Surveil's developpement environnement is based on Docker and docker-compose.
+Surveil's development environment is based on Docker and docker-compose.
+
+First you need to install Docker. Refer to the project `installation documentation <https://docs.docker.com/installation/>`_.
 
 You can install docker-compose with the following command:
 
     :bash:`sudo pip install -U docker-compose`
+
+
+1. Starting the containers
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You will then be able to use the environment with the following commands:
 
@@ -84,11 +90,23 @@ You can also use the CLI to view the configured hosts in the API with
 
 Adding a new host
 `````````````````
-Surveil ships with configuration templates (or packs). While it is possible possible to define services by yourself, it is suggested
-to use configuration templates. For example, the following command defines a host using the OpenStack Keystone template: ::
+The Surveil CLI provides function to add hosts:
 
-    surveil config-host-create --host_name os-controller-1.cloud.mtl.sfl --address 172.20.1.21 --use linux-keystone --custom_fields '{"_OS_AUTH_URL":"http://145.50.1.61:5000/v2.0", "_OS_TENANT_NAME":"admin", "_OS_USERNAME":"admin", "_OS_PASSWORD":"password","_KS_SERVICES":"identity"}'
+    :bash:`surveil config-host-create --host_name openstackwebsite --address openstack.org`
 
-This will create a ``os-controller-1.cloud.mtl.sfl`` host using the ``linux-keystone`` template. A service will be automatically
-defined to monitor the Keystone API with the authentication credentials provided. More documentation about configuration packs
-is available `here <http://sfl-monitoring-tools.readthedocs.org>`_.
+This will configure a new host in Surveil. However, it won't be monitored until Surveil's config
+is reloaded. You can do this with the CLI:
+
+    :bash:`surveil config-reload`
+
+It will take from 5 to 10 seconds for Surveil to start monitoring the host. After this delay, you
+will be able to consult the host status with the CLI:
+
+    :bash:`surveil status-host-list`
+
+Using Bansho the web interface
+``````````````````````````````
+The Surveil client uses the Surveil API to query information concerning hosts
+and services. Bansho (Surveil's web interface) also uses this API. To use Bansho simply
+open a browser at `python-surveilclient <>`_ and press login.
+
