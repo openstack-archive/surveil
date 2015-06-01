@@ -68,15 +68,13 @@ influxdb:
    - ./container-data/influxdb:/data
 
 grafana:
-  image: savoirfairelinux/grafana:2.0.2
+  image: savoirfairelinux/grafana:2.1.0-pre1
   environment:
     INFLUXDB_HOST: "influxdb"
     INFLUXDB_PORT: "8086"
     INFLUXDB_NAME: "db"
     INFLUXDB_USER: "root"
     INFLUXDB_PASS: "root"
-  ports:
-    - "8888:80"
   links:
     - influxdb
 
@@ -90,3 +88,4 @@ bansho:
     - "80:8888"
   links:
     - surveil
+    - grafana
