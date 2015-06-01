@@ -56,6 +56,7 @@ class MergedIntegrationTest(base.BaseTestCase):
         )
         cls.project.kill()
         cls.project.remove_stopped()
+        cls.project.build()
         cls.project.up()
 
         cls.client = sclient.Client(
