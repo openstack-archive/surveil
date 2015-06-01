@@ -26,8 +26,8 @@ from compose import project as compose_project
 from surveilclient import client as sclient
 
 
-@unittest.skipIf(os.environ.get('SURVEIL_INTEGRATION_TESTS', None) != 'True',
-                 'Skipping integraiton tests')
+#@unittest.skipIf(os.environ.get('SURVEIL_INTEGRATION_TESTS', None) != 'True',
+#                 'Skipping integraiton tests')
 class MergedIntegrationTest(base.BaseTestCase):
 
     @classmethod
@@ -56,6 +56,7 @@ class MergedIntegrationTest(base.BaseTestCase):
         )
         cls.project.kill()
         cls.project.remove_stopped()
+        cls.project.build()
         cls.project.up()
 
         cls.client = sclient.Client(
