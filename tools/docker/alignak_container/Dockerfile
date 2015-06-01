@@ -78,13 +78,14 @@ RUN chmod u+s /bin/ping
 RUN chmod u+s /bin/ping6
 
 # Download plugins
-ENV MONITORING_TOOLS_VERSION 0.2.0
+ENV MONITORING_TOOLS_VERSION 0.3.0
 RUN apt-get update && apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-glance /plugins/check_glance && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-keystone /plugins/check_keystone && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-nova /plugins/check_nova && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-cinder /plugins/check_cinder && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-ceilometer /plugins/check_ceilometer && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-nova-host-status /plugins/check_nova_host_status && \
     apt-get remove -y subversion
 
 ## Install plugins dependencies
@@ -97,6 +98,7 @@ RUN cd /plugins/check_glance && sudo python setup.py install
 RUN cd /plugins/check_nova && sudo python setup.py install
 RUN cd /plugins/check_cinder && sudo python setup.py install
 RUN cd /plugins/check_ceilometer && sudo python setup.py install
+RUN cd /plugins/check_nova_host_status && sudo python setup.py install
 
 ## packs
 RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \

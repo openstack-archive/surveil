@@ -11,7 +11,7 @@ RUN virtualenv /opt/surveil/env
 RUN useradd shinken && /opt/surveil/env/bin/pip install pycurl https://github.com/Alignak-monitoring/alignak/archive/396d10105827f8c75686811991829548e6778e11.zip
 
 # Download packs
-ENV MONITORING_TOOLS_VERSION 0.2.0
+ENV MONITORING_TOOLS_VERSION 0.3.0
 RUN apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/generic-host /packs/generic-host && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-glance /packs/linux-glance && \
