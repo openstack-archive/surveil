@@ -58,7 +58,7 @@ RUN cd /tmp && \
 
 # mod-mongo-live-config
 RUN cd /tmp && \
-    wget -O mod-mongo-live-config.tar.gz https://github.com/savoirfairelinux/mod-mongo-live-config/archive/0.2.0.tar.gz && \
+    wget -O mod-mongo-live-config.tar.gz https://github.com/savoirfairelinux/mod-mongo-live-config/archive/0.3.0.zip
     tar -zxvf mod-mongo-live-config.tar.gz && \
     mv /tmp/mod-mongo-live-config-*/mod_mongo_live_config /var/lib/alignak/modules/mod_mongo_live_config && \
     rm -rfv /tmp/mod-mongo-live-config*
