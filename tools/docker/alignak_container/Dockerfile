@@ -85,6 +85,7 @@ RUN apt-get update && apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-nova /plugins/check_nova && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-cinder /plugins/check_cinder && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-ceilometer /plugins/check_ceilometer && \
+    svn checkout https://github.com/fpeyre/monitoring-tools/branches/linux-nova/plugins/check-nova-host-status /plugins/check_nova_host_status && \
     apt-get remove -y subversion
 
 ## Install plugins dependencies
@@ -97,6 +98,7 @@ RUN cd /plugins/check_glance && sudo python setup.py install
 RUN cd /plugins/check_nova && sudo python setup.py install
 RUN cd /plugins/check_cinder && sudo python setup.py install
 RUN cd /plugins/check_ceilometer && sudo python setup.py install
+RUN cd /plugins/check_nova_host_status && sudo python setup.py install
 
 ## packs
 RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
