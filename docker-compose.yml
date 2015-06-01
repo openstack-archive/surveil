@@ -42,24 +42,28 @@ influxdb:
     - "8086:8086"
 
 grafana:
-  image: savoirfairelinux/grafana
+  image: grafana
   environment:
-    INFLUXDB_HOST: "influxdb"
-    INFLUXDB_PORT: "8086"
-    INFLUXDB_NAME: "db"
-    INFLUXDB_USER: "root"
-    INFLUXDB_PASS: "root"
+    GRAFANA_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
+    GRAFANA_AUTH_PROXY_ENABLED: true
+    GRAFANA_AUTH_PROXY_HEADER_NAME: grafana-user
   ports:
     - "80:80"
   links:
     - influxdb
 
 bansho:
-  image: savoirfairelinux/bansho
+  image: bansho
   environment:
     BANSHO_BACKEND: "surveil"
     BANSHO_SURVEIL_URL: "http://surveil:8080/"
+    INFLUXDB_HOST: "influxdb"
+    INFLUXDB_PORT: "8086"
+    INFLUXDB_NAME: "db"
+    INFLUXDB_USER: "root"
+    INFLUXDB_PASS: "root"
   ports:
     - "8888:8888"
   links:
     - surveil
+    - grafana
