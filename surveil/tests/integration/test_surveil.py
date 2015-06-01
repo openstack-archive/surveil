@@ -78,9 +78,8 @@ class TestSeparatedIntegrationSurveil(
         TestSeparatedIntegrationSurveil.client.config.reload_config()
 
         def function():
-            # TODO(aviau): Use status API
             status_hosts = (TestSeparatedIntegrationSurveil.
-                            client.config.hosts.list())
+                            client.status.hosts.list())
             self.assertFalse(
                 any(host['host_name'].decode() == 'integrationhosttest'
                     for host in status_hosts)
