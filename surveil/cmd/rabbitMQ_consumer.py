@@ -147,6 +147,19 @@ def main():
                 "_OS_INSTANCE_ID": event['payload']['instance_id']
             }
 
+            surveil_metadata_custom_fields = event['payload']['metadata'].get(
+                'surveil_custom_fields',
+                None
+            )
+            if surveil_metadata_custom_fields is not None:
+                try:
+                    custom_fields.update(
+                        json.loads(surveil_metadata_custom_fields)
+                    )
+                except ValueError:
+                    print("Could not load json %s" %
+                          surveil_metadata_custom_fields)
+
             instance_tags = daemon_config["SURVEIL_DEFAULT_TAGS"]
             surveil_metadata_tags = event['payload']['metadata'].get(
                 'surveil_tags',
