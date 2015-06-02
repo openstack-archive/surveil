@@ -62,6 +62,7 @@ RUN cd /tmp && \
     rm -rfv /tmp/mod-mongo-live-config*
 
 # mod-ceilometer
+RUN apt-get update && apt-get install -y python-ceilometerclient
 RUN cd /tmp && \
     wget -O mod-ceilometer.tar.gz https://github.com/savoirfairelinux/mod-ceilometer/archive/062c546b12f6a57b3f9810955e1aee6b5b92e38f.tar.gz && \
     tar -zxvf mod-ceilometer.tar.gz && \
