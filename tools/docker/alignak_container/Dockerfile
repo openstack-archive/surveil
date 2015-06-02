@@ -88,7 +88,8 @@ RUN apt-get update && apt-get install -y subversion && \
 ## Install plugins dependencies
 RUN mkdir -p /opt/surveilplugins
 RUN virtualenv /opt/surveilplugins/env
-ENV PATH=$PATH:ENV PATH=$PATH:/opt/surveilplugins/env/bin
+ENV PATH=$PATH:/opt/surveilplugins/env/bin
+RUN su -c "export PATH=$PATH:/opt/surveilplugins/env/bin" -s /bin/sh alignak
 RUN /opt/surveilplugins/env/bin/pip install "pbr>=0.6,!=0.7,<1.0" shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
