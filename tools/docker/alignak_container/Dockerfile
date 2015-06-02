@@ -76,13 +76,14 @@ RUN chmod u+s /bin/ping
 RUN chmod u+s /bin/ping6
 
 # Download plugins
-ENV MONITORING_TOOLS_VERSION 0.2.0
+ENV MONITORING_TOOLS_VERSION 0.3.2
 RUN apt-get update && apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-glance /plugins/check_glance && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-keystone /plugins/check_keystone && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-nova /plugins/check_nova && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-cinder /plugins/check_cinder && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-ceilometer /plugins/check_ceilometer && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-nova-host-status /plugins/check_nova_host_status && \
     apt-get remove -y subversion
 
 ## Install plugins dependencies
@@ -98,6 +99,7 @@ RUN cd /plugins/check_glance && sudo /opt/surveilplugins/env/bin/python setup.py
 RUN cd /plugins/check_nova && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_nova /usr/lib/alignak/plugins/
 RUN cd /plugins/check_cinder && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_cinder /usr/lib/alignak/plugins/
 RUN cd /plugins/check_ceilometer && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_ceilometer /usr/lib/alignak/plugins/
+RUN cd /plugins/check_nova_host_status && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_nova_host_status /usr/lib/alignak/plugins/
 
 ## packs
 RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
