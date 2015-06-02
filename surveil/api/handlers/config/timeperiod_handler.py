@@ -35,7 +35,8 @@ class TimePeriodHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.timeperiods.update(
             {"timeperiod_name": timeperiod_name},
-            timeperiod_dict
+            {"$set": timeperiod_dict},
+            upsert=True
         )
 
     def delete(self, timeperiod_name):

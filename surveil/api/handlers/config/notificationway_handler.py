@@ -33,7 +33,8 @@ class NotificationWayHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.notificationways.update(
             {"notificationway_name": notificationway_name},
-            notificationway_dict
+            {"$set": notificationway_dict},
+            upsert=True
         )
 
     def delete(self, notificationway_name):

@@ -35,7 +35,8 @@ class ServiceHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.hosts.update(
             {"host_name": id},
-            host_dict
+            {"$set": host_dict},
+            upsert=True
         )
 
     def delete(self, host_name, service_description):

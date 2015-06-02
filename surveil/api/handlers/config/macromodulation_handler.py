@@ -35,7 +35,8 @@ class MacroModulationHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.macromodulations.update(
             {"macromodulation_name": modulation_name},
-            modulation_dict
+            {"$set": modulation_dict},
+            upsert=True
         )
 
     def delete(self, modulation_name):

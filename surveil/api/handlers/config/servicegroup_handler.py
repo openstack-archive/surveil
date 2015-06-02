@@ -35,7 +35,8 @@ class ServiceGroupHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.servicegroups.update(
             {"servicegroup_name": group_name},
-            group_dict
+            {"$set": group_dict},
+            upsert=True
         )
 
     def delete(self, group_name):

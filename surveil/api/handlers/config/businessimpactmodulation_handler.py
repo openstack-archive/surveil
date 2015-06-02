@@ -37,7 +37,8 @@ class BusinessImpactModulationHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.businessimpactmodulations.update(
             {"business_impact_modulation_name": name},
-            modulation_dict
+            {"$set": modulation_dict},
+            upsert=True
         )
 
     def delete(self, name):
