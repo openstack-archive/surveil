@@ -35,7 +35,8 @@ class HostGroupHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.hostgroups.update(
             {"hostgroup_name": group_name},
-            group_dict
+            {"$set": group_dict},
+            upsert=True
         )
 
     def delete(self, group_name):

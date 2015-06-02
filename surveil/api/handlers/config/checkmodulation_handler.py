@@ -34,7 +34,8 @@ class CheckModulationHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.checkmodulations.update(
             {"checkmodulation_name": checkmodulation_name},
-            checkmodulation_dict
+            {"$set": checkmodulation_dict},
+            upsert=True
         )
 
     def delete(self, checkmodulation_name):

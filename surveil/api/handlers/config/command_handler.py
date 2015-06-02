@@ -34,7 +34,8 @@ class CommandHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.commands.update(
             {"command_name": command_name},
-            command_dict
+            {"$set": command_dict},
+            upsert=True
         )
 
     def delete(self, command_name):

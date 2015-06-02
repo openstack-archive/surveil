@@ -35,7 +35,8 @@ class ContactHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.contacts.update(
             {"contact_name": contact_name},
-            contact_dict
+            {"$set": contact_dict},
+            upsert=True
         )
 
     def delete(self, contact_name):

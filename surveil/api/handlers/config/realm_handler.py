@@ -35,7 +35,8 @@ class RealmHandler(handler.Handler):
 
         self.request.mongo_connection.shinken.realms.update(
             {"realm_name": realm_name},
-            realm_dict
+            {"$set": realm_dict},
+            upsert=True
         )
 
     def delete(self, realm_name):
