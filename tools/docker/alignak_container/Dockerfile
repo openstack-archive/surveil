@@ -88,15 +88,17 @@ RUN apt-get update && apt-get install -y subversion && \
 ## Install plugins dependencies
 RUN mkdir -p /opt/surveilplugins
 RUN virtualenv /opt/surveilplugins/env
-ENV PATH=$PATH:ENV PATH=$PATH:/opt/surveilplugins/env/bin
+ENV PATH=$PATH:/opt/surveilplugins/env/bin
+RUN su -c "export PATH=$PATH:/opt/surveilplugins/env/bin" -s /bin/sh alignak
 RUN /opt/surveilplugins/env/bin/pip install "pbr>=0.6,!=0.7,<1.0" shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
-RUN cd /plugins/check_keystone && sudo /opt/surveilplugins/env/bin/python setup.py install
-RUN cd /plugins/check_glance && sudo /opt/surveilplugins/env/bin/python setup.py install
-RUN cd /plugins/check_nova && sudo /opt/surveilplugins/env/bin/python setup.py install
-RUN cd /plugins/check_cinder && sudo /opt/surveilplugins/env/bin/python setup.py install
-RUN cd /plugins/check_ceilometer && sudo /opt/surveilplugins/env/bin/python setup.py install
+RUN mkdir -p /usr/lib/alignak/plugins
+RUN cd /plugins/check_keystone && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_keystone /usr/lib/alignak/plugins/
+RUN cd /plugins/check_glance && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_glance /usr/lib/alignak/plugins/
+RUN cd /plugins/check_nova && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_nova /usr/lib/alignak/plugins/
+RUN cd /plugins/check_cinder && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_cinder /usr/lib/alignak/plugins/
+RUN cd /plugins/check_ceilometer && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_ceilometer /usr/lib/alignak/plugins/
 
 ## packs
 RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
