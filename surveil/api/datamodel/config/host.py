@@ -22,7 +22,7 @@ class Host(types.Base):
     host_name = wsme.wsattr(wtypes.text, mandatory=True)
     """The name of the host"""
 
-    address = wsme.wsattr(wtypes.text, mandatory=True)
+    address = wsme.wsattr(wtypes.text, mandatory=False)
     """The address of the host. Normally, this is an IP address."""
 
     max_check_attempts = wsme.wsattr(int, mandatory=False, default=3)

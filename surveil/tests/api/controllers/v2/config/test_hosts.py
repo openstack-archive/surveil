@@ -45,7 +45,8 @@ class TestHostController(functionalTest.FunctionalTest):
                 "host_name": "bogus-router333", "address": "192.168.1.254",
                 "max_check_attempts": 5, "check_period": "24x7",
                 "contacts": "admin,carl", "contact_groups": "router-admins",
-                "notification_interval": 30, "notification_period": "24x7"
+                "notification_interval": 30, "notification_period": "24x7",
+                'use': 'test'
             },
         ]
         self.mongoconnection.shinken.hosts.insert(
@@ -133,14 +134,8 @@ class TestHostController(functionalTest.FunctionalTest):
 
     def test_update_host(self):
         put_host = {
-            u"host_name": u"bogus-router333",
-            u"address": u"newputaddress",
-            u"max_check_attempts": 222225,
-            u"check_period": u"newtimeperiod",
-            u"contacts": u"aaa,bbb",
-            u"contact_groups": u"newgroup",
-            u"notification_interval": 333,
-            u"notification_period": u"newnotificationperiod"
+            u'host_name': u'bogus-router333',
+            u'contacts': u'newcontacts',
         }
         response = self.put_json(
             "/v2/config/hosts/bogus-router333", params=put_host
@@ -152,7 +147,19 @@ class TestHostController(functionalTest.FunctionalTest):
             )
         )
 
-        self.assertEqual(put_host, mongo_host.as_dict())
+        expected = {
+            'address': u'192.168.1.254',
+            'check_period': u'24x7',
+            'notification_interval': 30,
+            'contacts': u'newcontacts',
+            'notification_period': u'24x7',
+            'contact_groups': u'',
+            'host_name': u'bogus-router333',
+            'max_check_attempts': 3,
+            'use': u'test'
+        }
+
+        self.assertEqual(expected, mongo_host.as_dict())
         self.assertEqual(response.status_int, 204)
 
     def test_delete_host(self):
