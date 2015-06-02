@@ -2,14 +2,12 @@ FROM ubuntu:trusty
 
 MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
-RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev nagios-nrpe-server wget
+RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev nagios-nrpe-server wget python-virtualenv
 # libffi-devand libssl-dev are for python-cryptography
 
 ### Alignak
-RUN apt-get update && apt-get install -y python-pip git
+RUN apt-get update && apt-get install -y python-pip python-pycurl
 RUN useradd alignak && pip install https://github.com/Alignak-monitoring/alignak/archive/d7f457d5ed94f08d9a6a38809106d3e0d35a1712.tar.gz
-RUN apt-get install -y python-pycurl
-RUN alignak --init
 
 ## modules
 # mod-webui
@@ -88,15 +86,17 @@ RUN apt-get update && apt-get install -y subversion && \
     apt-get remove -y subversion
 
 ## Install plugins dependencies
-RUN pip install "pbr>=0.6,!=0.7,<1.0"
-RUN pip install shinkenplugins python-keystoneclient python-glanceclient
+RUN mkdir -p /opt/surveilplugins
+RUN virtualenv /opt/surveilplugins/env
+ENV PATH=$PATH:ENV PATH=$PATH:/opt/surveilplugins/env/bin
+RUN /opt/surveilplugins/env/bin/pip install "pbr>=0.6,!=0.7,<1.0" shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
-RUN cd /plugins/check_keystone && sudo python setup.py install
-RUN cd /plugins/check_glance && sudo python setup.py install
-RUN cd /plugins/check_nova && sudo python setup.py install
-RUN cd /plugins/check_cinder && sudo python setup.py install
-RUN cd /plugins/check_ceilometer && sudo python setup.py install
+RUN cd /plugins/check_keystone && sudo /opt/surveilplugins/env/bin/python setup.py install
+RUN cd /plugins/check_glance && sudo /opt/surveilplugins/env/bin/python setup.py install
+RUN cd /plugins/check_nova && sudo /opt/surveilplugins/env/bin/python setup.py install
+RUN cd /plugins/check_cinder && sudo /opt/surveilplugins/env/bin/python setup.py install
+RUN cd /plugins/check_ceilometer && sudo /opt/surveilplugins/env/bin/python setup.py install
 
 ## packs
 RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
