@@ -133,14 +133,8 @@ class TestHostController(functionalTest.FunctionalTest):
 
     def test_update_host(self):
         put_host = {
-            u"host_name": u"bogus-router333",
-            u"address": u"newputaddress",
-            u"max_check_attempts": 222225,
-            u"check_period": u"newtimeperiod",
-            u"contacts": u"aaa,bbb",
-            u"contact_groups": u"newgroup",
-            u"notification_interval": 333,
-            u"notification_period": u"newnotificationperiod"
+            u'host_name': u'bogus-router333',
+            u'contacts': u'newcontacts',
         }
         response = self.put_json(
             "/v2/config/hosts/bogus-router333", params=put_host
@@ -152,7 +146,17 @@ class TestHostController(functionalTest.FunctionalTest):
             )
         )
 
-        self.assertEqual(put_host, mongo_host.as_dict())
+        expected = {
+            'check_period': u'24x7',
+            'notification_interval': 30,
+            'contacts': u'newcontacts',
+            'notification_period': u'24x7',
+            'contact_groups': u'',
+            'host_name': u'bogus-router333',
+            'max_check_attempts': 3
+        }
+
+        self.assertEqual(expected, mongo_host.as_dict())
         self.assertEqual(response.status_int, 204)
 
     def test_delete_host(self):
