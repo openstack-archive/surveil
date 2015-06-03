@@ -69,12 +69,31 @@ class HostServicesController(rest.RestController):
 
 class HostServiceMetricsController(rest.RestController):
 
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose([live_metric.LiveMetric])
+    def get(self):
+        """Returns a specific host."""
+        handler = live_metric_handler.MetricHandler(pecan.request)
+        metrics_name = handler.get_metric(
+            pecan.request.context['host_name'],
+            pecan.request.context['service_name']
+        )
+        return metrics_name
+
     @pecan.expose()
     def _lookup(self, metric_name, *remainder):
         return HostServiceMetricController(metric_name), remainder
 
 
 class HostMetricsController(rest.RestController):
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose([live_metric.LiveMetric])
+    def get(self):
+        """Returns a specific host."""
+        handler = live_metric_handler.MetricHandler(pecan.request)
+        metrics_name = handler.get_metric(pecan.request.context['host_name'])
+        return metrics_name
 
     @pecan.expose()
     def _lookup(self, metric_name, *remainder):

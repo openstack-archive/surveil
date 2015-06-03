@@ -91,7 +91,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
 
             response = self.get(
                 "/v2/status/hosts/srv-monitoring-01/metrics/load1"
-                )
+            )
 
             expected = {
                 "metric_name": "load1",
@@ -115,26 +115,27 @@ class TestHostMetric(functionalTest.FunctionalTest):
     def test_time_hosts(self):
         self.influxdb_response = json.dumps({
             "results": [
-                {"series": [
-                    {"name": "metric_load1",
-                     "tags": {"host_name": "srv-monitoring-01",
-                              "service_description": "load"},
-                     "columns": ["time",
-                                 "critical",
-                                 "min",
-                                 "value",
-                                 "warning",
-                                 ],
-                     "values": [["2015-04-19T01:09:24Z",
-                                 "30",
-                                 "0",
-                                 "0.6",
-                                 "15"],
-                                ["2015-04-19T01:09:25Z",
-                                 "40",
-                                 "4",
-                                 "10",
-                                 "10"]]}]}]
+                {
+                    "series": [
+                        {"name": "metric_load1",
+                         "tags": {"host_name": "srv-monitoring-01",
+                                  "service_description": "load"},
+                         "columns": ["time",
+                                     "critical",
+                                     "min",
+                                     "value",
+                                     "warning",
+                                     ],
+                         "values": [["2015-04-19T01:09:24Z",
+                                     "30",
+                                     "0",
+                                     "0.6",
+                                     "15"],
+                                    ["2015-04-19T01:09:25Z",
+                                     "40",
+                                     "4",
+                                     "10",
+                                     "10"]]}]}]
 
         })
 
@@ -175,4 +176,87 @@ class TestHostMetric(functionalTest.FunctionalTest):
                  "and service_description ='load' "
                  "order by time desc"
                  ]
+            )
+
+    def test_metric_names(self):
+        self.influxdb_response = json.dumps({
+            "results": [
+                {
+                    "series": [
+                        {
+                            "name": "measurements",
+                            "columns": ["name"],
+                            "values": [
+                                ["ALERT"],
+                                ["HOST_STATE"],
+                                ["metric_pl"],
+                                ["metric_rta"],
+                                ["metric_rtmax"],
+                                ["metric_rtmin"]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        })
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.GET,
+                           "http://influxdb:8086/query",
+                           text=self.influxdb_response)
+
+            response = self.get(
+                "/v2/status/hosts/localhost/metrics"
+            )
+
+            expected = [{"metric_name": "ALERT"},
+                        {"metric_name": "HOST_STATE"},
+                        {"metric_name": "metric_pl"},
+                        {"metric_name": "metric_rta"},
+                        {"metric_name": "metric_rtmax"},
+                        {"metric_name": "metric_rtmin"},
+                        ]
+
+            self.assert_count_equal_backport(
+                json.loads(response.body.decode()),
+                expected)
+            self.assertEqual(
+                m.last_request.qs['q'],
+                ["show measurements where host_name='localhost'"]
+            )
+
+    def test_metric_names_services(self):
+        self.influxdb_response = json.dumps({
+            "results": [
+                {
+                    "series": [
+                        {
+                            "name": "measurements",
+                            "columns": ["name"],
+                            "values": [
+                                ["SERVICE_STATE"]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        })
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.GET,
+                           "http://influxdb:8086/query",
+                           text=self.influxdb_response)
+
+            response = self.get(
+                "/v2/status/hosts/localhost/services/load/metrics"
+            )
+
+            expected = [{"metric_name": "SERVICE_STATE"},
+                        ]
+
+            self.assert_count_equal_backport(
+                json.loads(response.body.decode()),
+                expected)
+            self.assertEqual(
+                m.last_request.qs['q'],
+                ["show measurements where host_name='localhost' "
+                 "and service_description='load'"]
             )
