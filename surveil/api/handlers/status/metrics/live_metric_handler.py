@@ -21,10 +21,37 @@ from surveil.api.handlers.status.metrics import influxdb_time_query
 class MetricHandler(handler.Handler):
     """Fulfills a request on the metrics."""
 
-    def get(self, metric_name, host_name, service_description=None):
-        """Return a metric."""
+    def get_metric(self, host_name, service_description=None):
+        """Return all metrics name for a given host."""
+
         cli = self.request.influxdb_client
 
+        if service_description is None:
+            query = "SHOW measurements WHERE host_name='%s'" % host_name
+        else:
+            query = ("SHOW measurements WHERE host_name='%s' "
+                     "AND service_description='%s'"
+                     % (host_name, service_description))
+
+        response = cli.query(query)
+
+        metric_name_dicts = []
+
+        for item in response[None]:
+            metric_name_dict = self._metrics_name_from_influx_item(item)
+            metric_name_dicts.append(metric_name_dict)
+
+        metrics = []
+        for metric_dict in metric_name_dicts:
+            metric = live_metric.LiveMetric(**metric_dict)
+            metrics.append(metric)
+
+        return metrics
+
+    def get(self, metric_name, host_name, service_description=None):
+        """Return a metric."""
+
+        cli = self.request.influxdb_client
         if service_description is None:
             query = ("SELECT * FROM metric_%s "
                      "WHERE host_name= '%s' "
@@ -73,7 +100,9 @@ class MetricHandler(handler.Handler):
         return metrics
 
     def _metric_dict_from_influx_item(self, item, metric_name):
+
         metric_dict = {"metric_name": str(metric_name)}
+
         mappings = [
             ('min', str),
             ('max', str),
@@ -89,3 +118,14 @@ class MetricHandler(handler.Handler):
                 metric_dict[field[0]] = field[1](value)
 
         return metric_dict
+
+    def _metrics_name_from_influx_item(self, item):
+
+        metric_name = {}
+        mappings = [('metric_name', 'name', str), ]
+        for field in mappings:
+            value = item.get(field[1], None)
+            if value is not None:
+                metric_name[field[0]] = field[2](value)
+
+        return metric_name
