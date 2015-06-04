@@ -68,7 +68,7 @@ influxdb:
    - ./container-data/influxdb:/data
 
 grafana:
-  image: savoirfairelinux/grafana:2.1.0-pre1
+  image: savoirfairelinux/grafana:2.0.2
   environment:
     INFLUXDB_HOST: "influxdb"
     INFLUXDB_PORT: "8086"
