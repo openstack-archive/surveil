@@ -79,7 +79,7 @@ grafana:
     - influxdb
 
 bansho:
-  image: savoirfairelinux/bansho:0.6.0
+  image: savoirfairelinux/bansho
   environment:
     BANSHO_BACKEND: "surveil"
     #BANSHO_SURVEIL_URL: "http://surveil:8080/"
