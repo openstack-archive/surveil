@@ -1,6 +1,6 @@
 surveil:
   #build: .
-  image: savoirfairelinux/surveil:0.6.0
+  image: savoirfairelinux/surveil:0.7.0
   links:
    - mongo
    - influxdb
@@ -18,7 +18,7 @@ surveil:
 
 rabbitconsumer:
   #build: .
-  image: savoirfairelinux/surveil:0.6.0
+  image: savoirfairelinux/surveil:0.7.0
   links:
     - surveil
   environment:
@@ -41,7 +41,7 @@ rabbitconsumer:
 
 alignak:
   #build: tools/docker/alignak_container/
-  image: savoirfairelinux/surveil-alignak:0.6.0
+  image: savoirfairelinux/surveil-alignak:0.7.0
   links:
     - mongo
     - influxdb
@@ -68,22 +68,25 @@ influxdb:
    - ./container-data/influxdb:/data
 
 grafana:
-  image: savoirfairelinux/grafana:2.0.2
+  image: savoirfairelinux/grafana:2.1.0-pre1
   environment:
+    GRAFANA_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
+    GRAFANA_AUTH_PROXY_ENABLED: true
+    GRAFANA_AUTH_PROXY_HEADER_NAME: grafana-user
+  links:
+    - influxdb
+
+bansho:
+  image: savoirfairelinux/bansho:0.8.0
+  environment:
+    BANSHO_BACKEND: "surveil"
+    #BANSHO_SURVEIL_URL: "http://surveil:8080/"
+    #BANSHO_AUTH_URL: "http://198.72.123.131:5000/v2.0/"
     INFLUXDB_HOST: "influxdb"
     INFLUXDB_PORT: "8086"
     INFLUXDB_NAME: "db"
     INFLUXDB_USER: "root"
     INFLUXDB_PASS: "root"
-  links:
-    - influxdb
-
-bansho:
-  image: savoirfairelinux/bansho:0.6.0
-  environment:
-    BANSHO_BACKEND: "surveil"
-    #BANSHO_SURVEIL_URL: "http://surveil:8080/"
-    #BANSHO_AUTH_URL: "http://198.72.123.131:5000/v2.0/"
   ports:
     - "80:8888"
   links:
