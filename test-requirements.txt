@@ -9,3 +9,4 @@ mongomock
 requests_mock
 sphinx_rtd_theme
 docker-compose
+shinkenplugins>=0.1.4,<0.2.0
