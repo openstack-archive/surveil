@@ -6,3 +6,4 @@ Tutorials
 
    getting_started
    developing_the_api
+   monitoring_with_your_custom_plugin
