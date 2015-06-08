@@ -1,8 +1,5 @@
-Surveil project architecture
-============================
-
-Global project architecture
-###########################
+Project architecture
+===========================
 
 .. image:: https://github.com/stackforge/surveil-specs/raw/master/surveil_architecture.png
    :height: 2400px

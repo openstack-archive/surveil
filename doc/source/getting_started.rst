@@ -5,7 +5,7 @@ Getting Started
 ###############
 
 Development environment
----------------------------
+-----------------------
 
 0. Prerequisite
 ~~~~~~~~~~~~~~~

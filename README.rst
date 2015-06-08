@@ -9,6 +9,28 @@ Monitoring as a Service
 An OpenStack related project designed to provide highly available, scalable
 and flexible monitoring for OpenStack.
 
+Check the `live demo <http://surveil.savoirfairelinux.net/>`_ of the web interface.
+
+Global project architecture
+###########################
+
+.. image:: https://github.com/stackforge/surveil-specs/raw/master/surveil_architecture.png
+   :height: 2400px
+   :width: 800px
+   :alt: Surveil software architecture
+   :align: center
+
+Main components
+###############
+
+* `Surveil <https://github.com/stackforge/surveil>`_: REST API
+* `python-surveilclient <https://github.com/stackforge/python-surveilclient>`_: command line interface and Python library
+* `Alignak <https://github.com/Alignak-monitoring/alignak>`_: Core monitoring framework
+* `Bansho <https://github.com/stackforge/bansho>`_: Surveil web interface
+* `InfluxDB <https://github.com/influxdb/influxdb>`_: Storing metrics
+* `Redis <http://redis.io/>`_: API caching
+* `Grafana <http://grafana.org/>`_: Data visualization
+
 Project Info
 ############
 
