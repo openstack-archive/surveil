@@ -108,10 +108,18 @@ RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --e
     apt-get update && \
     apt-get install -y --force-yes monitoring-packs-sfl-generic-host monitoring-packs-sfl-linux-system-nrpe
 
+## Add check example plugin
+ADD plugins/check-example /plugins/check_example
+RUN virtualenv /plugins/check_example/env
+ENV PATH=$PATH:/plugins/check_example/env/bin
+RUN /plugins/check_example/env/bin/pip install -r /plugins/check_example/requirements.txt
+RUN cd /plugins/check_example && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_example /usr/lib/alignak/plugins/
+
 ## configuration
 ADD setup.sh /setup.sh
 RUN rm -rf /etc/alignak
 ADD etc/alignak /etc/alignak
+
 RUN chown -R root:alignak /etc/alignak
 
 ### Supervisor
