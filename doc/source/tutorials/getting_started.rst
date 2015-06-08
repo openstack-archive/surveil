@@ -1,11 +1,8 @@
 .. role:: bash(code)
    :language: bash
 
-Getting Started
-###############
-
-Development environment
----------------------------
+Getting started with Surveil
+----------------------------
 
 0. Prerequisite
 ~~~~~~~~~~~~~~~
@@ -109,4 +106,3 @@ Using Bansho the web interface
 The Surveil client uses the Surveil API to query information concerning hosts
 and services. Bansho (Surveil's web interface) also uses this API. To use Bansho simply
 open a browser at `http://localhost:8888 <http://localhost:8888/#/view?view=liveHosts>`_ and press login.
-
