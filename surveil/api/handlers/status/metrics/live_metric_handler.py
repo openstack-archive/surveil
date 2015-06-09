@@ -25,23 +25,34 @@ class MetricHandler(handler.Handler):
         """Return all metrics name for a given host."""
 
         cli = self.request.influxdb_client
-
+        metric_name_dicts = []
         if service_description is None:
-            query = "SHOW measurements WHERE host_name='%s'" % host_name
+            query = "SHOW series WHERE host_name='%s'" % host_name
+            response = cli.query(query)
+
+            for item in response[None]:
+                metric_name_dict = (
+                    self.
+                    _metrics_name_from_influx_item_without_service_descripion
+                    (item))
+                if metric_name_dict != {} and (
+                   metric_name_dict not in metric_name_dicts):
+                    metric_name_dicts.append(metric_name_dict)
         else:
             query = ("SHOW measurements WHERE host_name='%s' "
                      "AND service_description='%s'"
                      % (host_name, service_description))
 
-        response = cli.query(query)
+            response = cli.query(query)
 
-        metric_name_dicts = []
-
-        for item in response[None]:
-            metric_name_dict = self._metrics_name_from_influx_item(item)
-            metric_name_dicts.append(metric_name_dict)
+            for item in response[None]:
+                metric_name_dict = self._metrics_name_from_influx_item(item)
+                if metric_name_dict != {} and (
+                   metric_name_dict not in metric_name_dicts):
+                    metric_name_dicts.append(metric_name_dict)
 
         metrics = []
+
         for metric_dict in metric_name_dicts:
             metric = live_metric.LiveMetric(**metric_dict)
             metrics.append(metric)
@@ -125,7 +136,25 @@ class MetricHandler(handler.Handler):
         mappings = [('metric_name', 'name', str), ]
         for field in mappings:
             value = item.get(field[1], None)
-            if value is not None:
-                metric_name[field[0]] = field[2](value)
+            if value.startswith('metric_'):
+                metric_name[field[0]] = field[2](value[7:])
+                return metric_name
 
         return metric_name
+
+    def _metrics_name_from_influx_item_without_service_descripion(self, item):
+
+        metric_name = {}
+        mappings = [('metric_name', '_key', str), ]
+        for field in mappings:
+            key = item.get(field[1], None)
+            print (key)
+            print ('cle')
+            if key is not None:
+                values = key.split(',')
+                for value in values:
+                    if value.startswith('metric_'):
+                        metric_name[field[0]] = field[2](value[7:])
+                    elif value.startswith('service_description'):
+                        return {}
+            return metric_name
