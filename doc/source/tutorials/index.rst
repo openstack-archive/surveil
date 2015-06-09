@@ -6,3 +6,4 @@ Tutorials
 
    getting_started
    developing_the_api
+   running_the_tests
