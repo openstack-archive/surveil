@@ -179,41 +179,38 @@ class TestHostMetric(functionalTest.FunctionalTest):
             )
 
     def test_metric_names(self):
-        self.influxdb_response = json.dumps({
-            "results": [
-                {
-                    "series": [
-                        {
-                            "name": "measurements",
-                            "columns": ["name"],
-                            "values": [
-                                ["ALERT"],
-                                ["HOST_STATE"],
-                                ["metric_pl"],
-                                ["metric_rta"],
-                                ["metric_rtmax"],
-                                ["metric_rtmin"]
-                            ]
-                        }
-                    ]
-                }
-            ]
-        })
+        self.influxdb_response = json.dumps({"results": [{"series": [
+            {"name": "metric_pl",
+             "columns": ["_key", "host_name"],
+             "values": [["metric_pl,host_name=ws-arbiter", "ws-arbiter"]]},
+            {"name": "metric_rta",
+             "columns": ["_key", "host_name"],
+             "values": [["metric_rta,host_name=ws-arbiter", "ws-arbiter"]]},
+            {"name": "metric_rtmax",
+             "columns": ["_key", "host_name"],
+             "values": [["metric_rtmax,host_name=ws-arbiter", "ws-arbiter"]]},
+            {"name": "metric_rtmin",
+             "columns": ["_key", "host_name"],
+             "values": [["metric_rtmin,host_name=ws-arbiter", "ws-arbiter"]]},
+            {"name": "metric_time",
+             "columns": ["_key", "host_name", "service_description"],
+             "values": [["metric_time,host_name=ws-arbiter,"
+                         "service_description=check-ws-arbiter", "ws-arbiter",
+                         "check-ws-arbiter"]]}
+        ]}]})
         with requests_mock.Mocker() as m:
             m.register_uri(requests_mock.GET,
                            "http://influxdb:8086/query",
                            text=self.influxdb_response)
 
             response = self.get(
-                "/v2/status/hosts/localhost/metrics"
+                "/v2/status/hosts/ws-arbiter/metrics"
             )
 
-            expected = [{"metric_name": "ALERT"},
-                        {"metric_name": "HOST_STATE"},
-                        {"metric_name": "metric_pl"},
-                        {"metric_name": "metric_rta"},
-                        {"metric_name": "metric_rtmax"},
-                        {"metric_name": "metric_rtmin"},
+            expected = [{"metric_name": "pl"},
+                        {"metric_name": "rta"},
+                        {"metric_name": "rtmax"},
+                        {"metric_name": "rtmin"},
                         ]
 
             self.assert_count_equal_backport(
@@ -221,7 +218,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
                 expected)
             self.assertEqual(
                 m.last_request.qs['q'],
-                ["show measurements where host_name='localhost'"]
+                ["show series from /metric_*/ where host_name='ws-arbiter'"]
             )
 
     def test_metric_names_services(self):
@@ -233,7 +230,8 @@ class TestHostMetric(functionalTest.FunctionalTest):
                             "name": "measurements",
                             "columns": ["name"],
                             "values": [
-                                ["SERVICE_STATE"]
+                                ["metric_rtmin"],
+                                ["ALERT"]
                             ]
                         }
                     ]
@@ -249,7 +247,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
                 "/v2/status/hosts/localhost/services/load/metrics"
             )
 
-            expected = [{"metric_name": "SERVICE_STATE"}, ]
+            expected = [{"metric_name": "rtmin"}, ]
 
             self.assert_count_equal_backport(
                 json.loads(response.body.decode()),

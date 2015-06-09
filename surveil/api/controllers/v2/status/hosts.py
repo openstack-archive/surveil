@@ -187,7 +187,10 @@ class HostServiceMetricController(rest.RestController):
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([live_metric.LiveMetric], body=time_delta.TimeDelta)
     def post(self, time):
-        """Given a LiveQuery, returns all matching s."""
+        """Returns all matching metrics.
+
+        :param time: a time delta within the request body.
+        """
         handler = live_metric_handler.MetricHandler(pecan.request)
         metrics = handler.get_all(time_delta=time,
                                   metric_name=self.metric_name,
@@ -220,7 +223,10 @@ class HostMetricController(rest.RestController):
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([live_metric.LiveMetric], body=time_delta.TimeDelta)
     def post(self, time):
-        """Given a LiveQuery, returns all matching s."""
+        """Given a time delta, returns all matching metrics.
+
+        :param time: a time delta within the request body.
+        """
         handler = live_metric_handler.MetricHandler(pecan.request)
         metrics = handler.get_all(time_delta=time,
                                   metric_name=self.metric_name,
