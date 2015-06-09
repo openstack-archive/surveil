@@ -14,8 +14,7 @@ Project Info
 
 * Documentation: https://surveil.readthedocs.org/
 * IRC: #surveil at Freenode
-* Bug tracker: https://github.com/surveil/surveil-meta/issues
-* Development dashboard: https://waffle.io/surveil/surveil-meta
+* Issue tracker: https://waffle.io/surveil/surveil-meta (Also on `GitHub <https://github.com/surveil/surveil-meta/issues>`_)
 * Open Gerrit Changesets: https://review.openstack.org/#/q/status:open+surveil,n,z
 
 Related projects
