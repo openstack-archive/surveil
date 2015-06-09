@@ -187,12 +187,8 @@ class TestHostMetric(functionalTest.FunctionalTest):
                             "name": "measurements",
                             "columns": ["name"],
                             "values": [
-                                ["ALERT"],
-                                ["HOST_STATE"],
-                                ["metric_pl"],
-                                ["metric_rta"],
-                                ["metric_rtmax"],
-                                ["metric_rtmin"]
+                                ["metric_rtmin"],
+                                ["ALERT"]
                             ]
                         }
                     ]
@@ -205,23 +201,18 @@ class TestHostMetric(functionalTest.FunctionalTest):
                            text=self.influxdb_response)
 
             response = self.get(
-                "/v2/status/hosts/localhost/metrics"
+                "/v2/status/hosts/ws-arbiter/metrics"
             )
 
-            expected = [{"metric_name": "ALERT"},
-                        {"metric_name": "HOST_STATE"},
-                        {"metric_name": "metric_pl"},
-                        {"metric_name": "metric_rta"},
-                        {"metric_name": "metric_rtmax"},
-                        {"metric_name": "metric_rtmin"},
-                        ]
+            expected = [{"metric_name": "rtmin"}, ]
 
             self.assert_count_equal_backport(
                 json.loads(response.body.decode()),
                 expected)
             self.assertEqual(
                 m.last_request.qs['q'],
-                ["show measurements where host_name='localhost'"]
+                ["show measurements where host_name='ws-arbiter' "
+                 "and service_description=''"]
             )
 
     def test_metric_names_services(self):
@@ -233,7 +224,8 @@ class TestHostMetric(functionalTest.FunctionalTest):
                             "name": "measurements",
                             "columns": ["name"],
                             "values": [
-                                ["SERVICE_STATE"]
+                                ["metric_rtmin"],
+                                ["ALERT"]
                             ]
                         }
                     ]
@@ -249,7 +241,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
                 "/v2/status/hosts/localhost/services/load/metrics"
             )
 
-            expected = [{"metric_name": "SERVICE_STATE"}, ]
+            expected = [{"metric_name": "rtmin"}, ]
 
             self.assert_count_equal_backport(
                 json.loads(response.body.decode()),

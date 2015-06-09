@@ -37,7 +37,7 @@ class LiveService(types.Base):
     last_check = wsme.wsattr(int, mandatory=False)
     """The last time the service was checked"""
 
-    last_state_change = wsme.wsattr(int, mandatory=False)
+    last_state_change = wsme.wsattr(float, mandatory=False)
     """The last time the state has changed"""
 
     plugin_output = wsme.wsattr(wtypes.text, mandatory=False)
@@ -54,7 +54,7 @@ class LiveService(types.Base):
             description='Serves Stuff',
             state='OK',
             last_check=1429220785,
-            last_state_change=1429220785,
+            last_state_change=1429220785.481679,
             plugin_output='HTTP OK - GOT NICE RESPONSE',
             acknowledged=True,
             long_output='Serves /var/www/\nServes /home/webserver/www/'
