@@ -16,7 +16,7 @@ surveil:
     #SURVEIL_OS_PASSWORD: "password"
     #SURVEIL_OS_TENANT_NAME: "admin"
 
-rabbitconsumer:
+surveilosinterface:
   #build: .
   image: savoirfairelinux/surveil:0.7.0
   links:
