@@ -13,13 +13,16 @@ Project Info
 ############
 
 * Documentation: https://surveil.readthedocs.org/
-* IRC: #surveil at freenode
-* Wiki: https://wiki.openstack.org/wiki/Surveil
+* IRC: #surveil at Freenode
+* Bug tracker: https://github.com/surveil/surveil-meta/issues
+* Development dashboard: https://waffle.io/surveil/surveil-meta
 * Open Gerrit Changesets: https://review.openstack.org/#/q/status:open+surveil,n,z
-* Bug tracker: https://bugs.launchpad.net/surveil
+
+Related projects
+----------------
+
 * Bansho (Surveil Web UI): https://github.com/stackforge/bansho
 * Puppet module: https://github.com/stackforge/puppet-surveil
-
 
 Getting started
 ###############
