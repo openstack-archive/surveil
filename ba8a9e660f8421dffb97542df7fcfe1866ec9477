@@ -1,0 +1,8 @@
+Verified+2: Jenkins
+Code-Review+2: Alexandre Viau <alexandre@alexandreviau.net>
+Workflow+1: Alexandre Viau <alexandre@alexandreviau.net>
+Submitted-by: Jenkins
+Submitted-at: Tue, 09 Jun 2015 13:59:07 +0000
+Reviewed-on: https://review.openstack.org/189709
+Project: stackforge/surveil
+Branch: refs/heads/master
