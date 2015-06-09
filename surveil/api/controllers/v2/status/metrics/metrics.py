@@ -12,15 +12,22 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import pecan
 from pecan import rest
-
-from surveil.api.controllers.v2.status import hosts as v2_hosts
-from surveil.api.controllers.v2.status import services as v2_services
-from surveil.api.controllers.v2.status.metrics import metrics as v2_metrics
+import wsmeext.pecan as wsme_pecan
 
 
-class StatusController(rest.RestController):
-    # events = EventsController()
-    hosts = v2_hosts.HostsController()
-    services = v2_services.ServicesController()
-    metrics = v2_metrics.MetricsController()
+from surveil.api.datamodel.status.metrics import live_metric
+from surveil.api.handlers.status.metrics import live_metric_handler
+from surveil.common import util
+
+
+class MetricsController(rest.RestController):
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose([live_metric.LiveMetric])
+    def get_all(self):
+        """Returns all hosts."""
+        handler = live_metric_handler.MetricHandler(pecan.request)
+        metrics = handler.get_metric_without_service_description()
+        return metrics

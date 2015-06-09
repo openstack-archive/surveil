@@ -32,3 +32,4 @@ class V2Controller(object):
     auth = v2_auth.AuthController()
     logs = v2_logs.LogsController()
     bansho = v2_bansho.BanshoController()
+

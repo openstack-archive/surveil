@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import json
 
 from surveil.api.datamodel.status.metrics import live_metric
 from surveil.api.handlers import handler
@@ -20,6 +21,24 @@ from surveil.api.handlers.status.metrics import influxdb_time_query
 
 class MetricHandler(handler.Handler):
     """Fulfills a request on the metrics."""
+
+    def get_metric_without_service_description(self):
+        cli = self.request.influxdb_client
+        query = "SHOW series"
+        response = cli.query(query)
+        metric_name_dicts = []
+        for item in response[None]:
+            metric_name_dict = self._metrics_name_from_influx_item_without_service_descripion(item)
+            metric_name_dicts.append(metric_name_dict)
+
+        metrics = []
+        for metric_dict in metric_name_dicts:
+            metric = live_metric.LiveMetric(**metric_dict)
+            metrics.append(metric)
+
+        print(json.loads(metrics))
+
+        return metrics
 
     def get_metric(self, host_name, service_description=None):
         """Return all metrics name for a given host."""
@@ -128,4 +147,16 @@ class MetricHandler(handler.Handler):
             if value is not None:
                 metric_name[field[0]] = field[2](value)
 
+        return metric_name
+
+    def _metrics_name_from_influx_item_without_service_descripion(self, item):
+
+        metric_name = {}
+        mappings = [('metric_name', 'name', str), ]
+        for field in mappings:
+            service_description = item.get('service_description', None)
+            if service_description is None:
+                value = item.get(field[1], None)
+                if value is not None:
+                    metric_name[field[0]] = field[2](value)
         return metric_name
