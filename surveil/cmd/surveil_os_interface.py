@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-"""Starter script for the RabbitMQ receiver"""
+"""Starter script for the surveil openstack interface"""
 
 from __future__ import print_function
 
@@ -29,65 +29,65 @@ from surveilclient import client
 
 def main():
     config = configparser.ConfigParser()
-    config.read("/etc/surveil/surveil_rabbitMQ_consumer.cfg")
+    config.read("/etc/surveil/surveil_os_interface.cfg")
 
     daemon_config = {
         "SURVEIL_API_URL": os.environ.get(
             'SURVEIL_API_URL',
-            config.get("rabbitconsumer", "SURVEIL_API_URL")
+            config.get("surveil-os-interface", "SURVEIL_API_URL")
         ),
         "SURVEIL_AUTH_URL": os.environ.get(
             'SURVEIL_AUTH_URL',
-            config.get("rabbitconsumer", "SURVEIL_AUTH_URL")
+            config.get("surveil-os-interface", "SURVEIL_AUTH_URL")
         ),
         "SURVEIL_VERSION": os.environ.get(
             'SURVEIL_VERSION',
-            config.get("rabbitconsumer", "SURVEIL_VERSION")
+            config.get("surveil-os-interface", "SURVEIL_VERSION")
         ),
         "RABBIT_HOST": os.environ.get(
             'RABBIT_HOST',
-            config.get("rabbitconsumer", "RABBIT_HOST")
+            config.get("surveil-os-interface", "RABBIT_HOST")
         ),
         "RABBIT_PORT": int(os.environ.get(
             'RABBIT_PORT',
-            config.get("rabbitconsumer", "RABBIT_PORT")
+            config.get("surveil-os-interface", "RABBIT_PORT")
         )
         ),
         "QUEUE": os.environ.get(
             'QUEUE',
-            config.get("rabbitconsumer", "QUEUE")
+            config.get("surveil-os-interface", "QUEUE")
         ),
         "RABBIT_USER": os.environ.get(
             'RABBIT_USER',
-            config.get("rabbitconsumer", "RABBIT_USER")
+            config.get("surveil-os-interface", "RABBIT_USER")
         ),
         "RABBIT_PASSWORD": os.environ.get(
             'RABBIT_PASSWORD',
-            config.get("rabbitconsumer", "RABBIT_PASSWORD")
+            config.get("surveil-os-interface", "RABBIT_PASSWORD")
         ),
         "SURVEIL_OS_AUTH_URL": os.environ.get(
             'SURVEIL_OS_AUTH_URL',
-            config.get("rabbitconsumer", "SURVEIL_OS_AUTH_URL")
+            config.get("surveil-os-interface", "SURVEIL_OS_AUTH_URL")
         ),
         "SURVEIL_OS_USERNAME": os.environ.get(
             'SURVEIL_OS_USERNAME',
-            config.get("rabbitconsumer", "SURVEIL_OS_USERNAME")
+            config.get("surveil-os-interface", "SURVEIL_OS_USERNAME")
         ),
         "SURVEIL_OS_PASSWORD": os.environ.get(
             'SURVEIL_OS_PASSWORD',
-            config.get("rabbitconsumer", "SURVEIL_OS_PASSWORD")
+            config.get("surveil-os-interface", "SURVEIL_OS_PASSWORD")
         ),
         "SURVEIL_OS_TENANT_NAME": os.environ.get(
             'SURVEIL_OS_TENANT_NAME',
-            config.get("rabbitconsumer", "SURVEIL_OS_TENANT_NAME")
+            config.get("surveil-os-interface", "SURVEIL_OS_TENANT_NAME")
         ),
         "SURVEIL_DEFAULT_TAGS": os.environ.get(
             'SURVEIL_DEFAULT_TAGS',
-            config.get("rabbitconsumer", "SURVEIL_DEFAULT_TAGS")
+            config.get("surveil-os-interface", "SURVEIL_DEFAULT_TAGS")
         ),
         "SURVEIL_NETWORK_LABEL": os.environ.get(
             'SURVEIL_NETWORK_LABEL',
-            config.get("rabbitconsumer", "SURVEIL_NETWORK_LABEL")
+            config.get("surveil-os-interface", "SURVEIL_NETWORK_LABEL")
         ),
     }
 
