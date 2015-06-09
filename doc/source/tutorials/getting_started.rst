@@ -1,3 +1,5 @@
+.. _tutorial_getting_started:
+
 .. role:: bash(code)
    :language: bash
 
