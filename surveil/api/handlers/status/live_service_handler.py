@@ -102,7 +102,7 @@ def _service_dict_from_mongo_item(mongo_item):
 
     mappings = [
         ('last_chk', 'last_check', int),
-        ('last_state_change', 'last_state_change', int),
+        ('last_state_change', 'last_state_change', float),
         ('output', 'plugin_output', str),
         ('problem_has_been_acknowledged', 'acknowledged', bool),
     ]

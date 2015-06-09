@@ -21,6 +21,26 @@ from surveil.api.handlers.status.metrics import influxdb_time_query
 class MetricHandler(handler.Handler):
     """Fulfills a request on the metrics."""
 
+    def get_metric_without_service_description(self):
+        cli = self.request.influxdb_client
+        query = "SHOW series"
+        response = cli.query(query)
+        metric_name_dicts = []
+        for item in response[None]:
+            metric_name_dict = (
+                self._metrics_name_from_influx_item_without_service_descripion
+                (item))
+            if metric_name_dict is not None and (
+               metric_name_dict not in metric_name_dicts):
+                metric_name_dicts.append(metric_name_dict)
+
+        metrics = []
+        for metric_dict in metric_name_dicts:
+            metric = live_metric.LiveMetric(**metric_dict)
+            metrics.append(metric)
+
+        return metrics
+
     def get_metric(self, host_name, service_description=None):
         """Return all metrics name for a given host."""
 
@@ -129,3 +149,15 @@ class MetricHandler(handler.Handler):
                 metric_name[field[0]] = field[2](value)
 
         return metric_name
+
+    def _metrics_name_from_influx_item_without_service_descripion(self, item):
+
+        metric_name = {}
+        mappings = [('metric_name', '_key', str), ]
+        for field in mappings:
+            key = item.get(field[1], None)
+            if key is not None:
+                value = key.split(',')
+                if value[0].startswith('metric_'):
+                    metric_name[field[0]] = field[2](value[0][7:])
+                    return metric_name
