@@ -13,10 +13,12 @@
 # under the License.
 
 import pecan
+import requests
 from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.controllers.v2 import logs
+from surveil.api.datamodel import checkresult
 from surveil.api.datamodel.status import live_host
 from surveil.api.datamodel.status import live_query
 from surveil.api.datamodel.status import live_service
@@ -100,9 +102,50 @@ class HostMetricsController(rest.RestController):
         return HostMetricController(metric_name), remainder
 
 
+class HostCheckResultsSubController(rest.RestController):
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(body=checkresult.CheckResult, status_code=204)
+    def post(self, data):
+        """Submit a new check result.
+
+        :param data: a check result within the request body.
+        """
+        result = data.as_dict()
+        result['host_name'] = pecan.request.context['host_name']
+
+        requests.post(
+            pecan.request.ws_arbiter_url + "/push_check_result",
+            data=result
+        )
+
+
+class ServiceCheckResultsSubController(rest.RestController):
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(body=checkresult.CheckResult, status_code=204)
+    def post(self, data):
+        """Submit a new check result.
+
+        :param data: a check result within the request body.
+        """
+        result = data.as_dict()
+        result['host_name'] = pecan.request.context['host_name']
+
+        result['service_description'] = pecan.request.context[
+            'service_name'
+        ]
+
+        requests.post(
+            pecan.request.ws_arbiter_url + "/push_check_result",
+            data=result
+        )
+
+
 class HostServiceController(rest.RestController):
 
     metrics = HostServiceMetricsController()
+    results = ServiceCheckResultsSubController()
 
     def __init__(self, service_name):
         pecan.request.context['service_name'] = service_name
@@ -194,6 +237,7 @@ class HostController(rest.RestController):
     # config = config.ConfigController()
     events = logs.LogsController()
     metrics = HostMetricsController()
+    results = HostCheckResultsSubController()
 
     def __init__(self, host_name):
         pecan.request.context['host_name'] = host_name

@@ -22,13 +22,6 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.config.hosts:HostServiceSubController
    :webprefix: /v2/config/hosts/(host_name)/services/(service_name)
 
-.. rest-controller:: surveil.api.controllers.v2.config.hosts:HostCheckResultsSubController
-   :webprefix: /v2/config/hosts/(host_name)/results
-
-.. rest-controller:: surveil.api.controllers.v2.config.hosts:ServiceCheckResultsSubController
-   :webprefix: /v2/config/hosts/(host_name)/services/(service_description)/results
-
-
 Services
 ========
 
