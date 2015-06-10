@@ -23,23 +23,25 @@ class Service(types.Base):
 
     service_description = wsme.wsattr(wtypes.text, mandatory=True)
 
-    check_command = wsme.wsattr(wtypes.text, mandatory=True)
+    check_command = wsme.wsattr(wtypes.text, mandatory=False)
 
-    max_check_attempts = wsme.wsattr(int, mandatory=True)
+    max_check_attempts = wsme.wsattr(int, mandatory=False)
 
-    check_interval = wsme.wsattr(int, mandatory=True)
+    check_interval = wsme.wsattr(int, mandatory=False)
 
-    retry_interval = wsme.wsattr(int, mandatory=True)
+    retry_interval = wsme.wsattr(int, mandatory=False)
 
-    check_period = wsme.wsattr(wtypes.text, mandatory=True)
+    check_period = wsme.wsattr(wtypes.text, mandatory=False)
 
-    notification_interval = wsme.wsattr(int, mandatory=True)
+    notification_interval = wsme.wsattr(int, mandatory=False)
 
-    notification_period = wsme.wsattr(wtypes.text, mandatory=True)
+    notification_period = wsme.wsattr(wtypes.text, mandatory=False)
 
-    contacts = wsme.wsattr(wtypes.text, mandatory=True)
+    contacts = wsme.wsattr(wtypes.text, mandatory=False)
 
-    contact_groups = wsme.wsattr(wtypes.text, mandatory=True)
+    contact_groups = wsme.wsattr(wtypes.text, mandatory=False)
+
+    passive_checks_enabled = wsme.wsattr(wtypes.text, mandatory=False)
 
     @classmethod
     def sample(cls):
@@ -55,4 +57,5 @@ class Service(types.Base):
             notification_period="24x7",
             contacts="surveil-ptl,surveil-bob",
             contact_groups="linux-admins",
+            passive_checks_enabled='1',
         )

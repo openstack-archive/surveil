@@ -15,6 +15,9 @@
 import copy
 import json
 
+import requests_mock
+from six.moves import urllib_parse
+
 from surveil.tests.api import functionalTest
 
 
@@ -197,3 +200,57 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                     'service_description': 'check-ws-arbiter'}
         self.assert_count_equal_backport(json.loads(response.body.decode()),
                                          expected)
+
+    def test_submit_service_result(self):
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.POST,
+                           self.ws_arbiter_url + "/push_check_result")
+
+            check_result = {
+                "return_code": "0",
+                "output": "TEST OUTPUT",
+                "time_stamp": "1409149234"
+            }
+
+            response = self.post_json(
+                "/v2/status/hosts/bogus-router/services/" +
+                "service-example/results",
+                params=check_result
+            )
+
+            self.assertEqual(response.status_int, 204)
+            self.assertEqual(
+                urllib_parse.parse_qs(m.last_request.body),
+                {
+                    u'output': [u'TEST OUTPUT'],
+                    u'return_code': [u'0'],
+                    u'service_description': [u'service-example'],
+                    u'host_name': [u'bogus-router'],
+                    u'time_stamp': [u'1409149234']
+                }
+            )
+
+    def test_submit_host_result(self):
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.POST,
+                           self.ws_arbiter_url + "/push_check_result")
+
+            check_result = {
+                "return_code": "0",
+                "output": "TEST OUTPUT",
+                "time_stamp": "1409149234"
+            }
+
+            response = self.post_json("/v2/status/hosts/bogus-router/results",
+                                      params=check_result)
+
+            self.assertEqual(response.status_int, 204)
+            self.assertEqual(
+                urllib_parse.parse_qs(m.last_request.body),
+                {
+                    u'output': [u'TEST OUTPUT'],
+                    u'return_code': [u'0'],
+                    u'host_name': [u'bogus-router'],
+                    u'time_stamp': [u'1409149234']
+                }
+            )

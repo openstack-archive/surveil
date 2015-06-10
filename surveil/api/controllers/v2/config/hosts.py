@@ -14,10 +14,8 @@
 
 import pecan
 from pecan import rest
-import requests
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.datamodel import checkresult
 from surveil.api.datamodel.config import host
 from surveil.api.datamodel.config import service
 from surveil.api.handlers.config import host_handler
@@ -25,30 +23,7 @@ from surveil.api.handlers.config import service_handler
 from surveil.common import util
 
 
-class ServiceCheckResultsSubController(rest.RestController):
-
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(body=checkresult.CheckResult, status_code=204)
-    def post(self, data):
-        """Submit a new check result.
-
-        :param data: a check result within the request body.
-        """
-        result = data.as_dict()
-        result['host_name'] = pecan.request.context['host_name']
-
-        result['service_description'] = pecan.request.context[
-            'service_description'
-        ]
-
-        requests.post(
-            pecan.request.ws_arbiter_url + "/push_check_result",
-            data=result
-        )
-
-
 class HostServiceSubController(rest.RestController):
-    results = ServiceCheckResultsSubController()
 
     def __init__(self, service_description):
         pecan.request.context['service_description'] = service_description
@@ -93,27 +68,8 @@ class HostServicesSubController(rest.RestController):
         return HostServiceSubController(service_description), remainder
 
 
-class HostCheckResultsSubController(rest.RestController):
-
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(body=checkresult.CheckResult, status_code=204)
-    def post(self, data):
-        """Submit a new check result.
-
-        :param data: a check result within the request body.
-        """
-        result = data.as_dict()
-        result['host_name'] = pecan.request.context['host_name']
-
-        requests.post(
-            pecan.request.ws_arbiter_url + "/push_check_result",
-            data=result
-        )
-
-
 class HostSubController(rest.RestController):
     services = HostServicesSubController()
-    results = HostCheckResultsSubController()
 
 
 class HostController(rest.RestController):
