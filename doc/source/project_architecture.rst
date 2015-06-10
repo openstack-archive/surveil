@@ -10,6 +10,16 @@ Global project architecture
    :alt: Surveil software architecture
    :align: center
 
+OpenStack Integration
+#####################
+
+.. image:: https://github.com/stackforge/surveil-specs/raw/master/surveil_architecture_with_openstack.png
+   :height: 2400px
+   :width: 800px
+   :alt: Surveil software architecture with OpenStack
+   :align: center
+
+
 Main components
 ###############
 
