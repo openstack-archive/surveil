@@ -20,6 +20,12 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.status.hosts:ConfigController
    :webprefix: /v2/status/hosts/(host_name)/config
 
+.. rest-controller:: surveil.api.controllers.v2.status.hosts:HostCheckResultsSubController
+   :webprefix: /v2/status/hosts/(host_name)/results
+
+.. rest-controller:: surveil.api.controllers.v2.status.hosts:ServiceCheckResultsSubController
+   :webprefix: /v2/status/hosts/(host_name)/services/(service_description)/results
+
 .. rest-controller:: surveil.api.controllers.v2.logs:LogsController
    :webprefix: /v2/status/hosts/(host_name)/events
 
