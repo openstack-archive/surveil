@@ -1,0 +1,6 @@
+[Unit]
+Description=Surveil API service
+
+[Service]
+ExecStart=/usr/bin/surveil-os-interface
+Restart=on-abort
