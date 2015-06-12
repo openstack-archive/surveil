@@ -8,7 +8,7 @@ oslo.middleware
 oslo.policy>=0.3.0
 keystonemiddleware
 PasteDeploy
-influxdb==2.0.1
+influxdb==2.4.0
 pika
 python-surveilclient==0.6.0
 six
