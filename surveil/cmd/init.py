@@ -50,7 +50,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/packs/linux-keystone/",
+                "/usr/lib/monitoring/packs/sfl/linux-keystone/",
             ]
         )
 
@@ -59,7 +59,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/packs/linux-glance/",
+                "/usr/lib/monitoring/packs/sfl/linux-glance/",
             ]
         )
 
@@ -68,7 +68,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/packs/generic-host/",
+                "/usr/lib/monitoring/packs/sfl/generic-host/",
             ]
         )
 
@@ -77,7 +77,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/packs/linux-nova/",
+                "/usr/lib/monitoring/packs/sfl/linux-nova/",
             ]
         )
 
@@ -86,7 +86,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/packs/linux-cinder/",
+                "/usr/lib/monitoring/packs/sfl/linux-cinder/",
             ]
         )
 
@@ -95,7 +95,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/packs/linux-openstackceilometer/",
+                "/usr/lib/monitoring/packs/sfl/linux-openstackceilometer/",
             ]
         )
 
