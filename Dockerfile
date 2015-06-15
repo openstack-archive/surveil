@@ -13,12 +13,12 @@ RUN useradd shinken && /opt/surveil/env/bin/pip install pycurl https://github.co
 # Download packs
 ENV MONITORING_TOOLS_VERSION 0.3.2
 RUN apt-get install -y subversion && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/generic-host /packs/generic-host && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-glance /packs/linux-glance && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-cinder /packs/linux-cinder && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-keystone /packs/linux-keystone && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-nova /packs/linux-nova && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-openstackceilometer /packs/linux-openstackceilometer && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/generic-host /usr/lib/monitoring/packs/sfl/generic-host && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-glance /usr/lib/monitoring/packs/sfl/linux-glance && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-cinder /usr/lib/monitoring/packs/sfl/linux-cinder && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-keystone /usr/lib/monitoring/packs/sfl/linux-keystone && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-nova /usr/lib/monitoring/packs/sfl/linux-nova && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-openstackceilometer /usr/lib/monitoring/packs/linux-openstackceilometer && \
     apt-get remove -y subversion
 
 ADD requirements.txt /opt/surveil/requirements.txt
