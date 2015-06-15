@@ -21,7 +21,7 @@ import os
 import sys
 
 from pymongo import mongo_client
-from shinken.objects import config
+from alignak.objects import config
 
 
 def main():
