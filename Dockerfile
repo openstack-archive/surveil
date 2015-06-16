@@ -8,17 +8,17 @@ RUN apt-get update && apt-get install -y vim python-pip python3-pip python-dev l
 RUN virtualenv /opt/surveil/env
 
 # Surveil needs alignak (as a lib)
-RUN useradd shinken && /opt/surveil/env/bin/pip install pycurl https://github.com/Alignak-monitoring/alignak/archive/396d10105827f8c75686811991829548e6778e11.zip
+RUN useradd alignak && /opt/surveil/env/bin/pip install pycurl https://github.com/Alignak-monitoring/alignak/archive/d7f457d5ed94f08d9a6a38809106d3e0d35a1712.tar.gz
 
 # Download packs
-ENV MONITORING_TOOLS_VERSION 0.3.2
+ENV MONITORING_TOOLS_VERSION 0.4.0
 RUN apt-get install -y subversion && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/generic-host /usr/lib/monitoring/packs/sfl/generic-host && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-glance /usr/lib/monitoring/packs/sfl/linux-glance && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-cinder /usr/lib/monitoring/packs/sfl/linux-cinder && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-keystone /usr/lib/monitoring/packs/sfl/linux-keystone && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-nova /usr/lib/monitoring/packs/sfl/linux-nova && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-openstackceilometer /usr/lib/monitoring/packs/linux-openstackceilometer && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/generic-host /usr/share/monitoring/packs/sfl/generic-host && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-glance /usr/share/monitoring/packs/sfl/openstack-glance && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-cinder /usr/share/monitoring/packs/sfl/openstack-cinder && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-keystone /usr/share/monitoring/packs/sfl/openstack-keystone && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-nova /usr/share/monitoring/packs/sfl/openstack-nova && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-host /usr/share/monitoring/packs/openstack-host && \
     apt-get remove -y subversion
 
 ADD requirements.txt /opt/surveil/requirements.txt
