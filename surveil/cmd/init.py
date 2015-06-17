@@ -18,6 +18,7 @@ import optparse
 import subprocess
 import sys
 
+import influxdb
 import pymongo
 import surveilclient.client as sc
 
@@ -30,6 +31,10 @@ def main():
                       default=False,
                       dest='demo',
                       action="store_true")
+    parser.add_option('-i', '--influxdb',
+                      default=False,
+                      dest='influxdb',
+                      action='store_true')
     opts, _ = parser.parse_args(sys.argv)
 
     # Create a basic config in mongodb
@@ -38,6 +43,16 @@ def main():
     if opts.demo is True:
         # Drop the current shinken config
         mongo.drop_database('shinken')
+
+    if opts.influxdb is True:
+        # Create the InfluxDB database
+        influx_client = influxdb.InfluxDBClient.from_DSN(
+            config.surveil_api_config['influxdb_uri']
+        )
+
+        databases = influx_client.get_list_database()
+        if not any(db['name'] == influx_client._database for db in databases):
+            influx_client.create_database(influx_client._database)
 
     if mongo.surveil.init.count() == 0:
         # Mark packs as uploaded
@@ -48,8 +63,7 @@ def main():
         subprocess.call(
             [
                 "surveil-pack-upload",
-                "--mongo-url=mongo",
-                "--mongo-port=27017",
+                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
                 "/usr/share/monitoring/packs/sfl/openstack-keystone-http/",
             ]
         )
@@ -57,8 +71,7 @@ def main():
         subprocess.call(
             [
                 "surveil-pack-upload",
-                "--mongo-url=mongo",
-                "--mongo-port=27017",
+                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
                 "/usr/share/monitoring/packs/sfl/openstack-glance-http/",
             ]
         )
@@ -66,8 +79,7 @@ def main():
         subprocess.call(
             [
                 "surveil-pack-upload",
-                "--mongo-url=mongo",
-                "--mongo-port=27017",
+                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
                 "/usr/share/monitoring/packs/sfl/generic-host/",
             ]
         )
@@ -75,8 +87,7 @@ def main():
         subprocess.call(
             [
                 "surveil-pack-upload",
-                "--mongo-url=mongo",
-                "--mongo-port=27017",
+                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
                 "/usr/share/monitoring/packs/sfl/openstack-nova-http/",
             ]
         )
@@ -84,8 +95,7 @@ def main():
         subprocess.call(
             [
                 "surveil-pack-upload",
-                "--mongo-url=mongo",
-                "--mongo-port=27017",
+                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
                 "/usr/share/monitoring/packs/sfl/openstack-cinder-http/",
             ]
         )
@@ -93,8 +103,7 @@ def main():
         subprocess.call(
             [
                 "surveil-pack-upload",
-                "--mongo-url=mongo",
-                "--mongo-port=27017",
+                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
                 "/usr/share/monitoring/packs/sfl/openstack-host/",
             ]
         )
@@ -238,3 +247,6 @@ def main():
 
     # Reload the shinken config
     cli_surveil.config.reload_config()
+
+if __name__ == "__main__":
+    main()

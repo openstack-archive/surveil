@@ -30,12 +30,9 @@ def main():
         prog='surveil-pack-upload',
         add_help=False,
     )
-    parser.add_argument('--mongo-url',
-                        default='localhost',
+    parser.add_argument('--mongo-uri',
+                        default='mongodb://localhost:27017',
                         help='Defaults to localhost', type=str)
-    parser.add_argument('--mongo-port',
-                        default=27017,
-                        help='Defaults to 27017', type=int)
     parser.add_argument('pack', metavar='[Pack]', type=str, nargs=1,
                         help='Pack directory')
 
@@ -73,8 +70,7 @@ def main():
                 config_item[i[0]] = ','.join(i[1])
 
     # Remove the existing pack from mongodb
-    mongo = mongo_client.MongoClient(host=options.mongo_url,
-                                     port=options.mongo_port)
+    mongo = mongo_client.MongoClient(options.mongo_uri)
     mongo_shinken = mongo.shinken
     for collection in (
             mongo_shinken.collection_names(include_system_collections=False)
