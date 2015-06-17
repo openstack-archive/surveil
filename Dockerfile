@@ -14,10 +14,10 @@ RUN useradd alignak && /opt/surveil/env/bin/pip install pycurl https://github.co
 ENV MONITORING_TOOLS_VERSION 0.4.0
 RUN apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/generic-host /usr/share/monitoring/packs/sfl/generic-host && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-glance /usr/share/monitoring/packs/sfl/openstack-glance && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-cinder /usr/share/monitoring/packs/sfl/openstack-cinder && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-keystone /usr/share/monitoring/packs/sfl/openstack-keystone && \
-    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-nova /usr/share/monitoring/packs/sfl/openstack-nova && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-glance-http /usr/share/monitoring/packs/sfl/openstack-glance-http && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-cinder-http /usr/share/monitoring/packs/sfl/openstack-cinder-http && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-keystone-http /usr/share/monitoring/packs/sfl/openstack-keystone-http && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-nova-http /usr/share/monitoring/packs/sfl/openstack-nova-http && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-host /usr/share/monitoring/packs/openstack-host && \
     apt-get remove -y subversion
 

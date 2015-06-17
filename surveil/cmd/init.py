@@ -50,7 +50,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/usr/share/monitoring/packs/sfl/openstack-keystone/",
+                "/usr/share/monitoring/packs/sfl/openstack-keystone-http/",
             ]
         )
 
@@ -59,7 +59,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/usr/share/monitoring/packs/sfl/openstack-glance/",
+                "/usr/share/monitoring/packs/sfl/openstack-glance-http/",
             ]
         )
 
@@ -77,7 +77,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/usr/share/monitoring/packs/sfl/openstack-nova/",
+                "/usr/share/monitoring/packs/sfl/openstack-nova-http/",
             ]
         )
 
@@ -86,7 +86,7 @@ def main():
                 "surveil-pack-upload",
                 "--mongo-url=mongo",
                 "--mongo-port=27017",
-                "/usr/share/monitoring/packs/sfl/openstack-cinder/",
+                "/usr/share/monitoring/packs/sfl/openstack-cinder-http/",
             ]
         )
 
