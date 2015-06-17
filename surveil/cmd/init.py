@@ -142,7 +142,7 @@ def main():
         # Linux-keystone template
         cli_surveil.config.hosts.create(
             host_name='test_keystone',
-            use='linux-keystone',
+            use='openstack-keystone-http',
             address='127.0.0.1',
             custom_fields={
                 "_OS_AUTH_URL": "bla",
@@ -154,10 +154,10 @@ def main():
             }
         )
 
-        # Linux-openstackceilometer template
+        # openstack-host template
         cli_surveil.config.hosts.create(
             host_name='openstackceilometer-host',
-            use='linux-openstackceilometer',
+            use='openstack-host',
             address='127.0.0.1',
             custom_fields={
                 "_OS_AUTH_URL": "bla",
