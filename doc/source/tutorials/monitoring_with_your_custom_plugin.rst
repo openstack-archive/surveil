@@ -6,36 +6,18 @@ Monitoring with your custom plugin
 
 Surveil is compatible with Nagios plugins. It is trivial to write a custom plugin to monitor your applcation. In this guide, we will create a new plugin and configure a new Host that uses it in Surveil.
 
-1. Test the check_example plugin
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+0. Install the plugin
+~~~~~~~~~~~~~~~~~~~~~
 
-The first step to create a plugin is to successfully test the check_example plugin. This plugin
-will serve as a base file to create your own plugin.
+Surveil support Nagios plugins. For more information about Nagios plugins, please refer to the `Nagios plugin API documentation <http://nagios.sourceforge.net/docs/3_0/pluginapi.html>`_ for more information.
 
-Create virtual environment and install requirements: ::
+There are many plugins available on the web. For example, the `nagios-plugins <https://github.com/nagios-plugins/nagios-plugins>`_ project contains many plugins written in C and the `monitoring-tools <https://github.com/savoirfairelinux/monitoring-tools>`_ project contains many plugins written in Python.
 
-    virtualenv env
-    source env/bin/activate
-    cd tools/docker/alignak_container/plugins/check-example
-    pip install -r requirements.txt
+Surveil loads plugins from ``/usr/share/alignak/plugins/``. In this example, we will be installing  a simple fake plugin written in Bash: ::
 
-Install the check_example plugin: ::
-
-    python setup.py develop
-
-Run the plugin: ::
-
-    check_example
-
-The output should look like this: ::
-
-    DISK OK - free space: / 3326 MB (56%); | /=2643MB;5948;5958;0;5968
-
-2. Modify the plugin
-~~~~~~~~~~~~~~~~~~~~
-
-The next step is to modify the plugin to meet your needs. In order to do this,
-please refer to the `Nagios plugin API documentation <http://nagios.sourceforge.net/docs/3_0/pluginapi.html>`_.
+    echo "
+    echo "echo 'DISK OK - free space: / 3326 MB (56%); | /=2643MB;5948;5958;0;5968'" >> /usr/share/alignak/plugins/check_example
+    chmod +x /usr/share/alignak/plugins/check_example
 
 
 3. Create a host using this plugin
