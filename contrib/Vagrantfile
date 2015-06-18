@@ -1,0 +1,24 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "centos/7"
+  config.vm.network "public_network"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  config.vm.provision :shell, :inline => "yum install -y vim yum-utils"
+
+  # Disabling SELinux
+  config.vm.provision :shell, :inline => "echo 0 >  /sys/fs/selinux/enforce"
+  config.vm.provision :shell, :inline => "sed 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config"
+
+  # Install repos
+  config.vm.provision :shell, :inline => "yum-config-manager --add-repo http://yum.surveil.io/centos_7/"
+  config.vm.provision :shell, :inline => "yum install -y https://rdoproject.org/repos/rdo-release.rpm"
+
+  # Install Surveil
+  config.vm.provision :shell, :inline => "yum install -y surveil-full --nogpgcheck"
+  config.vm.provision :shell, :inline => "systemctl start surveil-full.target"
+  config.vm.provision :shell, :inline => "surveil-init --influxdb"
+  config.vm.provision :shell, :inline => "surveil-webui-init -H localhost -U root -P root -p 8086 -g 'http://localhost:3000/grafana'"
+
+end
