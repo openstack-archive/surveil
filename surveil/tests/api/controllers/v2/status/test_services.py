@@ -46,7 +46,7 @@ class TestStatusServices(functionalTest.FunctionalTest):
                 "problem_has_been_acknowledged": False,
             },
         ]
-        self.mongoconnection.shinken_live.services.insert(
+        self.mongoconnection.alignak_live.services.insert(
             copy.deepcopy(self.services)
         )
 
