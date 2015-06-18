@@ -26,7 +26,7 @@ class ServiceHandler(handler.Handler):
 
     def get(self, host_name, service_description):
         """Return a specific service."""
-        mongo_s = self.request.mongo_connection.shinken_live.services.find_one(
+        mongo_s = self.request.mongo_connection.alignak_live.services.find_one(
             {"host_name": host_name,
              "service_description": service_description},
         )
@@ -46,10 +46,10 @@ class ServiceHandler(handler.Handler):
 
         if fields != {}:
             mongo_dicts = (self.request.mongo_connection.
-                           shinken_live.services.find(query, fields))
+                           alignak_live.services.find(query, fields))
         else:
             mongo_dicts = (self.request.mongo_connection.
-                           shinken_live.services.find(query))
+                           alignak_live.services.find(query))
 
         service_dicts = [
             _service_dict_from_mongo_item(s) for s in mongo_dicts
