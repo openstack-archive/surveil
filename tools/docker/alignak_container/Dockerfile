@@ -94,13 +94,13 @@ ENV PATH=$PATH:/opt/surveilplugins/env/bin
 RUN /opt/surveilplugins/env/bin/pip install "pbr>=0.6,!=0.7,<1.0" shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
-RUN mkdir -p /usr/lib/alignak/plugins
-RUN cd /plugins/check_keystone && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_keystone /usr/lib/alignak/plugins/
-RUN cd /plugins/check_glance && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_glance /usr/lib/alignak/plugins/
-RUN cd /plugins/check_nova && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_nova /usr/lib/alignak/plugins/
-RUN cd /plugins/check_cinder && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_cinder /usr/lib/alignak/plugins/
-RUN cd /plugins/check_ceilometer && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_ceilometer /usr/lib/alignak/plugins/
-RUN cd /plugins/check_nova_host_status && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_nova_host_status /usr/lib/alignak/plugins/
+RUN mkdir -p /usr/lib/monitoring/plugins/sfl
+RUN cd /plugins/check_keystone && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_keystone /usr/lib/monitoring/plugins/sfl/
+RUN cd /plugins/check_glance && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_glance  /usr/lib/monitoring/plugins/sfl/
+RUN cd /plugins/check_nova && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_nova /usr/lib/monitoring/plugins/sfl/
+RUN cd /plugins/check_cinder && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_cinder /usr/lib/monitoring/plugins/sfl/
+RUN cd /plugins/check_ceilometer && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_ceilometer /usr/lib/monitoring/plugins/sfl/
+RUN cd /plugins/check_nova_host_status && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_nova_host_status /usr/lib/monitoring/plugins/sfl/
 
 ## packs
 RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
@@ -113,7 +113,7 @@ ADD plugins/check-example /plugins/check_example
 RUN virtualenv /plugins/check_example/env
 ENV PATH=$PATH:/plugins/check_example/env/bin
 RUN /plugins/check_example/env/bin/pip install -r /plugins/check_example/requirements.txt
-RUN cd /plugins/check_example && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_example /usr/lib/alignak/plugins/
+RUN cd /plugins/check_example && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_example /usr/lib/monitoring/plugins/sfl
 
 ## configuration
 ADD setup.sh /setup.sh
