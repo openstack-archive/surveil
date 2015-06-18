@@ -26,7 +26,7 @@ class HostHandler(handler.Handler):
 
     def get(self, host_name):
         """Return a host."""
-        mongo_s = self.request.mongo_connection.shinken_live.hosts.find_one(
+        mongo_s = self.request.mongo_connection.alignak_live.hosts.find_one(
             {"host_name": host_name}
         )
 
@@ -46,10 +46,10 @@ class HostHandler(handler.Handler):
 
         if fields != {}:
             mongo_dicts = (self.request.mongo_connection.
-                           shinken_live.hosts.find(query, fields))
+                           alignak_live.hosts.find(query, fields))
         else:
             mongo_dicts = (self.request.mongo_connection.
-                           shinken_live.hosts.find(query))
+                           alignak_live.hosts.find(query))
 
         host_dicts = [
             _host_dict_from_mongo_item(s) for s in mongo_dicts

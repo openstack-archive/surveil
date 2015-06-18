@@ -72,7 +72,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
                 "services": [],
             },
         ]
-        self.mongoconnection.shinken_live.hosts.insert(
+        self.mongoconnection.alignak_live.hosts.insert(
             copy.deepcopy(self.host)
         )
 
@@ -99,7 +99,7 @@ class TestStatusHosts(functionalTest.FunctionalTest):
             },
 
         ]
-        self.mongoconnection.shinken_live.services.insert(
+        self.mongoconnection.alignak_live.services.insert(
             copy.deepcopy(self.services)
         )
 
