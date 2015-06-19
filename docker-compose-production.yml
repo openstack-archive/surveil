@@ -1,6 +1,6 @@
 surveil:
   #build: .
-  image: surveil/surveil:0.10.1
+  image: surveil/surveil:0.10.3
   links:
    - mongo
    - influxdb
@@ -18,7 +18,7 @@ surveil:
 
 surveilosinterface:
   #build: .
-  image: surveil/surveil:0.10.1
+  image: surveil/surveil:0.10.3
   links:
     - surveil
   environment:
@@ -41,7 +41,7 @@ surveilosinterface:
 
 alignak:
   #build: tools/docker/alignak_container/
-  image: surveil/surveil-alignak:0.10.1
+  image: surveil/surveil-alignak:0.10.3
   links:
     - mongo
     - influxdb
@@ -77,7 +77,7 @@ grafana:
     - influxdb
 
 bansho:
-  image: surveil/bansho:0.9.1
+  image: surveil/bansho:0.11.0
   environment:
     BANSHO_BACKEND: "surveil"
     #BANSHO_SURVEIL_URL: "http://surveil:8080/"
