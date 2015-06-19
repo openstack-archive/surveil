@@ -73,7 +73,9 @@ def main():
     mongo = mongo_client.MongoClient(options.mongo_uri)
     mongo_shinken = mongo.shinken
     for collection in (
-            mongo_shinken.collection_names(include_system_collections=False)
+            [c for c
+             in mongo_shinken.collection_names()
+             if not c.startswith("system.")]
     ):
         mongo_shinken[collection].remove({'SURVEIL_PACK_NAME': pack_name})
 
