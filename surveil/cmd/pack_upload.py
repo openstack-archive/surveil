@@ -39,13 +39,12 @@ def main():
     (options, args) = parser.parse_known_args(sys.argv[1:])
 
     pack_dir = options.pack[0]
-    pack_sub_dir = os.path.join(pack_dir, 'pack')
     pack_name = os.path.basename(os.path.normpath(pack_dir))
 
     # Find the .cfg files
     cfg_files = [
         os.path.join(dirpath, f)
-        for dirpath, dirnames, files in os.walk(pack_sub_dir)
+        for dirpath, dirnames, files in os.walk(pack_dir)
         for f in fnmatch.filter(files, '*.cfg')
     ]
 
