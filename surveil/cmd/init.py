@@ -30,21 +30,43 @@ def main():
     parser.add_option('-d', '--demo',
                       default=False,
                       dest='demo',
+                      help="Create fake hosts in Alignak",
                       action="store_true")
     parser.add_option('-i', '--influxdb',
                       default=False,
                       dest='influxdb',
+                      help="Pre-create the InfluxDB database",
+                      action='store_true')
+    parser.add_option('-m', '--mongodb',
+                      default=False,
+                      dest='mongodb',
+                      help="Drop the existing Alignak MongoDB database",
+                      action='store_true')
+    parser.add_option('-p', '--packs',
+                      default=False,
+                      dest='packs',
+                      help="Upload/Update configuration packs to MongoDB",
+                      action='store_true')
+    parser.add_option('-h', '--help',
+                      default=False,
+                      dest='help',
                       action='store_true')
     opts, _ = parser.parse_args(sys.argv)
+
+    if opts.help:
+        parser.print_help()
+        sys.exit(0)
 
     # Create a basic config in mongodb
     mongo = pymongo.MongoClient(config.surveil_api_config['mongodb_uri'])
 
-    if opts.demo is True:
+    if opts.mongodb is True:
         # Drop the current shinken config
+        print("Dropping existing Alignak MongoDB database...")
         mongo.drop_database('shinken')
 
     if opts.influxdb is True:
+        print("Pre-creating InfluxDB database...")
         # Create the InfluxDB database
         influx_client = influxdb.InfluxDBClient.from_DSN(
             config.surveil_api_config['influxdb_uri']
@@ -54,11 +76,8 @@ def main():
         if not any(db['name'] == influx_client._database for db in databases):
             influx_client.create_database(influx_client._database)
 
-    if mongo.surveil.init.count() == 0:
-        # Mark packs as uploaded
-        print("Uploading packs...")
-        mongo.surveil.init.insert({"source": "surveil-init script"})
-
+    if opts.packs:
+        print ("Uploading packs...")
         # Load the shinken packs
         subprocess.call(
             [
@@ -107,9 +126,6 @@ def main():
                 "/usr/share/monitoring/packs/sfl/openstack-host/",
             ]
         )
-
-    else:
-        print("Skipping pack upload...")
 
     cli_surveil = sc.Client('http://localhost:8080/v2',
                             auth_url='http://localhost:8080/v2/auth',

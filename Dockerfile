@@ -51,5 +51,5 @@ ENV SURVEIL_OS_TENANT_NAME=admin
 
 CMD cd /opt/surveil && \
     ./setup.sh && \
-    ((sleep 40 && surveil-init) &) && \
+    ((sleep 40 && surveil-init --influxdb --packs --mongodb) &) && \
     surveil-api
