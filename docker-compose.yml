@@ -18,6 +18,7 @@ alignak:
   links:
     - mongo
     - influxdb
+    - redis
   ports:
     - "7767:7767"
   environment:
@@ -40,6 +41,9 @@ influxdb:
   ports:
     - "8083:8083"
     - "8086:8086"
+
+redis:
+  image: redis
 
 grafana:
   image: savoirfairelinux/grafana:2.1.0-pre1
