@@ -60,4 +60,4 @@ You should now be able to use the API: ::
 3. Surveil Web UI
 ~~~~~~~~~~~~~~~~~
 
-Access the Surveil Web UI at http://localhost:80
+Access the Surveil Web UI at http://localhost:80/surveil
