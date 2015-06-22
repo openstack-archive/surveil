@@ -40,9 +40,9 @@ Launch all surveil services with the following command: ::
     systemctl start surveil-full.target
 
 
-The surveil-init command will create a database in InfluxDB and initialize the MongoDB database: ::
+The surveil-init command will flush existing MongoDB Alignak config, create an InfluxDB database and upload configuration templates to Alignak: ::
 
-    surveil-init --influxdb
+    surveil-init --mongodb --influxdb --packs
 
 The surveil-webui-init command will pre-create data sources in Grafana: ::
 
