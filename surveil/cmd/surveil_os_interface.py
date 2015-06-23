@@ -154,7 +154,8 @@ def main():
                 "_OS_TENANT_NAME": daemon_config["SURVEIL_OS_TENANT_NAME"],
                 "_OS_USERNAME": daemon_config["SURVEIL_OS_USERNAME"],
                 "_OS_PASSWORD": daemon_config["SURVEIL_OS_PASSWORD"],
-                "_OS_INSTANCE_ID": event['payload']['instance_id']
+                "_OS_INSTANCE_ID": event['payload']['instance_id'],
+                "_OS_INSTANCE_METADATA": event['payload']['metadata'],
             }
 
             surveil_metadata_custom_fields = event['payload']['metadata'].get(
