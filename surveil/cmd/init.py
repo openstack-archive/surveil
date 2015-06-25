@@ -99,6 +99,14 @@ def main():
             [
                 "surveil-pack-upload",
                 "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
+                "/usr/share/monitoring/packs/sfl/linux-system-nrpe/",
+            ]
+        )
+
+        subprocess.call(
+            [
+                "surveil-pack-upload",
+                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
                 "/usr/share/monitoring/packs/sfl/openstack-nova-http/",
             ]
         )

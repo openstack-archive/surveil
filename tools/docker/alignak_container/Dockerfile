@@ -102,12 +102,6 @@ RUN cd /plugins/check_cinder && sudo /opt/surveilplugins/env/bin/python setup.py
 RUN cd /plugins/check_ceilometer && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_ceilometer /usr/lib/monitoring/plugins/sfl/
 RUN cd /plugins/check_nova_host_status && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_nova_host_status /usr/lib/monitoring/plugins/sfl/
 
-## packs
-RUN sh  -c 'gpg --recv-keys --keyserver keyserver.ubuntu.com 2320E8F8 && gpg --export --armor 2320E8F8 | apt-key add -' && \
-    sh -c "echo 'deb http://deb.kaji-project.org/ubuntu14.04/ plugins main' >> /etc/apt/sources.list.d/kaji.list" && \
-    apt-get update && \
-    apt-get install -y --force-yes monitoring-packs-sfl-generic-host monitoring-packs-sfl-linux-system-nrpe
-
 ## Add check example plugin
 ADD plugins/check-example /plugins/check_example
 RUN virtualenv /plugins/check_example/env
