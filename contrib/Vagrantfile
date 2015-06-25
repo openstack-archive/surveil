@@ -21,4 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell, :inline => "surveil-init --influxdb"
   config.vm.provision :shell, :inline => "surveil-webui-init -H localhost -U root -P root -p 8086 -g 'http://localhost:3000/grafana'"
 
+  # Show IP
+  config.vm.provision :shell, :inline => "ip addr | grep 'inet 192.168.'"
+
 end
