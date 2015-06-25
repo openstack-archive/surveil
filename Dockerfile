@@ -19,6 +19,8 @@ RUN apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-keystone-http /usr/share/monitoring/packs/sfl/openstack-keystone-http && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-nova-http /usr/share/monitoring/packs/sfl/openstack-nova-http && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/openstack-host /usr/share/monitoring/packs/openstack-host && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/linux-system-nrpe /usr/share/monitoring/packs/linux-system-nrpe && \
+    svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/packs/generic-host /usr/share/monitoring/packs/generic-host && \
     apt-get remove -y subversion
 
 ADD requirements.txt /opt/surveil/requirements.txt
