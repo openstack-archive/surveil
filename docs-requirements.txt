@@ -9,7 +9,6 @@ mongomock
 requests_mock
 sphinx_rtd_theme
 docker-compose
-wsme
 pecan>=0.5.0
 pymongo>=2.7.2
 wsme
