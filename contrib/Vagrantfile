@@ -17,6 +17,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Install Surveil
   config.vm.provision :shell, :inline => "yum install -y surveil-full --nogpgcheck"
+  config.vm.provision :shell, :inline => "systemctl start mongod"
   config.vm.provision :shell, :inline => "systemctl start surveil-full.target"
   config.vm.provision :shell, :inline => "surveil-init --influxdb"
   config.vm.provision :shell, :inline => "surveil-webui-init -H localhost -U root -P root -p 8086 -g 'http://localhost:3000/grafana'"
