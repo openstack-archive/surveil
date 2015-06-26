@@ -8,9 +8,10 @@ Table of Contents:
    :maxdepth: 2
 
    readme
-   tutorials/index.rst
    project_architecture
+   tutorials/index.rst
    webapi/index
+   administration/index.rst
 
 Indices and tables
 ==================
