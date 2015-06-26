@@ -1,0 +1,147 @@
+heat_template_version: 2013-05-23
+description: Creates an autoscaling group based on Surveil's metrics
+parameters:
+  image:
+    type: string
+    default: rhel7-updated
+    description: Image used for servers
+  key:
+    type: string
+    default: < USER KEY HERE >
+    description: SSH key to connect to the servers
+  flavor:
+    type: string
+    default: c1.small
+    description: flavor used by the web servers
+  network_public:
+    type: string
+    default: public-01
+    description: Public network used by the server
+  network_private:
+    type: string
+    default: private-01
+    description: Private network used by the server
+  monitoring_server:
+    type: string
+    default: < SURVEIL SERVER IP HERE >
+    description: Monitoring server address to allow connections from
+resources:
+  asg:
+    type: OS::Heat::AutoScalingGroup
+    properties:
+      min_size: 1
+      max_size: 6
+      resource:
+        type: OS::Nova::Server
+        properties:
+          flavor: {get_param: flavor}
+          image: {get_param: image}
+          key_name: {get_param: key}
+          networks:
+            - network: {get_param: network_public}
+            - network: {get_param: network_private}
+          security_groups:
+            - default
+            - sysadmin
+            - insecure
+          metadata:
+            metering.stack: {get_param: "OS::stack_id"}
+            surveil_tags: linux-system-nrpe
+          user_data_format: RAW
+          user_data:
+            str_replace:
+              template: |
+                #!/bin/bash -v
+                rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+                yum install -y nrpe wget bc svn
+                yum install -y nagios-plugins-users nagios-plugins-disk nagios-plugins-load --disablerepo=rhel-7-server-openstack-6.0-rpms
+                mkdir -p /usr/lib64/nagios/plugins/sfl-monitoring-tools/check_users
+                svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/0.3.2/plugins/check-cpu  /usr/lib64/nagios/plugins/sfl-monitoring-tools/check_cpu
+                svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/0.3.2/plugins/check-mem  /usr/lib64/nagios/plugins/sfl-monitoring-tools/check_mem
+                wget https://raw.githubusercontent.com/fpeyre/nagios-plugins/master/check_swap -P /usr/lib64/nagios/plugins/sfl-monitoring-tools/check_swap/
+                chmod +x /usr/lib64/nagios/plugins/sfl-monitoring-tools/check_swap/check_swap
+                chmod +x /usr/lib64/nagios/plugins/sfl-monitoring-tools/check_users/check_users.sh
+                sed -i 's/^allowed_hosts=.*$/allowed_hosts=$monitoring_server/' /etc/nagios/nrpe.cfg
+                echo "command[check_disk]=/usr/lib64/nagios/plugins/check_disk -w 85 -c 90 " >> /etc/nagios/nrpe.cfg
+                echo "command[check_cpu]=/usr/lib64/nagios/plugins/sfl-monitoring-tools/check_cpu/check_cpu -w 80 -c 90 " >> /etc/nagios/nrpe.cfg
+                echo "command[check_memory]=/usr/lib64/nagios/plugins/sfl-monitoring-tools/check_mem/check_mem -u -w 80.0 -c 90.0 " >> /etc/nagios/nrpe.cfg
+                echo "command[check_swap]=/usr/lib64/nagios/plugins/sfl-monitoring-tools/check_swap/check_swap 20 10 " >> /etc/nagios/nrpe.cfg
+                echo "command[check_users]=/usr/lib64/nagios/plugins/check_users -w 2 -c 4 " >> /etc/nagios/nrpe.cfg
+                systemctl enable nrpe
+                systemctl start nrpe
+              params:
+                $monitoring_server: {get_param: monitoring_server}
+  server_scaleup_policy:
+    type: OS::Heat::ScalingPolicy
+    properties:
+      adjustment_type: change_in_capacity
+      auto_scaling_group_id: {get_resource: asg}
+      cooldown: 30
+      scaling_adjustment: 1
+  server_scaledown_policy:
+    type: OS::Heat::ScalingPolicy
+    properties:
+      adjustment_type: change_in_capacity
+      auto_scaling_group_id: {get_resource: asg}
+      cooldown: 30
+      scaling_adjustment: -1
+  users_alarm_high:
+    type: OS::Ceilometer::Alarm
+    properties:
+      description: Scale-up if the average connected users is > 3 for 1 minute
+      meter_name: SURVEIL_users
+      statistic: avg
+      period: 60
+      evaluation_periods: 1
+      threshold: 3
+      alarm_actions:
+        - {get_attr: [server_scaleup_policy, alarm_url]}
+      matching_metadata: {'stack': {get_param: "OS::stack_id"}}
+      comparison_operator: gt
+  users_alarm_low:
+    type: OS::Ceilometer::Alarm
+    properties:
+      description: Scale-down if the average connected users is < 1 for 1 minute
+      meter_name: SURVEIL_users
+      statistic: avg
+      period: 60
+      evaluation_periods: 1
+      threshold: 1
+      alarm_actions:
+        - {get_attr: [server_scaledown_policy, alarm_url]}
+      matching_metadata: {'stack': {get_param: "OS::stack_id"}}
+      comparison_operator: lt
+
+outputs:
+  scale_up_url:
+    description: >
+      This URL is the webhook to scale up the autoscaling group.  You
+      can invoke the scale-up operation by doing an HTTP POST to this
+      URL; no body nor extra headers are needed.
+    value: {get_attr: [server_scaleup_policy, alarm_url]}
+  scale_dn_url:
+    description: >
+      This URL is the webhook to scale down the autoscaling group.
+      You can invoke the scale-down operation by doing an HTTP POST to
+      this URL; no body nor extra headers are needed.
+    value: {get_attr: [server_scaledown_policy, alarm_url]}
+  ceilometer_query:
+    value:
+      str_replace:
+        template: >
+          ceilometer statistics -m SURVEIL_users
+          -q metadata.user_metadata.stack=$stackval -p 600 -a avg
+        params:
+          $stackval: { get_param: "OS::stack_id" }
+    description: >
+      This is a Ceilometer query for statistics on the SURVEIL_users meter
+      Samples about OS::Nova::Server instances in this stack.  The -q
+      parameter selects Samples according to the subject's metadata.
+      When a VM's metadata includes an item of the form metering.X=Y,
+      the corresponding Ceilometer resource has a metadata item of the
+      form user_metadata.X=Y and samples about resources so tagged can
+      be queried with a Ceilometer query term of the form
+      metadata.user_metadata.X=Y.  In this case the nested stacks give
+      their VMs metadata that is passed as a nested stack parameter,
+      and this stack passes a metadata of the form metering.stack=Y,
+      where Y is this stack's ID.

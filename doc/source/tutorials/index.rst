@@ -10,6 +10,7 @@ Using Surveil
    installing_surveil
    monitoring_a_host_with_passive_checks
    monitoring_with_your_custom_plugin
+   heat_autoscaling
 
 Contributing
 ------------
