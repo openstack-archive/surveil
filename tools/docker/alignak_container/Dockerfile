@@ -64,7 +64,7 @@ RUN cd /tmp && \
 # mod-ceilometer
 RUN apt-get update && apt-get install -y python-ceilometerclient
 RUN cd /tmp && \
-    wget -O mod-ceilometer.tar.gz https://github.com/savoirfairelinux/mod-ceilometer/archive/8be80b37f2d5f81c57fcfdae13cc3acafbbd7778.tar.gz && \
+    wget -O mod-ceilometer.tar.gz https://github.com/savoirfairelinux/mod-ceilometer/archive/0.2.0.tar.gz && \
     tar -zxvf mod-ceilometer.tar.gz && \
     mv /tmp/mod-ceilometer-*/module /var/lib/alignak/modules/mod-ceilometer && \
     rm -rfv /tmp/mod-ceilometer*
