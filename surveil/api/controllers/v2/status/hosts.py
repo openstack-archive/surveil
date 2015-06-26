@@ -76,9 +76,9 @@ class HostServiceMetricsController(rest.RestController):
     def get(self):
         """Returns all metrics name for a host with a service."""
         handler = live_metric_handler.MetricHandler(pecan.request)
-        metrics_name = handler.get_metric(
+        metrics_name = handler.get(
             pecan.request.context['host_name'],
-            pecan.request.context['service_name']
+            service_description=pecan.request.context['service_name']
         )
         return metrics_name
 
@@ -94,7 +94,7 @@ class HostMetricsController(rest.RestController):
     def get(self):
         """Returns all metrics name for a host."""
         handler = live_metric_handler.MetricHandler(pecan.request)
-        metrics_name = handler.get_metric(pecan.request.context['host_name'])
+        metrics_name = handler.get(pecan.request.context['host_name'])
         return metrics_name
 
     @pecan.expose()
@@ -178,8 +178,8 @@ class HostServiceMetricController(rest.RestController):
             """
         handler = live_metric_handler.MetricHandler(pecan.request)
         metric = handler.get(
-            self.metric_name,
             pecan.request.context['host_name'],
+            self.metric_name,
             pecan.request.context['service_name']
         )
         return metric
@@ -187,7 +187,10 @@ class HostServiceMetricController(rest.RestController):
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([live_metric.LiveMetric], body=time_delta.TimeDelta)
     def post(self, time):
-        """Given a LiveQuery, returns all matching s."""
+        """Returns all matching metrics.
+
+        :param time: a time delta within the request body.
+        """
         handler = live_metric_handler.MetricHandler(pecan.request)
         metrics = handler.get_all(time_delta=time,
                                   metric_name=self.metric_name,
@@ -212,15 +215,18 @@ class HostMetricController(rest.RestController):
         """
         handler = live_metric_handler.MetricHandler(pecan.request)
         metric = handler.get(
-            self.metric_name,
-            pecan.request.context['host_name']
+            pecan.request.context['host_name'],
+            self.metric_name
         )
         return metric
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([live_metric.LiveMetric], body=time_delta.TimeDelta)
     def post(self, time):
-        """Given a LiveQuery, returns all matching s."""
+        """Given a time delta, returns all matching metrics.
+
+        :param time: a time delta within the request body.
+        """
         handler = live_metric_handler.MetricHandler(pecan.request)
         metrics = handler.get_all(time_delta=time,
                                   metric_name=self.metric_name,
