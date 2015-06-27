@@ -13,54 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import businessimpactmodulation
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class BusinessImpactModulationHandler(handler.Handler):
-    """Fulfills a request on the business impact modulation resource."""
+class BusinessImpactModulationHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the host group resource."""
 
-    def get(self, name):
-        """Return a business impact modulation."""
-
-        t = (self.request.mongo_connection.
-             shinken.businessimpactmodulations).find_one(
-            {"business_impact_modulation_name": name},
-            {'_id': 0}
+    def __init__(self, *args, **kwargs):
+        super(BusinessImpactModulationHandler, self).__init__(
+            'businessimpactmodulations',
+            'business_impact_modulation_name',
+            businessimpactmodulation.BusinessImpactModulation,
+            *args,
+            **kwargs
         )
-        return businessimpactmodulation.BusinessImpactModulation(**t)
-
-    def update(self, name, modulation):
-        """Modify an existing business impact modulation."""
-        modulation_dict = modulation.as_dict()
-        if "business_impact_modulation_name" not in modulation_dict.keys():
-            modulation_dict['business_impact_modulation_name'] = modulation
-
-        self.request.mongo_connection.shinken.businessimpactmodulations.update(
-            {"business_impact_modulation_name": name},
-            {"$set": modulation_dict},
-            upsert=True
-        )
-
-    def delete(self, name):
-        """Delete existing business impact modulation."""
-        self.request.mongo_connection.shinken.businessimpactmodulations.remove(
-            {"business_impact_modulation_name": name}
-        )
-
-    def create(self, modulation):
-        """Create a new business impact modulation."""
-        self.request.mongo_connection.shinken.businessimpactmodulations.insert(
-            modulation.as_dict()
-        )
-
-    def get_all(self):
-        """Return all business impact modulations."""
-        modulations = [m for m
-                       in self.request.mongo_connection.
-                       shinken.businessimpactmodulations.find(
-                           {"register": {"$ne": "0"}},
-                           {'_id': 0}
-                       )]
-        modulations = [businessimpactmodulation.BusinessImpactModulation(**m)
-                       for m in modulations]
-        return modulations

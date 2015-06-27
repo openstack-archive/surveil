@@ -13,51 +13,18 @@
 # under the License.
 
 from surveil.api.datamodel.config import realm
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class RealmHandler(handler.Handler):
-    """Fulfills a request on the realm resource."""
+class RealmHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the host group resource."""
 
-    def get(self, realm_name):
-        """Return a realm."""
-
-        r = self.request.mongo_connection.shinken.realms.find_one(
-            {"realm_name": realm_name}, {'_id': 0}
-        )
-        return realm.Realm(**r)
-
-    def update(self, realm_name, realm):
-        """Modify an existing realm."""
-        realm_dict = realm.as_dict()
-        if "realm_name" not in realm_dict.keys():
-            realm_dict['realm_name'] = realm_name
-
-        self.request.mongo_connection.shinken.realms.update(
-            {"realm_name": realm_name},
-            {"$set": realm_dict},
-            upsert=True
+    def __init__(self, *args, **kwargs):
+        super(RealmHandler, self).__init__(
+            'realms',
+            'realm_name',
+            realm.Realm,
+            *args,
+            **kwargs
         )
 
-    def delete(self, realm_name):
-        """Delete existing realm."""
-        self.request.mongo_connection.shinken.realms.remove(
-            {"realm_name": realm_name}
-        )
-
-    def create(self, realm):
-        """Create a new realm."""
-        self.request.mongo_connection.shinken.realms.insert(
-            realm.as_dict()
-        )
-
-    def get_all(self):
-        """Return all realms."""
-        realms = [c for c
-                  in self.request.mongo_connection.
-                  shinken.realms.find(
-                      {"register": {"$ne": "0"}},  # Don't return templates
-                      {'_id': 0}
-                  )]
-        realms = [realm.Realm(**r) for r in realms]
-        return realms

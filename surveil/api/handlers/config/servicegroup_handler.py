@@ -13,51 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import servicegroup
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class ServiceGroupHandler(handler.Handler):
-    """Fulfills a request on the service group resource."""
+class ServiceGroupHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the host group resource."""
 
-    def get(self, group_name):
-        """Return a service group."""
-
-        s = self.request.mongo_connection.shinken.servicegroups.find_one(
-            {"servicegroup_name": group_name}, {'_id': 0}
+    def __init__(self, *args, **kwargs):
+        super(ServiceGroupHandler, self).__init__(
+            'servicegroups',
+            'servicegroup_name',
+            servicegroup.ServiceGroup,
+            *args,
+            **kwargs
         )
-        return servicegroup.ServiceGroup(**s)
-
-    def update(self, group_name, group):
-        """Modify an existing service group."""
-        group_dict = group.as_dict()
-        if "servicegroup_name" not in group_dict.keys():
-            group_dict['servicegroup_name'] = group_name
-
-        self.request.mongo_connection.shinken.servicegroups.update(
-            {"servicegroup_name": group_name},
-            {"$set": group_dict},
-            upsert=True
-        )
-
-    def delete(self, group_name):
-        """Delete existing service group."""
-        self.request.mongo_connection.shinken.servicegroups.remove(
-            {"servicegroup_name": group_name}
-        )
-
-    def create(self, group):
-        """Create a new service group."""
-        self.request.mongo_connection.shinken.servicegroups.insert(
-            group.as_dict()
-        )
-
-    def get_all(self):
-        """Return all service groups."""
-        servicegroups = [c for c
-                         in self.request.mongo_connection.
-                         shinken.servicegroups.find(
-                             {"register": {"$ne": "0"}},
-                             {'_id': 0}
-                         )]
-        servicegroups = [servicegroup.ServiceGroup(**s) for s in servicegroups]
-        return servicegroups

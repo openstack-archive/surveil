@@ -13,52 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import notificationway
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class NotificationWayHandler(handler.Handler):
-    def get(self, notificationway_name):
-        """Return a notification way."""
+class NotificationWayHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the host group resource."""
 
-        g = self.request.mongo_connection.shinken.notificationways.find_one(
-            {"notificationway_name": notificationway_name}, {'_id': 0}
+    def __init__(self, *args, **kwargs):
+        super(NotificationWayHandler, self).__init__(
+            'notificationways',
+            'notificationway_name',
+            notificationway.NotificationWay,
+            *args,
+            **kwargs
         )
-        return notificationway.NotificationWay(**g)
-
-    def update(self, notificationway_name, notificationway):
-        """Modify an existing notification way."""
-        notificationway_dict = notificationway.as_dict()
-        if "notificationway_name" not in notificationway_dict.keys():
-            notificationway_dict['notificationway_name'] = notificationway_name
-
-        self.request.mongo_connection.shinken.notificationways.update(
-            {"notificationway_name": notificationway_name},
-            {"$set": notificationway_dict},
-            upsert=True
-        )
-
-    def delete(self, notificationway_name):
-        """Delete existing notification way."""
-        self.request.mongo_connection.shinken.notificationways.remove(
-            {"notificationway_name": notificationway_name}
-        )
-
-    def create(self, notificationway):
-        """Create a new notification way."""
-        self.request.mongo_connection.shinken.notificationways.insert(
-            notificationway.as_dict()
-        )
-
-    def get_all(self):
-        """Return all notification way."""
-        notificationways = [
-            g for g in self.request.mongo_connection
-            .shinken.notificationways.find(
-                {"register": {"$ne": "0"}},
-                {'_id': 0}
-            )]
-        notificationways = [
-            notificationway.NotificationWay(**g) for g in notificationways
-        ]
-
-        return notificationways
