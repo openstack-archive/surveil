@@ -13,46 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import command
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class CommandHandler(handler.Handler):
-    """Fulfills a request on the service resource."""
+class CommandHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the Command resource."""
 
-    def get(self, command_name):
-        """Return a command."""
-        c = self.request.mongo_connection.shinken.commands.find_one(
-            {"command_name": command_name}
+    def __init__(self, *args, **kwargs):
+        super(CommandHandler, self).__init__(
+            'commands',
+            'command_name',
+            command.Command,
+            *args,
+            **kwargs
         )
-        return command.Command(**c)
-
-    def update(self, command_name, command):
-        """Modify existing command."""
-        command_dict = command.as_dict()
-        if "command_name" not in command_dict.keys():
-            command_dict['command_name'] = command_name
-
-        self.request.mongo_connection.shinken.commands.update(
-            {"command_name": command_name},
-            {"$set": command_dict},
-            upsert=True
-        )
-
-    def delete(self, command_name):
-        """Delete an existing command."""
-        self.request.mongo_connection.shinken.commands.remove(
-            {"command_name": command_name}
-        )
-
-    def create(self, data):
-        """Create a new command."""
-        self.request.mongo_connection.shinken.commands.insert(
-            data.as_dict()
-        )
-
-    def get_all(self):
-        """Return all commands."""
-        commands = [c for c
-                    in self.request.mongo_connection.shinken.commands.find()]
-
-        return [command.Command(**c) for c in commands]

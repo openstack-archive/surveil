@@ -13,51 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import host
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class HostHandler(handler.Handler):
-    """Fulfills a request on the host resource."""
+class HostHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the Host resource."""
 
-    def get(self, host_name):
-        """Return a host."""
-
-        h = self.request.mongo_connection.shinken.hosts.find_one(
-            {"host_name": host_name}, {'_id': 0}
+    def __init__(self, *args, **kwargs):
+        super(HostHandler, self).__init__(
+            'hosts',
+            'host_name',
+            host.Host,
+            *args,
+            **kwargs
         )
-        return host.Host(**h)
-
-    def update(self, host_name, host):
-        """Modify existing host."""
-        host_dict = host.as_dict()
-        if "host_name" not in host_dict.keys():
-            host_dict['host_name'] = host_name
-
-        self.request.mongo_connection.shinken.hosts.update(
-            {"host_name": host_name},
-            {"$set": host_dict},
-            upsert=True
-        )
-
-    def delete(self, host_name):
-        """Delete existing host."""
-        self.request.mongo_connection.shinken.hosts.remove(
-            {"host_name": host_name}
-        )
-
-    def create(self, host):
-        """Create a new host."""
-        self.request.mongo_connection.shinken.hosts.insert(
-            host.as_dict()
-        )
-
-    def get_all(self):
-        """Return all hosts."""
-        hosts = [h for h
-                 in self.request.mongo_connection.
-                 shinken.hosts.find(
-                     {"register": {"$ne": "0"}},  # Don't return templates
-                     {'_id': 0}
-                 )]
-        hosts = [host.Host(**h) for h in hosts]
-        return hosts

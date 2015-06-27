@@ -13,51 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import hostgroup
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class HostGroupHandler(handler.Handler):
+class HostGroupHandler(mongo_object_handler.MongoObjectHandler):
     """Fulfills a request on the host group resource."""
 
-    def get(self, group_name):
-        """Return a host group."""
-
-        g = self.request.mongo_connection.shinken.hostgroups.find_one(
-            {"hostgroup_name": group_name}, {'_id': 0}
+    def __init__(self, *args, **kwargs):
+        super(HostGroupHandler, self).__init__(
+            'hostgroups',
+            'hostgroup_name',
+            hostgroup.HostGroup,
+            *args,
+            **kwargs
         )
-        return hostgroup.HostGroup(**g)
-
-    def update(self, group_name, group):
-        """Modify an existing host group."""
-        group_dict = group.as_dict()
-        if "hostgroup_name" not in group_dict.keys():
-            group_dict['hostgroup_name'] = group_name
-
-        self.request.mongo_connection.shinken.hostgroups.update(
-            {"hostgroup_name": group_name},
-            {"$set": group_dict},
-            upsert=True
-        )
-
-    def delete(self, group_name):
-        """Delete existing host group."""
-        self.request.mongo_connection.shinken.hostgroups.remove(
-            {"hostgroup_name": group_name}
-        )
-
-    def create(self, group):
-        """Create a new host group."""
-        self.request.mongo_connection.shinken.hostgroups.insert(
-            group.as_dict()
-        )
-
-    def get_all(self):
-        """Return all host groups."""
-        hostgroups = [g for g
-                      in self.request.mongo_connection.
-                      shinken.hostgroups.find(
-                          {"register": {"$ne": "0"}},
-                          {'_id': 0}
-                      )]
-        hostgroups = [hostgroup.HostGroup(**g) for g in hostgroups]
-        return hostgroups

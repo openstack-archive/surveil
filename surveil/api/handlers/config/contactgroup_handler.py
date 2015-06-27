@@ -13,51 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import contactgroup
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class ContactGroupHandler(handler.Handler):
-    """Fulfills a request on the contact group resource."""
+class ContactGroupHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the Contact Group resource."""
 
-    def get(self, group_name):
-        """Return a contact group."""
-
-        g = self.request.mongo_connection.shinken.contactgroups.find_one(
-            {"contactgroup_name": group_name}, {'_id': 0}
+    def __init__(self, *args, **kwargs):
+        super(ContactGroupHandler, self).__init__(
+            'contactgroups',
+            'contactgroup_name',
+            contactgroup.ContactGroup,
+            *args,
+            **kwargs
         )
-        return contactgroup.ContactGroup(**g)
-
-    def update(self, group_name, group):
-        """Modify an existing contact group."""
-        group_dict = group.as_dict()
-        if "contactgroup_name" not in group_dict.keys():
-            group_dict['contactgroup_name'] = group_name
-
-        self.request.mongo_connection.shinken.contactgroups.update(
-            {"contactgroup_name": group_name},
-            {"$set": group_dict},
-            upsert=True
-        )
-
-    def delete(self, group_name):
-        """Delete existing contact group."""
-        self.request.mongo_connection.shinken.contactgroups.remove(
-            {"contactgroup_name": group_name}
-        )
-
-    def create(self, group):
-        """Create a new contact group."""
-        self.request.mongo_connection.shinken.contactgroups.insert(
-            group.as_dict()
-        )
-
-    def get_all(self):
-        """Return all contact groups."""
-        contactgroups = [g for g
-                         in self.request.mongo_connection.
-                         shinken.contactgroups.find(
-                             {"register": {"$ne": "0"}},
-                             {'_id': 0}
-                         )]
-        contactgroups = [contactgroup.ContactGroup(**g) for g in contactgroups]
-        return contactgroups

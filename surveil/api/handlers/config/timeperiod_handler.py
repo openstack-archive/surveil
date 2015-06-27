@@ -13,51 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import timeperiod
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class TimePeriodHandler(handler.Handler):
-    """Fulfills a request on the contact resource."""
+class TimePeriodHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the Time Period resource."""
 
-    def get(self, timeperiod_name):
-        """Return a time period."""
-
-        t = self.request.mongo_connection.shinken.timeperiods.find_one(
-            {"timeperiod_name": timeperiod_name}, {'_id': 0}
+    def __init__(self, *args, **kwargs):
+        super(TimePeriodHandler, self).__init__(
+            'timeperiods',
+            'timeperiod_name',
+            timeperiod.TimePeriod,
+            *args,
+            **kwargs
         )
-        return timeperiod.TimePeriod(**t)
-
-    def update(self, timeperiod_name, timeperiod):
-        """Modify an existing time period."""
-        timeperiod_dict = timeperiod.as_dict()
-        if "timeperiod_name" not in timeperiod_dict.keys():
-            timeperiod_dict['timeperiod_name'] = timeperiod_name
-
-        self.request.mongo_connection.shinken.timeperiods.update(
-            {"timeperiod_name": timeperiod_name},
-            {"$set": timeperiod_dict},
-            upsert=True
-        )
-
-    def delete(self, timeperiod_name):
-        """Delete existing time period."""
-        self.request.mongo_connection.shinken.timeperiods.remove(
-            {"timeperiod_name": timeperiod_name}
-        )
-
-    def create(self, timeperiod):
-        """Create a new time period."""
-        self.request.mongo_connection.shinken.timeperiods.insert(
-            timeperiod.as_dict()
-        )
-
-    def get_all(self):
-        """Return all time periods."""
-        timeperiods = [t for t
-                       in self.request.mongo_connection.
-                       shinken.timeperiods.find(
-                           {"register": {"$ne": "0"}},
-                           {'_id': 0}
-                       )]
-        timeperiods = [timeperiod.TimePeriod(**t) for t in timeperiods]
-        return timeperiods

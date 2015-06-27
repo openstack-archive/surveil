@@ -13,60 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import macromodulation
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class MacroModulationHandler(handler.Handler):
-    """Fulfills a request on the macro modulation resource."""
+class MacroModulationHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the Macro Modulation resource."""
 
-    def get(self, modulation_name):
-        """Return a macro modulation."""
-
-        m = self.request.mongo_connection.shinken.macromodulations.find_one(
-            {"macromodulation_name": modulation_name}, {'_id': 0}
+    def __init__(self, *args, **kwargs):
+        super(MacroModulationHandler, self).__init__(
+            'macromodulations',
+            'macromodulation_name',
+            macromodulation.MacroModulation,
+            *args,
+            **kwargs
         )
-        return macromodulation.MacroModulation(**m)
-
-    def update(self, modulation_name, modulation):
-        """Modify an existing macro modulation."""
-        modulation_dict = modulation.as_dict()
-        if "macromodulation_name" not in modulation_dict.keys():
-            modulation_dict['contactgroup_name'] = modulation_name
-
-        self.request.mongo_connection.shinken.macromodulations.update(
-            {"macromodulation_name": modulation_name},
-            {"$set": modulation_dict},
-            upsert=True
-        )
-
-    def delete(self, modulation_name):
-        """Delete existing macro modulation."""
-        self.request.mongo_connection.shinken.macromodulations.remove(
-            {"macromodulation_name": modulation_name}
-        )
-
-    def create(self, modulation):
-        """Create a new macro modulation."""
-        self.request.mongo_connection.shinken.macromodulations.insert(
-            modulation.as_dict()
-        )
-
-    def get_all(self):
-        """Return all macro modulation objects."""
-        modulations = [m for m
-                       in self.request.mongo_connection.
-                       shinken.macromodulations.find(
-                           # Don't return templates
-                           {
-                               "register": {"$ne": "0"}
-                           },
-                           {
-                               "_id": 0
-                           }
-                       )
-                       ]
-
-        modulations = [macromodulation.MacroModulation(**m)
-                       for m in modulations]
-
-        return modulations
