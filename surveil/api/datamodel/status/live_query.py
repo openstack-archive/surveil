@@ -17,26 +17,38 @@ import json
 import wsme
 import wsme.types as wtypes
 
+from surveil.api.datamodel.status.metrics import time_interval
 from surveil.api.datamodel import types
 
 
 class LiveQuery(types.Base):
+
     """Holds a sample query encoded in json."""
 
-    filters = wsme.wsattr(wtypes.text, mandatory=True)
+    filters = wsme.wsattr(wtypes.text, mandatory=False)
     "The filter expression encoded in json."
 
     fields = wsme.wsattr([wtypes.text], mandatory=False)
     "List of fields to include in the response."
 
+    time_interval = wsme.wsattr(time_interval.TimeInterval, mandatory=False)
+    "Time interval of the query."
+
     @classmethod
     def sample(cls):
         return cls(
             fields=['host_name', 'last_check'],
+            time_interval=time_interval.TimeInterval(
+                start_time='2015-01-29T21:50:44Z',
+                end_time='2015-01-29T22:50:44Z'
+            ),
             filters=json.dumps({
                 "isnot": {
                     "state": ["0", "1"],
                     "host_state": ["2"]
+                },
+                "is": {
+                    "event_type": ["ALERT"]
                 }
             })
         )

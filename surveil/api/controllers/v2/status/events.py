@@ -25,7 +25,7 @@ from surveil.common import util
 
 class EventsController(rest.RestController):
 
-    @util.policy_enforce(['authenticated'])
+    # @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([event.Event])
     def get_all(self):
         """Returns all events."""
