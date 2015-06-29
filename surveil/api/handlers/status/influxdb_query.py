@@ -17,18 +17,22 @@ import json
 
 def build_influxdb_query(live_query,
                          measurement,
-                         time_delta=None,
                          group_by=[],
                          order_by=[],
+                         additional_filters={},
                          limit=None):
 
     query = ['SELECT * FROM', measurement]
 
-    filters = {}
-    if live_query and live_query.filters:
-        filters = json.loads(live_query.filters)
+    filters = additional_filters
+    time = None
+    if live_query:
+        if live_query.filters:
+            filters.update(json.loads(live_query.filters))
+        if live_query.time_interval:
+            time = live_query.time_interval
 
-    query += _build_where_clause(filters, time_delta)
+    query += _build_where_clause(filters, time)
 
     if group_by:
         query.append('GROUP BY')
@@ -44,27 +48,25 @@ def build_influxdb_query(live_query,
     return ' '.join(query)
 
 
-def _build_where_clause(filters, time_delta=None):
+def _build_where_clause(filters, time=None):
     filters_conversion = {
         'is': '=',
         'isnot': '!='
     }
     clause = []
-    first = True
+    is_where_append = False
 
-    if time_delta:
+    if time:
         clause.append('WHERE')
-        first = False
-
-        begin = time_delta.begin
-        end = time_delta.end
-        clause.append("time >= '%s' AND time <= '%s'" % (begin, end))
+        clause.append("time >= '%s' AND time <= '%s'" % (time.start_time, time.end_time))
+        is_where_append = True
 
     for filter_name, filter_data in sorted(filters.items()):
         for field, values in sorted(filter_data.items()):
             for value in values:
-                if first:
+                if not is_where_append:
                     clause.append('WHERE')
+                    is_where_append = True
                 else:
                     clause.append('AND')
 
@@ -77,6 +79,5 @@ def _build_where_clause(filters, time_delta=None):
                                   (field,
                                    filters_conversion[filter_name],
                                    value))
-                first = False
 
     return clause

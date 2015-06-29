@@ -76,9 +76,9 @@ class MetricHandler(handler.Handler):
 
         return metrics
 
-    def get_all(self, metric_name, time_delta, host_name,
-                service_description=None):
+    def get_all(self, metric_name, host_name, service_description=None, live_query=live_query.LiveQuery()):
         """Return all metrics."""
+
         filters = {
             "is": {
                 "host_name": [host_name]
@@ -88,19 +88,12 @@ class MetricHandler(handler.Handler):
         if service_description:
             filters["is"]["service_description"] = [service_description]
 
-        query = live_query.LiveQuery(
-            filters=json.dumps(filters)
-        )
-        order_by = ["time desc"]
-
-        cli = self.request.influxdb_client
-        query = influxdb_query.build_influxdb_query(
-            query,
-            "metric_" + metric_name,
-            time_delta=time_delta,
-            order_by=order_by
-        )
-        response = cli.query(query)
+        influx_client = self.request.influxdb_client
+        query = influxdb_query.build_influxdb_query(live_query,
+                                                    'metric_' + metric_name,
+                                                    order_by=["time desc"],
+                                                    additional_filters=filters)
+        response = influx_client.query(query)
 
         metric_dicts = []
 
