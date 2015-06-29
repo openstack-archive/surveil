@@ -23,7 +23,6 @@ from surveil.api.datamodel.status import live_host
 from surveil.api.datamodel.status import live_query
 from surveil.api.datamodel.status import live_service
 from surveil.api.datamodel.status.metrics import live_metric
-from surveil.api.datamodel.status.metrics import time_delta
 from surveil.api.handlers.status import live_host_handler
 from surveil.api.handlers.status import live_service_handler
 from surveil.api.handlers.status.metrics import live_metric_handler
@@ -185,18 +184,18 @@ class HostServiceMetricController(rest.RestController):
         return metric
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([live_metric.LiveMetric], body=time_delta.TimeDelta)
-    def post(self, time):
+    @wsme_pecan.wsexpose([live_metric.LiveMetric], body=live_query.LiveQuery)
+    def post(self, query):
         """Returns all matching metrics.
 
         :param time: a time delta within the request body.
         """
         handler = live_metric_handler.MetricHandler(pecan.request)
-        metrics = handler.get_all(time_delta=time,
-                                  metric_name=self.metric_name,
+        metrics = handler.get_all(metric_name=self.metric_name,
                                   host_name=pecan.request.context['host_name'],
-                                  service_description=pecan.request.
-                                  context['service_name'])
+                                  service_description=pecan.request
+                                  .context['service_name'],
+                                  live_query=query)
         return metrics
 
 
@@ -221,17 +220,16 @@ class HostMetricController(rest.RestController):
         return metric
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([live_metric.LiveMetric], body=time_delta.TimeDelta)
-    def post(self, time):
-        """Given a time delta, returns all matching metrics.
+    @wsme_pecan.wsexpose([live_metric.LiveMetric], body=live_query.LiveQuery)
+    def post(self, query):
+        """Given a LiveQuery, returns all matching metrics.
 
-        :param time: a time delta within the request body.
+        :param time: a live query within the request body.
         """
         handler = live_metric_handler.MetricHandler(pecan.request)
-        metrics = handler.get_all(time_delta=time,
-                                  metric_name=self.metric_name,
-                                  host_name=pecan.request.context['host_name']
-                                  )
+        metrics = handler.get_all(metric_name=self.metric_name,
+                                  host_name=pecan.request.context['host_name'],
+                                  live_query=query)
         return metrics
 
 

@@ -20,7 +20,6 @@ from surveil.api.controllers.v2.status import services as v2_services
 
 
 class StatusController(rest.RestController):
-    # events = EventsController()
     hosts = v2_hosts.HostsController()
     services = v2_services.ServicesController()
     events = v2_events.EventsController()
