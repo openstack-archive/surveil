@@ -13,57 +13,17 @@
 # under the License.
 
 
-import pecan
-from pecan import rest
-import wsme.types as wtypes
-import wsmeext.pecan as wsme_pecan
-
 from surveil.api.datamodel.config import hostgroup
 from surveil.api.handlers.config import hostgroup_handler
-from surveil.common import util
+from surveil.api.controllers import crud_controller
 
 
-class HostGroupsController(rest.RestController):
+class HostGroupsController(crud_controller.CrudController):
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([hostgroup.HostGroup])
-    def get_all(self):
-        """Returns all host groups."""
-        handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        host_groups = handler.get_all()
-        return host_groups
+    def __init__(self):
+        super(HostGroupsController, self).__init__(
+            hostgroup_handler.HostGroupHandler,
+            hostgroup.HostGroup,
+            'hostgroup'
+        )
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(hostgroup.HostGroup, wtypes.text)
-    def get_one(self, group_name):
-        """Returns a host group."""
-        handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        hostgroup = handler.get(group_name)
-        return hostgroup
-
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(body=hostgroup.HostGroup, status_code=201)
-    def post(self, data):
-        """Create a new host group.
-
-        :param data: a host group within the request body.
-        """
-        handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        handler.create(data)
-
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(hostgroup.HostGroup, wtypes.text, status_code=204)
-    def delete(self, group_name):
-        """Returns a specific host group."""
-        handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        handler.delete(group_name)
-
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(hostgroup.HostGroup,
-                         wtypes.text,
-                         body=hostgroup.HostGroup,
-                         status_code=204)
-    def put(self, group_name, hostgroup):
-        """Update a specific host group."""
-        handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        handler.update(group_name, hostgroup)
