@@ -172,8 +172,8 @@ class TestHostMetric(functionalTest.FunctionalTest):
                 ["select * from metric_load1 "
                  "where time >= '2015-04-19t00:09:24z' "
                  "and time <= '2015-04-19t02:09:25z' "
-                 "and host_name ='srv-monitoring-01' "
-                 "and service_description ='load' "
+                 "and host_name='srv-monitoring-01' "
+                 "and service_description='load' "
                  "order by time desc"
                  ]
             )
