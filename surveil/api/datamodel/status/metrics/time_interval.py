@@ -18,18 +18,18 @@ import wsme.types as wtypes
 from surveil.api.datamodel import types
 
 
-class TimeDelta(types.Base):
+class TimeInterval(types.Base):
     """Hold a time."""
 
-    begin = wsme.wsattr(wtypes.text, mandatory=True)
-    "The begin time of a measure in RFC3339."
+    start_time = wsme.wsattr(wtypes.text, mandatory=True)
+    "The starting time."
 
-    end = wsme.wsattr(wtypes.text, mandatory=True)
-    "The end time of a measure in RFC3339."
+    end_time = wsme.wsattr(wtypes.text, mandatory=True)
+    "The ending time."
 
     @classmethod
     def sample(cls):
         return cls(
-            begin='2015-01-29T21:50:44Z',
-            end='2015-01-29T22:50:44Z'
+            start_time='2015-01-29T21:50:44Z',
+            end_time='2015-01-29T22:50:44Z'
         )
