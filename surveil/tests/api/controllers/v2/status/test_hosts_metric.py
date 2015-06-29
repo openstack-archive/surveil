@@ -20,6 +20,7 @@ from surveil.tests.api import functionalTest
 
 
 class TestHostMetric(functionalTest.FunctionalTest):
+
     def setUp(self):
         super(TestHostMetric, self).setUp()
         self.influxdb_response = json.dumps({
@@ -144,12 +145,17 @@ class TestHostMetric(functionalTest.FunctionalTest):
                            "http://influxdb:8086/query",
                            text=self.influxdb_response)
 
-            time = {'begin': '2015-04-19T00:09:24Z',
-                    'end': '2015-04-19T02:09:25Z'}
+            query = {
+                'fields': [],
+                'time_interval': {
+                    'start_time': '2015-04-19T00:09:24Z',
+                    'end_time': '2015-04-19T02:09:25Z'
+                }
+            }
 
             response = self.post_json("/v2/status/hosts/srv-monitoring-01/"
                                       "services/load/metrics/load1",
-                                      params=time)
+                                      params=query)
 
             expected = [{"metric_name": 'load1',
                          "min": "0",
@@ -164,9 +170,6 @@ class TestHostMetric(functionalTest.FunctionalTest):
                          "value": "10"
                          }]
 
-            self.assert_count_equal_backport(
-                json.loads(response.body.decode()),
-                expected)
             self.assertEqual(
                 m.last_request.qs['q'],
                 ["select * from metric_load1 "
@@ -177,6 +180,9 @@ class TestHostMetric(functionalTest.FunctionalTest):
                  "order by time desc"
                  ]
             )
+            self.assert_count_equal_backport(
+                json.loads(response.body.decode()),
+                expected)
 
     def test_metric_names(self):
         self.influxdb_response = json.dumps({

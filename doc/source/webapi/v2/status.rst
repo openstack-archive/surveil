@@ -35,9 +35,6 @@ Hosts
 .. rest-controller:: surveil.api.controllers.v2.status.hosts:HostServiceMetricsController
    :webprefix: /v2/status/hosts/(host_name)/services/(service_description)/metrics
 
-.. rest-controller:: surveil.api.controllers.v2.logs:LogsController
-   :webprefix: /v2/status/hosts/(host_name)/events
-
 .. rest-controller:: surveil.api.controllers.v2.status.events:EventsController
    :webprefix: /v2/status/events/
 
@@ -65,7 +62,7 @@ types documentation
 .. autotype:: surveil.api.datamodel.status.metrics.live_metric.LiveMetric
    :members:
 
-.. autotype:: surveil.api.datamodel.status.metrics.time_delta.TimeDelta
+.. autotype:: surveil.api.datamodel.status.metrics.time_interval.TimeInterval
    :members:
 
 .. autotype:: surveil.api.datamodel.status.event.Event

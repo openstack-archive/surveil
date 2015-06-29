@@ -316,14 +316,19 @@ class TestEvents(functionalTest.FunctionalTest):
                     "is": {
                         "host_name": ['Google']
                     }
-                })
+                }),
+                'time_interval': {
+                    "start_time": "2015-06-04T18:55:02Z",
+                    "end_time": "2015-06-04T18:55:42Z"
+                }
             }
 
             response = self.post_json('/v2/status/events', params=query)
 
             self.assertEqual(
                 m.last_request.qs['q'],
-                ["select * from event where host_name='google'"]
+                ["select * from event where time >= '2015-06-04t18:55:02z' "
+                 "and time <= '2015-06-04t18:55:42z' and host_name='google'"]
             )
 
             self.assert_count_equal_backport(
