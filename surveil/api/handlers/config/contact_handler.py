@@ -13,51 +13,17 @@
 # under the License.
 
 from surveil.api.datamodel.config import contact
-from surveil.api.handlers import handler
+from surveil.api.handlers import mongo_object_handler
 
 
-class ContactHandler(handler.Handler):
-    """Fulfills a request on the contact resource."""
+class ContactHandler(mongo_object_handler.MongoObjectHandler):
+    """Fulfills a request on the Contact resource."""
 
-    def get(self, contact_name):
-        """Return a contact."""
-
-        c = self.request.mongo_connection.shinken.contacts.find_one(
-            {"contact_name": contact_name}, {'_id': 0}
+    def __init__(self, *args, **kwargs):
+        super(ContactHandler, self).__init__(
+            'contacts',
+            'contact_name',
+            contact.Contact,
+            *args,
+            **kwargs
         )
-        return contact.Contact(**c)
-
-    def update(self, contact_name, contact):
-        """Modify an existing contact."""
-        contact_dict = contact.as_dict()
-        if "contact_name" not in contact_dict.keys():
-            contact_dict['contact_name'] = contact_name
-
-        self.request.mongo_connection.shinken.contacts.update(
-            {"contact_name": contact_name},
-            {"$set": contact_dict},
-            upsert=True
-        )
-
-    def delete(self, contact_name):
-        """Delete existing contact."""
-        self.request.mongo_connection.shinken.contacts.remove(
-            {"contact_name": contact_name}
-        )
-
-    def create(self, contact):
-        """Create a new contact."""
-        self.request.mongo_connection.shinken.contacts.insert(
-            contact.as_dict()
-        )
-
-    def get_all(self):
-        """Return all contacts."""
-        contacts = [c for c
-                    in self.request.mongo_connection.
-                    shinken.contacts.find(
-                        {"register": {"$ne": "0"}},  # Don't return templates
-                        {'_id': 0}
-                    )]
-        contacts = [contact.Contact(**c) for c in contacts]
-        return contacts
