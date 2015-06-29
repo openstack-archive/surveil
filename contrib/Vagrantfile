@@ -22,6 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell, :inline => "sleep 10"
   config.vm.provision :shell, :inline => "surveil-init --influxdb"
   config.vm.provision :shell, :inline => "surveil-webui-init -H localhost -U root -P root -p 8086 -g 'http://localhost:3000/grafana'"
+  config.vm.provision :shell, :inline => "echo 'source /etc/bash_completion.d/surveil' >> /home/vagrant/.bashrc"
 
   # Show IP
   config.vm.provision :shell, :inline => "ip addr | grep 'inet 192.168.'"
