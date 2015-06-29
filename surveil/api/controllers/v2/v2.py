@@ -30,5 +30,4 @@ class V2Controller(object):
     status = v2_status.StatusController()
     surveil = v2_admin.AdminController()
     auth = v2_auth.AuthController()
-    events = v2_event.EventsController()
     bansho = v2_bansho.BanshoController()
