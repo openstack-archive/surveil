@@ -15,6 +15,7 @@ Surveil-os-interface needs acces to OpenStack's message queue. The following opt
      notification_topics=notifications,surveil
      notify_on_state_change=vm_and_task_state
      notify_on_any_change=True
+     default_notification_level = INFO
 
 Configuration samples
 ---------------------
