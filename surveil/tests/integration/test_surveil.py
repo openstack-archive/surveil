@@ -40,17 +40,16 @@ class TestSeparatedIntegrationSurveil(
                 for host in config_hosts)
         )
 
-        TestSeparatedIntegrationSurveil.client.config.hosts.create(
+        self.get_surveil_client().config.hosts.create(
             host_name='integrationhosttest',
             address='127.0.0.1',
             use='generic-host',
         )
 
-        TestSeparatedIntegrationSurveil.client.config.reload_config()
+        self.get_surveil_client().config.reload_config()
 
         def function():
-            status_hosts = (TestSeparatedIntegrationSurveil.
-                            client.status.hosts.list())
+            status_hosts = self.get_surveil_client().status.hosts.list()
             self.assertTrue(
                 any(host['host_name'].decode() == 'integrationhosttest'
                     for host in status_hosts)
@@ -69,14 +68,14 @@ class TestSeparatedIntegrationSurveil(
     def test_delete_host(self):
         self.test_create_host()
 
-        TestSeparatedIntegrationSurveil.client.config.hosts.delete(
-            'integrationhosttest')
+        self.get_surveil_client().config.hosts.delete(
+            'integrationhosttest'
+        )
 
-        TestSeparatedIntegrationSurveil.client.config.reload_config()
+        self.get_surveil_client().config.reload_config()
 
         def function():
-            status_hosts = (TestSeparatedIntegrationSurveil.
-                            client.status.hosts.list())
+            status_hosts = (self.get_surveil_client().status.hosts.list())
             self.assertFalse(
                 any(host['host_name'].decode() == 'integrationhosttest'
                     for host in status_hosts)
@@ -93,16 +92,16 @@ class TestSeparatedIntegrationSurveil(
         )
 
     def test_passive_check(self):
-        TestSeparatedIntegrationSurveil.client.config.hosts.create(
+        self.get_surveil_client().config.hosts.create(
             host_name='integrationhosttest',
             address='127.0.0.1',
             use='generic-host',
         )
-        TestSeparatedIntegrationSurveil.client.config.commands.create(
+        self.get_surveil_client().config.commands.create(
             command_name='check_integrationhosttest',
             command_line='/usr/lib/monitoring/plugins/sfl/check_example'
         )
-        TestSeparatedIntegrationSurveil.client.config.services.create(
+        self.get_surveil_client().config.services.create(
             check_command="check_integrationhosttest",
             check_interval="5",
             check_period="24x7",
@@ -117,19 +116,16 @@ class TestSeparatedIntegrationSurveil(
             passive_checks_enabled="1"
         )
 
-        TestSeparatedIntegrationSurveil.client.config.reload_config()
-        (TestSeparatedIntegrationSurveil.client.status.services.
-            submit_check_result(
-                host_name='integrationhosttest',
-                service_description='check_integrationhosttest',
-                output="Hello",
-                return_code=0
-            )
-         )
+        self.get_surveil_client().config.reload_config()
+        self.get_surveil_client().status.services.submit_check_result(
+            host_name='integrationhosttest',
+            service_description='check_integrationhosttest',
+            output="Hello",
+            return_code=0
+        )
 
         def function():
-            status_services = (TestSeparatedIntegrationSurveil.
-                               client.status.services.list())
+            status_services = self.get_surveil_client().status.services.list()
             self.assertFalse(
                 any(service['host_name'].decode() == 'integrationhosttest' and
                     service['service_description'].decode() ==
@@ -150,16 +146,16 @@ class TestSeparatedIntegrationSurveil(
         )
 
     def test_custom_plugins(self):
-        TestSeparatedIntegrationSurveil.client.config.hosts.create(
+        self.get_surveil_client().config.hosts.create(
             host_name='integrationhosttest',
             address='127.0.0.1',
             use='generic-host',
         )
-        TestSeparatedIntegrationSurveil.client.config.commands.create(
+        self.get_surveil_client().config.commands.create(
             command_name='check_integrationhosttest',
             command_line='/usr/lib/monitoring/plugins/sfl/check_example'
         )
-        TestSeparatedIntegrationSurveil.client.config.services.create(
+        self.get_surveil_client().config.services.create(
             check_command="check_integrationhosttest",
             check_interval="5",
             check_period="24x7",
@@ -174,11 +170,10 @@ class TestSeparatedIntegrationSurveil(
             passive_checks_enabled="1"
         )
 
-        TestSeparatedIntegrationSurveil.client.config.reload_config()
+        self.get_surveil_client().config.reload_config()
 
         def function():
-            status_services = (TestSeparatedIntegrationSurveil.
-                               client.status.services.list())
+            status_services = self.get_surveil_client().status.services.list()
             self.assertFalse(
                 any(service['host_name'].decode() == 'integrationhosttest' and
                     service['service_description'].decode() ==
