@@ -4,46 +4,49 @@
 Status
 ======
 
-.. rest-controller:: surveil.api.controllers.v2.status:StatusController
+.. rest-controller:: surveil.api.controllers.v2.status.status:StatusController
    :webprefix: /v2/status
+
+
+Events
+======
+
+.. rest-controller:: surveil.api.controllers.v2.status.events.events:EventsController
+:webprefix: /v2/status/events/
 
 
 Hosts
 =====
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts:HostsController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts.hosts:HostsController
    :webprefix: /v2/status/hosts
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts:HostController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts.hosts:HostController
    :webprefix: /v2/status/hosts/
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts:ConfigController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts.hosts:ConfigController
    :webprefix: /v2/status/hosts/(host_name)/config
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts:HostCheckResultsSubController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts.results:CheckResultsSubController
    :webprefix: /v2/status/hosts/(host_name)/results
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts:HostMetricsController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts.metrics:MetricsController
    :webprefix: /v2/status/hosts/(host_name)/metrics
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts:HostMetricController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts.metrics:MetricController
    :webprefix: /v2/status/hosts/(host_name)/metrics
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts:ServiceCheckResultsSubController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts.services.results:CheckResultsSubController
    :webprefix: /v2/status/hosts/(host_name)/services/(service_description)/results
 
-.. rest-controller:: surveil.api.controllers.v2.status.hosts:HostServiceMetricsController
+.. rest-controller:: surveil.api.controllers.v2.status.hosts.services.metrics:MetricsController
    :webprefix: /v2/status/hosts/(host_name)/services/(service_description)/metrics
-
-.. rest-controller:: surveil.api.controllers.v2.status.events:EventsController
-   :webprefix: /v2/status/events/
-
 
 
 Services
 ========
 
-.. rest-controller:: surveil.api.controllers.v2.status.services:ServicesController
+.. rest-controller:: surveil.api.controllers.v2.status.services.services:ServicesController
    :webprefix: /v2/status/services
 
 
