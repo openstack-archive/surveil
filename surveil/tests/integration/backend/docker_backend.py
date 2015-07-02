@@ -4,25 +4,24 @@
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-
 import os
 import time
 
 from compose.cli import docker_client
 from compose import config as compose_config
 from compose import project as compose_project
+import docker
 from surveilclient import client as sclient
 
 
 class DockerBackend():
-
     def __init__(self):
         pass
 
@@ -61,7 +60,6 @@ class DockerBackend():
             auth_url='http://localhost:8999/v2/auth',
             version='2_0'
         )
-
         #  Wait until Surveil is available
         now = time.time()
         while True:
@@ -82,6 +80,21 @@ class DockerBackend():
                 time.sleep(10)
             else:
                 raise Exception("Surveil could not start")
+
+    def execute_command(self, commands, container_name):
+
+        dclient = docker.Client()
+
+        if container_name is not None:
+            containers = dclient.containers()
+            for container in containers:
+                count = container.get('Image').count(container_name)
+                if ((count == 1 and container_name != 'surveil') or
+                        (count == 2 and container_name == 'surveil')):
+                    for command in commands:
+                        id = dclient.exec_create(container.get('Id')[:12],
+                                                 command)
+                        dclient.exec_start(id['Id'])
 
     def tearDownClass(self):
         self.project.kill()
