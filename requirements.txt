@@ -12,3 +12,4 @@ influxdb==2.6.0
 pika
 python-surveilclient==0.10.0
 six
+docker-py
