@@ -21,11 +21,8 @@ from surveil.api.handlers.status import influxdb_query
 class MetricHandler(handler.Handler):
     """Fulfills a request on the metrics."""
 
-    def get(self, host_name, metric_name=None, service_description=None):
-        """Return metrics name if param metric_name is null,
-
-         else , return the last metric.
-        """
+    def get(self, host_name, metric_name, service_description=None):
+        """Return the last metric."""
         metrics = []
         cli = self.request.influxdb_client
         if metric_name is None:

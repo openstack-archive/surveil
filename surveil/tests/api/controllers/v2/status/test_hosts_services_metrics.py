@@ -84,36 +84,8 @@ class TestHostMetric(functionalTest.FunctionalTest):
             ]
         })
 
-    def test_get_metric_hosts(self):
-        with requests_mock.Mocker() as m:
-            m.register_uri(requests_mock.GET,
-                           "http://influxdb:8086/query",
-                           text=self.influxdb_response)
-
-            response = self.get(
-                "/v2/status/hosts/srv-monitoring-01/metrics/load1"
-            )
-
-            expected = {
-                "metric_name": "load1",
-                "min": "0",
-                "critical": "30",
-                "warning": "15",
-                "value": "0.6"
-            }
-
-            self.assert_count_equal_backport(
-                json.loads(response.body.decode()),
-                expected)
-            self.assertEqual(
-                m.last_request.qs['q'],
-                ["select * from metric_load1 "
-                 "where host_name= 'srv-monitoring-01' "
-                 "group by service_description "
-                 "order by time desc limit 1"]
-            )
-
-    def test_metric_names(self):
+    def test_get(self):
+        """Test get all metric names for a service."""
         self.influxdb_response = json.dumps({
             "results": [
                 {
@@ -122,8 +94,8 @@ class TestHostMetric(functionalTest.FunctionalTest):
                             "name": "measurements",
                             "columns": ["name"],
                             "values": [
-                                ["metric_rtmin"],
-                                ["ALERT"]
+                                    ["metric_rtmin"],
+                                    ["ALERT"]
                             ]
                         }
                     ]
@@ -136,7 +108,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
                            text=self.influxdb_response)
 
             response = self.get(
-                "/v2/status/hosts/ws-arbiter/metrics"
+                "/v2/status/hosts/localhost/services/load/metrics"
             )
 
             expected = [{"metric_name": "rtmin"}, ]
@@ -146,6 +118,81 @@ class TestHostMetric(functionalTest.FunctionalTest):
                 expected)
             self.assertEqual(
                 m.last_request.qs['q'],
-                ["show measurements where host_name='ws-arbiter' "
-                 "and service_description=''"]
+                ["show measurements where host_name='localhost' "
+                 "and service_description='load'"]
             )
+
+    def test_get_metric_name(self):
+        """Test get the last measure for a metric within a service."""
+
+    def test_post_live_query(self):
+        """Test posting a live query."""
+        self.influxdb_response = json.dumps({
+            "results": [
+                {
+                    "series": [
+                        {"name": "metric_load1",
+                         "tags": {"host_name": "srv-monitoring-01",
+                                  "service_description": "load"},
+                         "columns": ["time",
+                                     "critical",
+                                     "min",
+                                     "value",
+                                     "warning",
+                                     ],
+                         "values": [["2015-04-19T01:09:24Z",
+                                     "30",
+                                     "0",
+                                     "0.6",
+                                     "15"],
+                                    ["2015-04-19T01:09:25Z",
+                                     "40",
+                                     "4",
+                                     "10",
+                                     "10"]]}]}]
+
+        })
+
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.GET,
+                           "http://influxdb:8086/query",
+                           text=self.influxdb_response)
+
+            query = {
+                'fields': [],
+                'time_interval': {
+                    'start_time': '2015-04-19T00:09:24Z',
+                    'end_time': '2015-04-19T02:09:25Z'
+                }
+            }
+
+            response = self.post_json("/v2/status/hosts/srv-monitoring-01/"
+                                      "services/load/metrics/load1",
+                                      params=query)
+
+            expected = [{"metric_name": 'load1',
+                         "min": "0",
+                         "critical": "30",
+                         "warning": "15",
+                         "value": "0.6"
+                         },
+                        {"metric_name": 'load1',
+                         "min": "4",
+                         "critical": "40",
+                         "warning": "10",
+                         "value": "10"
+                         }]
+
+            self.assertEqual(
+                m.last_request.qs['q'],
+                ["select * from metric_load1 "
+                 "where time >= '2015-04-19t00:09:24z' "
+                 "and time <= '2015-04-19t02:09:25z' "
+                 "and host_name='srv-monitoring-01' "
+                 "and service_description='load' "
+                 "order by time desc"
+                 ]
+            )
+            self.assert_count_equal_backport(
+                json.loads(response.body.decode()),
+                expected)
