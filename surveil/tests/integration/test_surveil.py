@@ -48,7 +48,7 @@ class TestSeparatedIntegrationSurveil(
 
         TestSeparatedIntegrationSurveil.client.config.reload_config()
 
-        def function():
+        def fonction():
             status_hosts = (TestSeparatedIntegrationSurveil.
                             client.status.hosts.list())
             self.assertTrue(
@@ -58,7 +58,7 @@ class TestSeparatedIntegrationSurveil(
 
         self.assertTrue(
             self.try_for_x_seconds(
-                function,
+                fonction,
                 time_to_wait=180,
                 cooldown=10,
                 exception=AssertionError,
@@ -89,6 +89,42 @@ class TestSeparatedIntegrationSurveil(
                 cooldown=10,
                 exception=AssertionError,
                 message="Host was not deleted"
+            )
+        )
+
+    def test_update_host(self):
+        """Update a host and asserts that is is monitored by Alignak."""
+
+        TestSeparatedIntegrationSurveil.client.config.hosts.create(
+            host_name='integrationhosttest',
+            address='127.0.0.1',
+            use='generic-host',
+        )
+
+        TestSeparatedIntegrationSurveil.client.config.hosts.update(
+            host_name='integrationhosttest',
+            address='127.0.1.1',
+            use='generic-host',
+        )
+
+        TestSeparatedIntegrationSurveil.client.config.reload_config()
+
+        def function():
+            status_hosts = (TestSeparatedIntegrationSurveil.
+                            client.status.hosts.list())
+            self.assertTrue(
+                any(host['host_name'].decode() == 'integrationhosttest' and
+                    host['address'].decode() == '127.0.1.1'
+                    for host in status_hosts)
+            )
+
+        self.assertTrue(
+            self.try_for_x_seconds(
+                function,
+                time_to_wait=180,
+                cooldown=10,
+                exception=AssertionError,
+                message="Host is not updated."
             )
         )
 
@@ -157,7 +193,7 @@ class TestSeparatedIntegrationSurveil(
         )
         TestSeparatedIntegrationSurveil.client.config.commands.create(
             command_name='check_integrationhosttest',
-            command_line='/usr/lib/monitoring/plugins/sfl/check_example'
+            command_line='/usr/lib/monitoring/plugins/custom/check_example 127.0.0.1'
         )
         TestSeparatedIntegrationSurveil.client.config.services.create(
             check_command="check_integrationhosttest",
@@ -184,7 +220,7 @@ class TestSeparatedIntegrationSurveil(
                     service['service_description'].decode() ==
                     'check_integrationhosttest' and
                     service['plugin_output'].decode() ==
-                    "DISK OK - free space: / 3326 MB (56%);"
+                    "DISK 127.0.0.1 OK - free space: / 3326 MB (56%);"
                     " | /=2643MB;5948;5958;0;5968"
                     for service in status_services)
             )
