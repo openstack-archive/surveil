@@ -12,46 +12,57 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
 import time
+import os
 
-from compose.cli import docker_client
-from compose import config as compose_config
-from compose import project as compose_project
+from novaclient import client as novaclient
 from surveilclient import client as sclient
 
 
-class DockerBackend(object):
+class OpenStackBackend(object):
 
     def setUpClass(self):
-        surveil_dir = os.path.realpath(
-            os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                "../../../../"
+
+        OS_AUTH_URL = os.environ.get('OS_AUTH_URL', None)
+        OS_USERNAME = os.environ.get('OS_USERNAME', None)
+        OS_PASSWORD = os.environ.get('OS_PASSWORD', None)
+        OS_PROJECT_NAME = os.environ.get('OS_PROJECT_NAME', None)
+
+        if OS_AUTH_URL is None:
+            raise Exception("OS_AUTH_URL environment variable not found.")
+
+        if OS_USERNAME is None:
+            raise Exception("OS_USERNAME environment variable not found.")
+
+        if OS_PASSWORD is None:
+            raise Exception("OS_PASSWORD environment variable not found.")
+
+        if OS_PROJECT_NAME is None:
+            raise Exception("OS_PROJECT_NAME environment variable not found.")
+
+        nc = novaclient.Client(
+            2,
+            OS_USERNAME,
+            OS_PASSWORD,
+            OS_PROJECT_NAME,
+            OS_AUTH_URL
+        )
+
+        fl = nc.flavors.find(ram=4096)
+
+        userdata_path = os.path.join(
+            os.path.abspath(__file__),
+            'userdata'
+        )
+        print userdata_path
+        print 234234234
+
+        with open('', 'r') as userdata:
+            self.server = nc.servers.create(
+                "surveil_integration_test",
+                flavor=fl,
+                userdata=userdata
             )
-        )
-
-        compose_file = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            'integration.yml'
-        )
-
-        project_config = compose_config.from_dictionary(
-            compose_config.load_yaml(compose_file),
-            working_dir=surveil_dir,
-            filename=compose_file
-        )
-
-        self.project = compose_project.Project.from_dicts(
-            "surveilintegrationtest",
-            project_config,
-            docker_client.docker_client()
-        )
-
-        self.project.kill()
-        self.project.remove_stopped()
-        self.project.build()
-        self.project.up()
 
         self.surveil_client = sclient.Client(
             'http://localhost:8999/v2',
