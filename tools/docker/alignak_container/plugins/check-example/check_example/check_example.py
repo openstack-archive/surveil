@@ -24,7 +24,7 @@ class Plugin(object):
 
 
 def main():
-    Plugin().run()
+    Plugin().run(sys.argv[1])
 
 if __name__ == "__main__":
     main()

@@ -18,7 +18,7 @@ import os
 import unittest
 
 from surveil.tests import base
-from surveil.tests.integration.backend import docker
+from surveil.tests.integration.backend import docker_backend
 
 
 @unittest.skipIf(os.environ.get('SURVEIL_INTEGRATION_TESTS', None) != 'True',
@@ -33,7 +33,7 @@ class MergedIntegrationTest(base.BaseTestCase):
         )
 
         if test_backend == 'DOCKER':
-            MergedIntegrationTest.backend = docker.DockerBackend()
+            MergedIntegrationTest.backend = docker_backend.DockerBackend()
         else:
             raise Exception(
                 "Could not identify tests backend: '%s'" % test_backend
@@ -46,6 +46,9 @@ class MergedIntegrationTest(base.BaseTestCase):
 
     def get_surveil_client(self):
         return MergedIntegrationTest.backend.get_surveil_client()
+
+    def create_custom_plugin(self, command):
+        MergedIntegrationTest.backend.create_custom_plugin(command)
 
 
 class SeparatedIntegrationTests(MergedIntegrationTest):

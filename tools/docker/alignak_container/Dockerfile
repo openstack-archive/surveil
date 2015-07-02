@@ -107,7 +107,7 @@ ADD plugins/check-example /plugins/check_example
 RUN virtualenv /plugins/check_example/env
 ENV PATH=$PATH:/plugins/check_example/env/bin
 RUN /plugins/check_example/env/bin/pip install -r /plugins/check_example/requirements.txt
-RUN cd /plugins/check_example && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_example /usr/lib/monitoring/plugins/sfl
+RUN cd /plugins/check_example && sudo /opt/surveilplugins/env/bin/python setup.py install && ln -s /opt/surveilplugins/env/bin/check_example /usr/lib/monitoring/plugins/sfl/
 
 ## configuration
 ADD setup.sh /setup.sh

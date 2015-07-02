@@ -11,6 +11,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+from __future__ import absolute_import
 
 import os
 import time
@@ -18,6 +19,7 @@ import time
 from compose.cli import docker_client
 from compose import config as compose_config
 from compose import project as compose_project
+import docker.client as dclient
 from surveilclient import client as sclient
 
 
@@ -61,7 +63,6 @@ class DockerBackend():
             auth_url='http://localhost:8999/v2/auth',
             version='2_0'
         )
-
         #  Wait until Surveil is available
         now = time.time()
         while True:
@@ -82,6 +83,12 @@ class DockerBackend():
                 time.sleep(10)
             else:
                 raise Exception("Surveil could not start")
+
+    def create_custom_plugin(self, commands):
+        for command in commands:
+            id = dclient.exec_create('surveilintegrationtest_alignak_1',
+                                     command)
+            dclient.exec_start(id['Id'])
 
     def tearDownClass(self):
         self.project.kill()

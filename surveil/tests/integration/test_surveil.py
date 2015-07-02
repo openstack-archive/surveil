@@ -65,7 +65,12 @@ class TestSeparatedIntegrationSurveil(
         )
 
     def test_delete_host(self):
-        self.test_create_host()
+
+        self.get_surveil_client().config.hosts.create(
+            host_name='integrationhosttest',
+            address='127.0.0.1',
+            use='generic-host',
+        )
 
         self.get_surveil_client().config.hosts.delete(
             'integrationhosttest'
@@ -87,6 +92,42 @@ class TestSeparatedIntegrationSurveil(
                 cooldown=10,
                 exception=AssertionError,
                 message="Host was not deleted"
+            )
+        )
+
+    def test_update_host(self):
+        """Update a host and asserts that is is monitored by Alignak."""
+
+        self.get_surveil_client().config.hosts.create(
+            host_name='integrationhosttest',
+            address='127.0.0.1',
+            use='generic-host',
+        )
+
+        self.get_surveil_client().config.hosts.update(
+            host_name='integrationhosttest',
+            address='127.0.1.1',
+            use='generic-host',
+        )
+
+        self.get_surveil_client().config.reload_config()
+
+        def function():
+            status_hosts = (self.get_surveil_client().
+                            status.hosts.list())
+            self.assertTrue(
+                any(host['host_name'].decode() == 'integrationhosttest' and
+                    host['address'].decode() == '127.0.1.1'
+                    for host in status_hosts)
+            )
+
+        self.assertTrue(
+            self.try_for_x_seconds(
+                function,
+                time_to_wait=180,
+                cooldown=10,
+                exception=AssertionError,
+                message="Host is not updated."
             )
         )
 
@@ -145,14 +186,24 @@ class TestSeparatedIntegrationSurveil(
         )
 
     def test_custom_plugins(self):
+        commands = []
+        commands.append("mkdir /usr/lib/monitoring/plugins/custom/")
+        commands.append("echo -e '#!/bin/bash\necho " +
+                        "DISK $1 OK - free space: / 3326 MB (56%);"
+                        " | /=2643MB;5948;5958;0;5968" +
+                        "' | sudo tee /usr/lib/monitoring/plugins/"
+                        "custom/check_example")
+        commands.append('chmod +x /usr/lib/monitoring/plugins/custom/'
+                        'check_example')
+
         self.get_surveil_client().config.hosts.create(
             host_name='integrationhosttest',
-            address='127.0.0.1',
+            address='integration@sfl.com',
             use='generic-host',
         )
         self.get_surveil_client().config.commands.create(
             command_name='check_integrationhosttest',
-            command_line='/usr/lib/monitoring/plugins/sfl/check_example'
+            command_line='$CUSTOMPLUGINSDIR$/check_example $HOSTADDRESS$'
         )
         self.get_surveil_client().config.services.create(
             check_command="check_integrationhosttest",
@@ -178,8 +229,8 @@ class TestSeparatedIntegrationSurveil(
                     service['service_description'].decode() ==
                     'check_integrationhosttest' and
                     service['plugin_output'].decode() ==
-                    "DISK OK - free space: / 3326 MB (56%);"
-                    " | /=2643MB;5948;5958;0;5968"
+                    "DISK integration@sfl.com OK - free space:"
+                    " / 3326 MB (56%);| /=2643MB;5948;5958;0;5968"
                     for service in status_services)
             )
 
