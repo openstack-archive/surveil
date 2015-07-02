@@ -18,6 +18,7 @@ import time
 from compose.cli import docker_client
 from compose import config as compose_config
 from compose import project as compose_project
+import docker
 from surveilclient import client as sclient
 
 
@@ -82,6 +83,19 @@ class DockerBackend():
                 time.sleep(10)
             else:
                 raise Exception("Surveil could not start")
+
+    def execute_command(self, commands, container_name):
+        dclient = docker.Client()
+        if container_name is not None:
+            containers = dclient.containers()
+            for container in containers:
+                count = container.get('Image').count(container_name)
+                if ((count == 1 and container_name != 'surveil') or
+                        (count == 2 and container_name == 'surveil')):
+                    for command in commands:
+                        id = dclient.exec_create(container.get('Id')[:12],
+                                                 command)
+                        dclient.exec_start(id['Id'])
 
     def tearDownClass(self):
         self.project.kill()
