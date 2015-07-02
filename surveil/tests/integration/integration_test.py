@@ -15,82 +15,41 @@
 from __future__ import print_function
 
 import os
-import time
 import unittest
 
 from surveil.tests import base
-
-from compose.cli import docker_client
-from compose import config as compose_config
-from compose import project as compose_project
-from surveilclient import client as sclient
+from surveil.tests.integration.backend import docker
 
 
 @unittest.skipIf(os.environ.get('SURVEIL_INTEGRATION_TESTS', None) != 'True',
                  'Skipping integraiton tests')
 class MergedIntegrationTest(base.BaseTestCase):
 
+    def __init__(self, *args, **kwargs):
+        super(MergedIntegrationTest, self).__init__(*args, **kwargs)
+
+        test_backend = os.environ.get(
+            'SURVEIL_INTEGRATION_TESTS_BACKEND',
+            None
+        )
+
+        if test_backend == 'DOCKER':
+            MergedIntegrationTest.backend = docker.DockerBackend()
+        else:
+            raise Exception(
+                "Could not identify tests backend: '%s'" % test_backend
+            )
+
     @classmethod
     def setUpClass(cls):
-        surveil_dir = os.path.realpath(
-            os.path.join(
-                os.path.dirname(os.path.realpath(__file__)),
-                "../../../")
-        )
-
-        compose_file = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            'integration.yml'
-        )
-
-        project_config = compose_config.from_dictionary(
-            compose_config.load_yaml(compose_file),
-            working_dir=surveil_dir,
-            filename=compose_file
-        )
-
-        cls.project = compose_project.Project.from_dicts(
-            "surveilintegrationtest",
-            project_config,
-            docker_client.docker_client()
-        )
-        cls.project.kill()
-        cls.project.remove_stopped()
-        cls.project.build()
-        cls.project.up()
-
-        cls.client = sclient.Client(
-            'http://localhost:8999/v2',
-            auth_url='http://localhost:8999/v2/auth',
-            version='2_0'
-        )
-
-        #  Wait until Surveil is available
-        now = time.time()
-        while True:
-            print("Waiting for surveil... %s" % int(time.time() - now))
-            if time.time() < (now + 180):
-                try:
-                    #  If 'ws-arbiter' is found, Surveil is ready!
-                    configured_hosts = cls.client.status.hosts.list()
-                    host_found = False
-                    for host in configured_hosts:
-                        if host['host_name'].decode() == 'ws-arbiter':
-                            host_found = True
-                            break
-                    if host_found:
-                        break
-
-                except Exception:
-                    pass
-                time.sleep(10)
-            else:
-                raise Exception("Surveil could not start")
+        cls.backend.setUpClass()
 
     @classmethod
     def tearDownClass(cls):
-        cls.project.kill()
-        cls.project.remove_stopped()
+        cls.backend.tearDownClass()
+
+    def get_surveil_client(self):
+        return MergedIntegrationTest.backend.get_surveil_client()
 
 
 class SeparatedIntegrationTests(MergedIntegrationTest):
