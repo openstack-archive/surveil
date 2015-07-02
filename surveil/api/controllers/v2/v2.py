@@ -18,7 +18,7 @@ from surveil.api.controllers.v2 import auth as v2_auth
 from surveil.api.controllers.v2 import bansho as v2_bansho
 from surveil.api.controllers.v2 import config as v2_config
 from surveil.api.controllers.v2 import hello as v2_hello
-from surveil.api.controllers.v2 import status as v2_status
+from surveil.api.controllers.v2.status import status as v2_status
 
 
 class V2Controller(object):
