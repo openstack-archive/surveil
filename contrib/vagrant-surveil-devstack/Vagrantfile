@@ -1,0 +1,48 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "centos/7"
+  config.vm.network "public_network"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Set 4GB RAM
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "4096"]
+  end
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.memory = 4096
+    libvirt.cpus = 2
+  end
+
+  config.vm.provision :shell, :inline => "yum install -y vim git yum-utils"
+
+  # Install DevStack
+  config.vm.provision :shell, :path => "devstack.sh"
+
+  # Disabling SELinux
+  config.vm.provision :shell, :inline => "echo 0 >  /sys/fs/selinux/enforce"
+  config.vm.provision :shell, :inline => "sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config"
+
+  # Install Surveil repos
+  config.vm.provision :shell, :inline => "yum-config-manager --add-repo http://yum.surveil.io/centos_7/"
+  config.vm.provision :shell, :inline => "yum install -y https://rdoproject.org/repos/rdo-release.rpm"
+
+  # Install Surveil
+  config.vm.provision :shell, :inline => "yum install -y surveil-full --nogpgcheck"
+
+  # Hot fix - requests's version does not match
+  config.vm.provision :shell, :inline => "sudo easy_install pip"
+  config.vm.provision :shell, :inline => "sudo pip install -U requests==2.7.0"
+
+  # Start Surveil services
+  config.vm.provision :shell, :inline => "sudo systemctl start mongod"
+  config.vm.provision :shell, :inline => "sudo systemctl start surveil-full.target"
+  config.vm.provision :shell, :inline => "sleep 10"
+  config.vm.provision :shell, :inline => "surveil-init --influxdb"
+  config.vm.provision :shell, :inline => "surveil-webui-init -H localhost -U root -P root -p 8086 -g 'http://localhost:3000/grafana'"
+  config.vm.provision :shell, :inline => "echo 'source /etc/bash_completion.d/surveil' >> /home/vagrant/.bashrc"
+
+  # Show IP
+  config.vm.provision :shell, :inline => "ip addr | grep 'inet 192.168.'"
+
+end
