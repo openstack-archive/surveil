@@ -42,16 +42,15 @@ class TestSeparatedIntegrationSurveil(
                 for host in config_hosts)
         )
 
-        TestSeparatedIntegrationSurveil.client.config.hosts.create(
+        self.get_surveil_client().config.hosts.create(
             host_name='integrationhosttest',
             address='127.0.0.1',
         )
 
-        TestSeparatedIntegrationSurveil.client.config.reload_config()
+        self.get_surveil_client().config.reload_config()
 
         def function():
-            status_hosts = (TestSeparatedIntegrationSurveil.
-                            client.status.hosts.list())
+            status_hosts = self.get_surveil_client().status.hosts.list()
             self.assertTrue(
                 any(host['host_name'].decode() == 'integrationhosttest'
                     for host in status_hosts)
@@ -71,15 +70,14 @@ class TestSeparatedIntegrationSurveil(
     def test_delete_host(self):
         self.test_create_host()
 
-        TestSeparatedIntegrationSurveil.client.config.hosts.delete(
+        self.get_surveil_client().config.hosts.delete(
             'integrationhosttest'
         )
 
-        TestSeparatedIntegrationSurveil.client.config.reload_config()
+        self.get_surveil_client().config.reload_config()
 
         def function():
-            status_hosts = (TestSeparatedIntegrationSurveil.
-                            client.status.hosts.list())
+            status_hosts = (self.get_surveil_client().status.hosts.list())
             self.assertFalse(
                 any(host['host_name'].decode() == 'integrationhosttest'
                     for host in status_hosts)
