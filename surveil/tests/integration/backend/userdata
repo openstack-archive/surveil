@@ -1,0 +1,54 @@
+#cloud-config
+
+users:
+  - default
+  - name: stack
+    lock_passwd: False
+    sudo: ["ALL=(ALL) NOPASSWD:ALL\nDefaults:stack !requiretty"]
+    shell: /bin/bash
+
+write_files:
+  - content: |
+        #!/bin/sh
+        DEBIAN_FRONTEND=noninteractive sudo apt-get -qqy update || sudo yum update -qy
+        DEBIAN_FRONTEND=noninteractive sudo apt-get install -qqy git || sudo yum install -qy git
+        sudo chown stack:stack /home/stack
+        cd /home/stack
+        git clone https://git.openstack.org/openstack-dev/devstack
+        cd devstack
+        echo '[[local|localrc]]' > local.conf
+        echo ADMIN_PASSWORD=password >> local.conf
+        echo MYSQL_PASSWORD=password >> local.conf
+        echo RABBIT_PASSWORD=password >> local.conf
+        echo SERVICE_PASSWORD=password >> local.conf
+        echo SERVICE_TOKEN=tokentoken >> local.conf
+        echo enable_service ceilometer-acompute ceilometer-acentral ceilometer-anotification ceilometer-collector >> local.conf
+        echo enable_service ceilometer-alarm-evaluator,ceilometer-alarm-notifier >> local.conf
+        echo enable_service ceilometer-api >> local.conf
+        echo "[[post-config|\$NOVA_CONF]]" >> local.conf
+        echo "[DEFAULT]" >> local.conf
+        echo notification_driver=ceilometer.compute.nova_notifier >> local.conf
+        echo notification_driver=nova.openstack.common.notifier.rpc_notifier >> local.conf
+        echo notification_topics=notifications,surveil >> local.conf
+        echo notify_on_state_change=vm_and_task_state >> local.conf
+        echo notify_on_any_change=True >> local.conf
+        echo default_notification_level = INFO >> local.conf
+        ./stack.sh
+    path: /home/stack/start.sh
+    permissions: 0755
+
+runcmd:
+  - su -l stack ./start.sh
+
+  # Install Surveil
+  - yum install -y https://rdoproject.org/repos/rdo-release.rpm
+  - yum install -y yum-utils
+  - yum-config-manager --add-repo http://yum.surveil.io/centos_7/
+  - echo 0 >  /sys/fs/selinux/enforce
+  - sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+  - yum install -y surveil-full --nogpgcheck
+  - systemctl start mongod.service
+  - sleep 10
+  - systemctl start surveil-full.target
+  - surveil-init --mongodb --influxdb --packs --demo
+  - surveil-webui-init -H localhost -U root -P root -p 8086 -g "http://localhost:3000/grafana"
