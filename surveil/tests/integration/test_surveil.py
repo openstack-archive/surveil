@@ -65,7 +65,11 @@ class TestSeparatedIntegrationSurveil(
         )
 
     def test_delete_host(self):
-        self.test_create_host()
+        self.get_surveil_client().config.hosts.create(
+            host_name='integrationhosttest',
+            address='127.0.0.1',
+            use='generic-host',
+        )
 
         self.get_surveil_client().config.hosts.delete(
             'integrationhosttest'
@@ -90,15 +94,46 @@ class TestSeparatedIntegrationSurveil(
             )
         )
 
-    def test_passive_check(self):
+    def test_update_host(self):
+        """Update a host and asserts that is is monitored by Alignak."""
+
         self.get_surveil_client().config.hosts.create(
             host_name='integrationhosttest',
             address='127.0.0.1',
             use='generic-host',
         )
-        self.get_surveil_client().config.commands.create(
-            command_name='check_integrationhosttest',
-            command_line='/usr/lib/monitoring/plugins/sfl/check_example'
+
+        self.get_surveil_client().config.hosts.update(
+            host_name='integrationhosttest',
+            address='127.0.1.1',
+        )
+
+        self.get_surveil_client().config.reload_config()
+
+        def function():
+            status_host = (self.get_surveil_client().
+                            status.hosts.get( host_name='integrationhosttest'))
+            self.assertTrue(
+                status_host['host_name'].decode() == 'integrationhosttest' and
+                status_host['address'].decode() == '127.0.1.1' and
+                status_host['use'].decode() == 'generic-host'
+            )
+
+        self.assertTrue(
+            self.try_for_x_seconds(
+                function,
+                time_to_wait=180,
+                cooldown=10,
+                exception=AssertionError,
+                message="Host is not updated."
+            )
+        )
+
+    def test_passive_check(self):
+        self.get_surveil_client().config.hosts.create(
+            host_name='integrationhosttest',
+            address='127.0.0.1',
+            use='generic-host',
         )
         self.get_surveil_client().config.services.create(
             check_command="check_integrationhosttest",
@@ -145,14 +180,28 @@ class TestSeparatedIntegrationSurveil(
         )
 
     def test_custom_plugins(self):
+
+        commands = [
+            "mkdir /usr/lib/monitoring/plugins/custom/",
+            "echo -e '#!/bin/bash\necho " +
+            "DISK $1 OK - free space: / 3326 MB (56%);"
+            " | /=2643MB;5948;5958;0;5968" +
+            "' | sudo tee /usr/lib/monitoring/plugins/"
+            "custom/check_example",
+            'chmod +x /usr/lib/monitoring/plugins/custom/'
+            'check_example'
+        ]
+
+        self.execute_command(commands, 'alignak')
+
         self.get_surveil_client().config.hosts.create(
             host_name='integrationhosttest',
-            address='127.0.0.1',
+            address='integration@sfl.com',
             use='generic-host',
         )
         self.get_surveil_client().config.commands.create(
             command_name='check_integrationhosttest',
-            command_line='/usr/lib/monitoring/plugins/sfl/check_example'
+            command_line='$CUSTOMPLUGINSDIR$/check_example $HOSTADDRESS$'
         )
         self.get_surveil_client().config.services.create(
             check_command="check_integrationhosttest",
@@ -165,8 +214,7 @@ class TestSeparatedIntegrationSurveil(
             notification_interval="30",
             notification_period="24x7",
             retry_interval="3",
-            service_description="check_integrationhosttest",
-            passive_checks_enabled="1"
+            service_description="check_integrationhosttest"
         )
 
         self.get_surveil_client().config.reload_config()
@@ -178,8 +226,8 @@ class TestSeparatedIntegrationSurveil(
                     service['service_description'].decode() ==
                     'check_integrationhosttest' and
                     service['plugin_output'].decode() ==
-                    "DISK OK - free space: / 3326 MB (56%);"
-                    " | /=2643MB;5948;5958;0;5968"
+                    "DISK integration@sfl.com OK - free space:"
+                    " / 3326 MB (56%);| /=2643MB;5948;5958;0;5968"
                     for service in status_services)
             )
 
