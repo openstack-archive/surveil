@@ -15,7 +15,7 @@
 import json
 
 from surveil.api.datamodel.status import live_query
-from surveil.api.datamodel.status.metrics import time_delta
+from surveil.api.datamodel.status.metrics import time_interval
 from surveil.api.handlers.status import influxdb_query
 from surveil.tests import base
 
@@ -86,16 +86,18 @@ class LiveQueryFilterTest(base.BaseTestCase):
         self.assertEqual(expected, result)
 
     def test_build_query_basic(self):
-        query_time = time_delta.TimeDelta(begin='2015-01-29T21:50:44Z',
-                                          end='2015-01-29T22:50:44Z')
+        query = live_query.LiveQuery(
+            time_interval=time_interval.TimeInterval(
+                start_time="2015-01-29T21:50:44Z",
+                end_time="2015-01-29T22:50:44Z"
+            )
+        )
 
-        query = live_query.LiveQuery()
         group_by = ['host_name', 'service_description']
         order_by = ['time DESC']
 
         result = influxdb_query.build_influxdb_query(query,
                                                      "metric_pl",
-                                                     time_delta=query_time,
                                                      group_by=group_by,
                                                      order_by=order_by
                                                      )
@@ -109,22 +111,23 @@ class LiveQueryFilterTest(base.BaseTestCase):
         self.assertEqual(result, expected)
 
     def test_build_query_host_name(self):
-        query_time = time_delta.TimeDelta(begin='2015-01-29T21:50:44Z',
-                                          end='2015-01-29T22:50:44Z')
         query = live_query.LiveQuery(
             fields=['host_name'],
             filters=json.dumps({
                 "is": {
                     "host_name": ["localhost"]
                 }
-            })
+            }),
+            time_interval=time_interval.TimeInterval(
+                start_time='2015-01-29T21:50:44Z',
+                end_time='2015-01-29T22:50:44Z'
+            )
         )
         group_by = ['service_description']
         order_by = ['time DESC']
 
         result = influxdb_query.build_influxdb_query(query,
                                                      "metric_pl",
-                                                     time_delta=query_time,
                                                      group_by=group_by,
                                                      order_by=order_by
                                                      )
@@ -139,8 +142,6 @@ class LiveQueryFilterTest(base.BaseTestCase):
         self.assertEqual(result, expected)
 
     def test_build_query_complete(self):
-        query_time = time_delta.TimeDelta(begin='2015-01-29T21:50:44Z',
-                                          end='2015-01-29T22:50:44Z', )
         query = live_query.LiveQuery(
             fields=['host_name'],
             filters=json.dumps({
@@ -148,12 +149,15 @@ class LiveQueryFilterTest(base.BaseTestCase):
                     "host_name": ["localhost"],
                     "service_description": ["mySQL"]
                 }
-            })
+            }),
+            time_interval=time_interval.TimeInterval(
+                start_time='2015-01-29T21:50:44Z',
+                end_time='2015-01-29T22:50:44Z'
+            )
         )
         order_by = ['time DESC']
         result = influxdb_query.build_influxdb_query(query,
                                                      "metric_pl",
-                                                     time_delta=query_time,
                                                      order_by=order_by
                                                      )
 
