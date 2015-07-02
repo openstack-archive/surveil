@@ -19,6 +19,7 @@ import unittest
 
 from surveil.tests import base
 from surveil.tests.integration.backend import docker
+from surveil.tests.integration.backend import openstack
 
 
 @unittest.skipIf(os.environ.get('SURVEIL_INTEGRATION_TESTS', None) != 'True',
@@ -34,6 +35,8 @@ class MergedIntegrationTest(base.BaseTestCase):
 
         if test_backend == 'DOCKER':
             MergedIntegrationTest.backend = docker.DockerBackend()
+        elif test_backend == 'OPENSTACK':
+            MergedIntegrationTest.backend = openstack.OpenStackBackend()
         else:
             raise Exception(
                 "Could not identify tests backend: '%s'" % test_backend

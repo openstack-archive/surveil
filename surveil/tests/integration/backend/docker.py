@@ -21,10 +21,7 @@ from compose import project as compose_project
 from surveilclient import client as sclient
 
 
-class DockerBackend():
-
-    def __init__(self):
-        pass
+class DockerBackend(object):
 
     def setUpClass(self):
         surveil_dir = os.path.realpath(
