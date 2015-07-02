@@ -6,13 +6,14 @@ surveil:
    - alignak
   ports:
    - "8999:8080"
-  command: bash -c "cd /opt/surveil && ./setup.sh && python setup.py develop && ((sleep 40 && surveil-init --demo) &) && sleep 20 && surveil-api --reload"
+  command: bash -c "cd /opt/surveil && ./setup.sh && /opt/surveil/env/bin/python setup.py develop && ((sleep 40 && surveil-init --influxdb --packs --mongodb --demo) &) && sleep 20 && surveil-api --reload"
 
 alignak:
   build: tools/docker/alignak_container/
   links:
     - mongo
     - influxdb
+    - redis
   environment:
     SURVEIL_OS_AUTH_URL: "http://keystone:5000/v2.0"
     SURVEIL_OS_USERNAME: "admin"
@@ -25,6 +26,9 @@ mongo:
       "mongod --nojournal --smallfiles"
 
 influxdb:
-  image: savoirfairelinux/influxdb
+  image: savoirfairelinux/influxdb:0.9.0
   environment:
     PRE_CREATE_DB: "db"
+
+redis:
+  image: redis
