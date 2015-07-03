@@ -1,6 +1,17 @@
 Changelog
 #########
 
+0.12.0
+~~~~~~
+
+* surveil-os-interface: Include instance metadata in custom fields
+* status API: New metrics enpoints
+* status API: Events
+* mod-ceilometer: Updated to 0.2.1
+* docs: Heat autoscaling examples
+* Refactored MongoDB handlers
+* surveil-api New default port: 5311 (Breaking Change)
+
 0.11.0
 ~~~~~~
 
