@@ -8,4 +8,5 @@ This section will covers the administration and configuration of the Surveil ser
 
    surveil_api
    surveil-os-interface
+   surveil-webui
 
