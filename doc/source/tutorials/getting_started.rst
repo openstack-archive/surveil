@@ -34,7 +34,7 @@ stored in tools/docker.
 After running :bash:`sudo docker-compose up`, you should be able to acces all
 services at the ports configured in the docker-compose.yml file.
 
-* Surveil API: http://localhost:8080/v1/hello
+* Surveil API: http://localhost:5311/v1/hello
 * Bansho (surveil web interface): http://localhost:8888 (any login info is fine)
 * InfluxDB: http://localhost:8083 (user:root pw:root)
 * Grafana: http://localhost:80 (user:admin pw:admin)
@@ -61,8 +61,8 @@ You'll need to provide the Surveil API URL. You can do this with the
 ``--surveil-api-url`` parameter, but its easier to just set it as environment
 variable::
 
-    export SURVEIL_API_URL=http://localhost:8080/v2
-    export SURVEIL_AUTH_URL=http://localhost:8080/v2/auth
+    export SURVEIL_API_URL=http://localhost:5311/v2
+    export SURVEIL_AUTH_URL=http://localhost:5311/v2/auth
 
 
 Viewing host status

@@ -23,7 +23,7 @@ After you save the file, the following logs will appear in Surveil's output: ::
     surveil_1  | Some source files have been modified
     surveil_1  | Restarting server...
 
-You should be able to test your modification by accessing ``http://localhost:8080/v2/hello`` with your browser.
+You should be able to test your modification by accessing ``http://localhost:5311/v2/hello`` with your browser.
 
 Disabling permissions
 ~~~~~~~~~~~~~~~~~~~~~

@@ -6,7 +6,7 @@ surveil:
    - influxdb
    - alignak
   ports:
-   - "8080:8080"
+   - "5311:5311"
   environment:
     PBR_VERSION: "PROD"
     #SURVEIL_AUTH_BACKEND: "keystone"
@@ -23,8 +23,8 @@ surveilosinterface:
     - surveil
   environment:
     PBR_VERSION: "PROD"
-    #SURVEIL_API_URL: "http://surveil:8080/v2"
-    #SURVEIL_AUTH_URL: "http://surveil:8080/v2/auth"
+    #SURVEIL_API_URL: "http://surveil:5311/v2"
+    #SURVEIL_AUTH_URL: "http://surveil:5311/v2/auth"
     #SURVEIL_VERSION: "2_0"
     #RABBIT_HOST: "192.168.49.239"
     #RABBIT_PORT: 5672
@@ -80,7 +80,7 @@ bansho:
   image: surveil/bansho:0.12.2
   environment:
     BANSHO_BACKEND: "surveil"
-    #BANSHO_SURVEIL_URL: "http://surveil:8080/"
+    #BANSHO_SURVEIL_URL: "http://surveil:5311/"
     #BANSHO_AUTH_URL: "http://198.72.123.131:5000/v2.0/"
     INFLUXDB_HOST: "influxdb"
     INFLUXDB_PORT: "8086"
