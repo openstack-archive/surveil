@@ -127,8 +127,8 @@ def main():
             ]
         )
 
-    cli_surveil = sc.Client('http://localhost:8080/v2',
-                            auth_url='http://localhost:8080/v2/auth',
+    cli_surveil = sc.Client('http://localhost:5311/v2',
+                            auth_url='http://localhost:5311/v2/auth',
                             version='2_0')
 
     # if --demo is specified, you get more hosts.

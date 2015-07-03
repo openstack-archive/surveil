@@ -6,7 +6,7 @@ The Surveil API provides Surveil's REST API.
 ==================================   ==========================
 **package name (RPM)**               surveil
 **services**                         surveil-api.service
-**Default port**                     8080
+**Default port**                     5311
 **configuration (API)**              /etc/surveil/surveil.cfg
 **configuration (permissions)**      /etc/surveil/policy.json
 **configuration (API - pipeline)**   /etc/surveil/api_paste.ini
