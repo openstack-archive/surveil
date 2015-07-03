@@ -18,7 +18,7 @@ from surveil.api import hooks
 
 # Server Specific Configurations
 server = {
-    'port': 8080,
+    'port': 5311,
     'host': '0.0.0.0'
 }
 
