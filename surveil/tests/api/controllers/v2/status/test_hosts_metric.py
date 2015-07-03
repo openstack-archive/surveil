@@ -85,10 +85,44 @@ class TestHostMetric(functionalTest.FunctionalTest):
         })
 
     def test_get_metric_hosts(self):
+        influxdb_response = json.dumps({
+            "results": [
+                {
+                    "series": [
+                        {
+                            "name": "metric_load1",
+                            "tags": {
+                                "host_name": "srv-monitoring-01",
+                                "service_description": "load"
+                            },
+                            "columns": [
+                                "time",
+                                "critical",
+                                "min",
+                                "unit",
+                                "value",
+                                "warning"
+                            ],
+                            "values": [
+                                [
+                                    "2015-07-03T15:18:46Z",
+                                    30,
+                                    0,
+                                    "",
+                                    0.78,
+                                    15
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        })
+
         with requests_mock.Mocker() as m:
             m.register_uri(requests_mock.GET,
                            "http://influxdb:8086/query",
-                           text=self.influxdb_response)
+                           text=influxdb_response)
 
             response = self.get(
                 "/v2/status/hosts/srv-monitoring-01/metrics/load1"
@@ -97,9 +131,10 @@ class TestHostMetric(functionalTest.FunctionalTest):
             expected = {
                 "metric_name": "load1",
                 "min": "0",
+                "unit": "",
                 "critical": "30",
                 "warning": "15",
-                "value": "0.6"
+                "value": "0.78"
             }
 
             self.assert_count_equal_backport(
@@ -108,7 +143,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
             self.assertEqual(
                 m.last_request.qs['q'],
                 ["select * from metric_load1 "
-                 "where host_name= 'srv-monitoring-01' "
+                 "where host_name='srv-monitoring-01' "
                  "group by service_description "
                  "order by time desc limit 1"]
             )

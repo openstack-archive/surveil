@@ -62,7 +62,7 @@ types documentation
 .. autotype:: surveil.api.datamodel.status.live_query.LiveQuery
    :members:
 
-.. autotype:: surveil.api.datamodel.status.metrics.live_metric.LiveMetric
+.. autotype:: surveil.api.datamodel.status.metrics.metric.Metric
    :members:
 
 .. autotype:: surveil.api.datamodel.status.metrics.time_interval.TimeInterval
