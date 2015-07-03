@@ -17,8 +17,8 @@ from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.status import live_query
-from surveil.api.datamodel.status.metrics import live_metric
-from surveil.api.handlers.status.metrics import live_metric_handler
+from surveil.api.datamodel.status.metrics import metric as m
+from surveil.api.handlers.status.metrics import metric_handler
 from surveil.api.handlers.status.metrics import metric_name_handler
 from surveil.common import util
 
@@ -26,7 +26,7 @@ from surveil.common import util
 class MetricsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([live_metric.LiveMetric])
+    @wsme_pecan.wsexpose([m.Metric])
     def get(self):
         """Returns all metrics name for a host."""
         handler = metric_name_handler.MetricNameHandler(pecan.request)
@@ -45,25 +45,25 @@ class MetricController(rest.RestController):
         self.metric_name = metric_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(live_metric.LiveMetric)
+    @wsme_pecan.wsexpose(m.Metric)
     def get(self):
         """Return the last measure for the metric name on the host."""
-        handler = live_metric_handler.MetricHandler(pecan.request)
-        metric = handler.get(
+        handler = metric_handler.MetricHandler(pecan.request)
+        metrics = handler.get(
             pecan.request.context['host_name'],
             self.metric_name
         )
-        return metric
+        return metrics
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([live_metric.LiveMetric], body=live_query.LiveQuery)
+    @wsme_pecan.wsexpose([m.Metric], body=live_query.LiveQuery)
     def post(self, query):
         """Given a live query, returns all matching metrics.
 
         :param live_query: a live query within the request body.
         """
-        handler = live_metric_handler.MetricHandler(pecan.request)
-        metrics = handler.get_all(live_query=query,
+        handler = metric_handler.MetricHandler(pecan.request)
+        metrics = handler.get_all(query=query,
                                   metric_name=self.metric_name,
                                   host_name=pecan.request.context['host_name']
                                   )

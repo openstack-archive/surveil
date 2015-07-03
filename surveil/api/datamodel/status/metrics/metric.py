@@ -18,7 +18,7 @@ import wsme.types as wtypes
 from surveil.api.datamodel import types
 
 
-class LiveMetric(types.Base):
+class Metric(types.Base):
 
     metric_name = wsme.wsattr(wtypes.text, mandatory=True)
     """Name of the metric"""

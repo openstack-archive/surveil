@@ -1,3 +1,4 @@
+
 # Copyright 2014 - Savoir-Faire Linux inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -12,7 +13,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.status.metrics import live_metric
+from surveil.api.datamodel.status.metrics import metric as m
 from surveil.api.handlers import handler
 
 
@@ -21,29 +22,22 @@ class MetricNameHandler(handler.Handler):
 
     def get(self, host_name, service_description=None):
         """Return all metrics name."""
+        service_description = service_description or ''
+        query = ("SHOW measurements WHERE host_name='%s' "
+                 "AND service_description='%s'"
+                 % (host_name, service_description))
+        influx_client = self.request.influxdb_client
+        response = influx_client.query(query)
+
         metrics = []
-        cli = self.request.influxdb_client
-
-        if service_description is None:
-            query = ("SHOW measurements WHERE host_name='%s' "
-                     "AND service_description=''"
-                     % host_name)
-        else:
-            query = ("SHOW measurements WHERE host_name='%s' "
-                     "AND service_description='%s'"
-                     % (host_name, service_description))
-
-        response = cli.query(query)
-
         for item in response[None]:
             metric_dict = self._metrics_name_from_influx_item(item)
             if metric_dict is not None:
-                metrics.append(live_metric.LiveMetric(**metric_dict))
+                metrics.append(m.Metric(**metric_dict))
 
         return metrics
 
     def _metrics_name_from_influx_item(self, item):
-
         metric_name = None
         mappings = [('metric_name', 'name', str), ]
         for field in mappings:

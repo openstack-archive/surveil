@@ -86,7 +86,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
 
     def test_get(self):
         """Test get all metric names for a service."""
-        self.influxdb_response = json.dumps({
+        influxdb_response = json.dumps({
             "results": [
                 {
                     "series": [
@@ -105,7 +105,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
         with requests_mock.Mocker() as m:
             m.register_uri(requests_mock.GET,
                            "http://influxdb:8086/query",
-                           text=self.influxdb_response)
+                           text=influxdb_response)
 
             response = self.get(
                 "/v2/status/hosts/localhost/services/load/metrics"
