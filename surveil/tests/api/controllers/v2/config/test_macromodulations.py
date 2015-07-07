@@ -27,14 +27,18 @@ class TestMacroModulationController(functionalTest.FunctionalTest):
             {
                 'macromodulation_name': 'HighDuringNight',
                 'modulation_period': 'night',
-                '_CRITICAL': 20,
-                '_WARNING': 10,
+                'macros': {
+                    '_CRITICAL': 10,
+                    '_WARNING': 20
+                }
             },
             {
                 'macromodulation_name': 'LowDuringNight',
                 'modulation_period': 'night',
-                '_CRITICAL': 10,
-                '_WARNING': 20,
+                'macros': {
+                    '_CRITICAL': 20,
+                    '_WARNING': 10
+                }
             }
         ]
         self.mongoconnection.shinken.macromodulations.insert(
@@ -50,14 +54,18 @@ class TestMacroModulationController(functionalTest.FunctionalTest):
                     'macromodulation_name': 'HighDuringNight',
                     'modulation_period': 'night',
                     'macros': {
-                        '_CRITICAL': 20,
-                        '_WARNING': 10}},
+                        '_CRITICAL': 10,
+                        '_WARNING': 20
+                    }
+                },
                 {
                     'macromodulation_name': 'LowDuringNight',
                     'modulation_period': 'night',
                     'macros': {
-                        '_CRITICAL': 10,
-                        '_WARNING': 20}}
+                        '_CRITICAL': 20,
+                        '_WARNING': 10
+                    }
+                }
             ],
             json.loads(response.body.decode())
 
@@ -69,11 +77,14 @@ class TestMacroModulationController(functionalTest.FunctionalTest):
 
         self.assertEqual(
             json.loads(response.body.decode()),
-            {'macromodulation_name': 'HighDuringNight',
-             'modulation_period': 'night',
-             'macros': {
-                 '_CRITICAL': 20,
-                 '_WARNING': 10}}
+            {
+                'macromodulation_name': 'HighDuringNight',
+                'modulation_period': 'night',
+                'macros': {
+                    '_CRITICAL': 10,
+                    '_WARNING': 20
+                }
+            }
         )
 
     def test_create_macromodulation(self):
@@ -90,11 +101,7 @@ class TestMacroModulationController(functionalTest.FunctionalTest):
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.macromodulations.find_one(
-                {
-                    'macromodulation_name': 'TEST_CREATE_MODULATION',
-                    '_CRITICAL': 10,
-                    '_WARNING': 20
-                }
+                m
             )
         )
 

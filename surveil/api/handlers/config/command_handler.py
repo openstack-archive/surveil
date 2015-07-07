@@ -12,18 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import command
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import command as command_datamodel
+from surveil.api.handlers import mongodb_mongoengine_object_handler
+from surveil.api.storage.mongodb.config import command as command_storage
 
 
-class CommandHandler(mongo_object_handler.MongoObjectHandler):
+class CommandHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
     """Fulfills a request on the Command resource."""
 
     def __init__(self, *args, **kwargs):
         super(CommandHandler, self).__init__(
-            'commands',
-            'command_name',
-            command.Command,
+            command_datamodel.Command,
+            command_storage.Command,
             *args,
             **kwargs
         )

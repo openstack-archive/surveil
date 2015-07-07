@@ -35,10 +35,10 @@ class MacroModulationController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(macromodulation.MacroModulation, wtypes.text)
-    def get_one(self, timeperiod_name):
+    def get_one(self, macromodulation_name):
         """Returns a specific macro modulation."""
         handler = macromodulation_handler.MacroModulationHandler(pecan.request)
-        modulation = handler.get(timeperiod_name)
+        modulation = handler.get({"macromodulation_name": macromodulation_name})
         return modulation
 
     @util.policy_enforce(['authenticated'])
@@ -58,7 +58,7 @@ class MacroModulationController(rest.RestController):
     def delete(self, modulation_name):
         """Returns a specific macro modulation."""
         handler = macromodulation_handler.MacroModulationHandler(pecan.request)
-        handler.delete(modulation_name)
+        handler.delete({"macromodulation_name": modulation_name})
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(macromodulation.MacroModulation,
@@ -68,4 +68,4 @@ class MacroModulationController(rest.RestController):
     def put(self, modulation_name, modulation):
         """Update a specific macro modulation."""
         handler = macromodulation_handler.MacroModulationHandler(pecan.request)
-        handler.update(modulation_name, modulation)
+        handler.update({"macromodulation_name": modulation_name}, modulation)
