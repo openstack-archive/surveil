@@ -10,5 +10,5 @@ keystonemiddleware
 PasteDeploy
 influxdb==2.6.0
 pika
-python-surveilclient==0.8.0
+python-surveilclient==0.10.0
 six
