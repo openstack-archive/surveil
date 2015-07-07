@@ -12,18 +12,20 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import notificationway
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import notificationway as datamodel
+from surveil.api.handlers import mongodb_mongoengine_object_handler
+from surveil.api.storage.mongodb.config import notificationway as storage
 
 
-class NotificationWayHandler(mongo_object_handler.MongoObjectHandler):
+class NotificationWayHandler(
+    mongodb_mongoengine_object_handler.MongoObjectHandler
+):
     """Fulfills a request on the Notification Way resource."""
 
     def __init__(self, *args, **kwargs):
         super(NotificationWayHandler, self).__init__(
-            'notificationways',
-            'notificationway_name',
-            notificationway.NotificationWay,
+            datamodel.NotificationWay,
+            storage.NotificationWays,
             *args,
             **kwargs
         )

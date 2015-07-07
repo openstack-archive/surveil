@@ -12,18 +12,20 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import contactgroup
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import contactgroup as datamodel
+from surveil.api.handlers import mongodb_mongoengine_object_handler
+from surveil.api.storage.mongodb.config import contactgroup as storage
 
 
-class ContactGroupHandler(mongo_object_handler.MongoObjectHandler):
+class ContactGroupHandler(
+    mongodb_mongoengine_object_handler.MongoObjectHandler
+):
     """Fulfills a request on the Contact Group resource."""
 
     def __init__(self, *args, **kwargs):
         super(ContactGroupHandler, self).__init__(
-            'contactgroups',
-            'contactgroup_name',
-            contactgroup.ContactGroup,
+            datamodel.ContactGroup,
+            storage.ContactGroup,
             *args,
             **kwargs
         )
