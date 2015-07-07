@@ -32,6 +32,7 @@ class TestCommandController(functionalTest.FunctionalTest):
         self.mongoconnection.shinken.commands.insert(
             copy.deepcopy(self.commands)
         )
+        import time; time.sleep(1)
 
     def test_get_all_commands(self):
         response = self.get('/v2/config/commands')
