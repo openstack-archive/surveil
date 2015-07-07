@@ -29,7 +29,7 @@ class ServicesController(rest.RestController):
         """Returns all services."""
         handler = service_handler.ServiceHandler(pecan.request)
         services = handler.get_all(
-            templates=bool(templates)
+            exclude_templates=(not bool(templates))
         )
         return services
 

@@ -38,7 +38,7 @@ class ContactGroupsController(rest.RestController):
     def get_one(self, group_name):
         """Returns a contact group."""
         handler = contactgroup_handler.ContactGroupHandler(pecan.request)
-        contactgroup = handler.get(group_name)
+        contactgroup = handler.get({"contactgroup_name": group_name})
         return contactgroup
 
     @util.policy_enforce(['authenticated'])
@@ -57,7 +57,7 @@ class ContactGroupsController(rest.RestController):
     def delete(self, group_name):
         """Delete a specific contact group."""
         handler = contactgroup_handler.ContactGroupHandler(pecan.request)
-        handler.delete(group_name)
+        handler.delete({"contactgroup_name": group_name})
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(contactgroup.ContactGroup,
@@ -67,4 +67,4 @@ class ContactGroupsController(rest.RestController):
     def put(self, group_name, contactgroup):
         """Update a specific contact group."""
         handler = contactgroup_handler.ContactGroupHandler(pecan.request)
-        handler.update(group_name, contactgroup)
+        handler.update({"contactgroup_name": group_name}, contactgroup)
