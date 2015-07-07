@@ -12,19 +12,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import host as host_datamodel
-from surveil.api.storage.mongodb.config import host as host_storage
-from surveil.api.handlers import mongodb_mongoengine_object_handler
+import mongoengine
 
 
-class HostHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
-    """Fulfills a request on the Host resource."""
-
-    def __init__(self, *args, **kwargs):
-        super(HostHandler, self).__init__(
-            'hosts',
-            host_datamodel.Host,
-            host_storage.Host,
-            *args,
-            **kwargs
-        )
+class Command(mongoengine.Document):
+    meta = {'collection': 'commands'}
+    command_name = mongoengine.StringField(unique=True)
+    command_line = mongoengine.StringField()
+    module_type = mongoengine.StringField()

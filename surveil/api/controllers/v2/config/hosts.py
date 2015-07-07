@@ -83,7 +83,7 @@ class HostController(rest.RestController):
     def get(self):
         """Returns a specific host."""
         handler = host_handler.HostHandler(pecan.request)
-        h = handler.get(self._id)
+        h = handler.get({"host_name": self._id})
         return h
 
     @util.policy_enforce(['authenticated'])
@@ -94,14 +94,14 @@ class HostController(rest.RestController):
         :param data: a host within the request body.
         """
         handler = host_handler.HostHandler(pecan.request)
-        handler.update(self._id, data)
+        handler.update({"host_name": self._id}, data)
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(None, status_code=204)
     def delete(self):
         """Delete this host."""
         handler = host_handler.HostHandler(pecan.request)
-        handler.delete(self._id)
+        handler.delete({"host_name": self._id})
 
     @pecan.expose()
     def _lookup(self, *remainder):
@@ -120,7 +120,7 @@ class HostsController(rest.RestController):
         """Returns all hosts."""
         handler = host_handler.HostHandler(pecan.request)
         hosts = handler.get_all(
-            templates=bool(templates)
+            exclude_templates=(not bool(templates))
         )
         return hosts
 
