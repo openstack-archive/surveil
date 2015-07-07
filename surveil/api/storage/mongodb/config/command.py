@@ -12,19 +12,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import command as command_datamodel
-from surveil.api.handlers import mongodb_mongoengine_object_handler
-from surveil.api.storage.mongodb.config import command as command_storage
+import mongoengine
 
 
-class CommandHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
-    """Fulfills a request on the Command resource."""
-
-    def __init__(self, *args, **kwargs):
-        super(CommandHandler, self).__init__(
-            'commands',
-            command_datamodel.Command,
-            command_storage.Command,
-            *args,
-            **kwargs
-        )
+class Command(mongoengine.Document):
+    meta = {'collection': 'commands'}
+    command_name = mongoengine.StringField(unique=True)
+    command_line = mongoengine.StringField()
+    module_type = mongoengine.StringField()
