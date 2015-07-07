@@ -12,18 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import checkmodulation
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import checkmodulation as datamodel
+from surveil.api.storage.mongodb.config import checkmodulation as storage
+from surveil.api.handlers import mongodb_mongoengine_object_handler
 
 
-class CheckModulationHandler(mongo_object_handler.MongoObjectHandler):
+class CheckModulationHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
     """Fulfills a request on the Check Modulation resource."""
 
     def __init__(self, *args, **kwargs):
         super(CheckModulationHandler, self).__init__(
-            'checkmodulations',
-            'checkmodulation_name',
-            checkmodulation.CheckModulation,
+            datamodel.CheckModulation,
+            storage.CheckModulation,
             *args,
             **kwargs
         )

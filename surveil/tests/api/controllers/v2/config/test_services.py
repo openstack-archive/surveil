@@ -80,7 +80,7 @@ class TestServiceController(functionalTest.FunctionalTest):
     def test_get_all_services_templates(self):
         self.mongoconnection.shinken.services.insert(
             copy.deepcopy(
-                {"host_name": "sample-server3",
+                {"host_name": "sample-server444",
                  "service_description": "check-disk-sdb",
                  "check_command": "check-disk!/dev/sdb1",
                  "max_check_attempts": 5,
