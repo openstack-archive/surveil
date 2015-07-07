@@ -12,18 +12,16 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import service as service_datamodel
-from surveil.api.handlers import mongodb_mongoengine_object_handler
-from surveil.api.storage.mongodb.config import service as service_storage
+import mongoengine
 
 
-class ServiceHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
-    """Fulfills a request on the service resource."""
-
-    def __init__(self, *args, **kwargs):
-        super(ServiceHandler, self).__init__(
-            service_datamodel.Service,
-            service_storage.Service,
-            *args,
-            **kwargs
-        )
+class NotificationWays(mongoengine.Document):
+    meta = {'collection': 'notificationways'}
+    notificationway_name = mongoengine.StringField(unique=True)
+    host_notification_period = mongoengine.StringField()
+    service_notification_period = mongoengine.StringField()
+    host_notification_options = mongoengine.StringField()
+    service_notification_options = mongoengine.StringField()
+    host_notification_commands = mongoengine.StringField()
+    service_notification_commands = mongoengine.StringField()
+    min_business_impact = mongoengine.StringField()
