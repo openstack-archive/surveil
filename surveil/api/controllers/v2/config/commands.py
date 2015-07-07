@@ -32,7 +32,7 @@ class CommandController(rest.RestController):
     def get(self):
         """Returns a specific command."""
         handler = command_handler.CommandHandler(pecan.request)
-        c = handler.get(self._id)
+        c = handler.get({"command_name": self._id})
         return c
 
     @util.policy_enforce(['authenticated'])
@@ -43,14 +43,14 @@ class CommandController(rest.RestController):
         :param data: a command within the request body.
         """
         handler = command_handler.CommandHandler(pecan.request)
-        handler.update(self._id, data)
+        handler.update({"command_name": self._id}, data)
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(None, status_code=204)
     def delete(self):
         """Delete this command."""
         handler = command_handler.CommandHandler(pecan.request)
-        handler.delete(self._id)
+        handler.delete({"command_name": self._id})
 
 
 class CommandsController(rest.RestController):

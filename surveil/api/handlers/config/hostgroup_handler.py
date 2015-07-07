@@ -12,18 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import hostgroup
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import hostgroup as datamodel
+from surveil.api.storage.mongodb.config import hostgroup as storage
+from surveil.api.handlers import mongodb_mongoengine_object_handler
 
 
-class HostGroupHandler(mongo_object_handler.MongoObjectHandler):
+class HostGroupHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
     """Fulfills a request on the host group resource."""
 
     def __init__(self, *args, **kwargs):
         super(HostGroupHandler, self).__init__(
-            'hostgroups',
-            'hostgroup_name',
-            hostgroup.HostGroup,
+            datamodel.HostGroup,
+            storage.HostGroup,
             *args,
             **kwargs
         )
