@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import six
 import wsme
 import wsme.types as wtypes
 
@@ -30,7 +31,8 @@ class TimePeriod(types.Base):
     def __init__(self, **kwargs):
         super(TimePeriod, self).__init__(**kwargs)
 
-        periods = [i for i in kwargs.items() if isinstance(i[0], str)
+        periods = [i for i in kwargs.items()
+                   if isinstance(i[0], six.string_types)
                    and i[0] not in ['timeperiod_name', 'exclude', 'periods']]
         if len(periods) > 0:
             self.periods = {}

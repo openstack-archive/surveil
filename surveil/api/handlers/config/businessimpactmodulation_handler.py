@@ -12,18 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import businessimpactmodulation
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import businessimpactmodulation as datamodel
+from surveil.api.storage.mongodb.config import businessimpactmodulation as storage
+from surveil.api.handlers import mongodb_mongoengine_object_handler
 
 
-class BusinessImpactModulationHandler(mongo_object_handler.MongoObjectHandler):
+class BusinessImpactModulationHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
     """Fulfills a request on the Business Impact Modulation resource."""
 
     def __init__(self, *args, **kwargs):
         super(BusinessImpactModulationHandler, self).__init__(
-            'businessimpactmodulations',
-            'business_impact_modulation_name',
-            businessimpactmodulation.BusinessImpactModulation,
+            datamodel.BusinessImpactModulation,
+            storage.BusinessImpactModulation,
             *args,
             **kwargs
         )
