@@ -20,6 +20,7 @@ from oslo_config import cfg
 import pecan
 from pecan import hooks
 import pecan.testing
+import mongoengine
 
 from surveil.tests import base
 
@@ -52,6 +53,12 @@ class FunctionalTest(base.BaseTestCase):
                 state.request.mongo_connection = self.mongoclient
                 state.request.ws_arbiter_url = self.ws_arbiter_url
                 state.request.influxdb_client = self.influxdb_client
+
+                def get_connection(alias):
+                    return self.mongoclient
+
+                mongoengine.connection.get_connection = get_connection
+                mongoengine.connect('shinken')
 
         app_hooks = [
             TestHook(
