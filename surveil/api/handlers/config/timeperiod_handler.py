@@ -12,18 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import timeperiod
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import timeperiod as datamodel
+from surveil.api.storage.mongodb.config import timeperiod as storage
+from surveil.api.handlers import mongodb_mongoengine_object_handler
 
 
-class TimePeriodHandler(mongo_object_handler.MongoObjectHandler):
+class TimePeriodHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
     """Fulfills a request on the Time Period resource."""
 
     def __init__(self, *args, **kwargs):
         super(TimePeriodHandler, self).__init__(
-            'timeperiods',
-            'timeperiod_name',
-            timeperiod.TimePeriod,
+            datamodel.TimePeriod,
+            storage.TimePeriod,
             *args,
             **kwargs
         )

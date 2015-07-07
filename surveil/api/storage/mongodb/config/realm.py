@@ -12,18 +12,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import service as service_datamodel
-from surveil.api.handlers import mongodb_mongoengine_object_handler
-from surveil.api.storage.mongodb.config import service as service_storage
+import mongoengine
 
 
-class ServiceHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
-    """Fulfills a request on the service resource."""
-
-    def __init__(self, *args, **kwargs):
-        super(ServiceHandler, self).__init__(
-            service_datamodel.Service,
-            service_storage.Service,
-            *args,
-            **kwargs
-        )
+class Realm(mongoengine.Document):
+    meta = {'collection': 'realms'}
+    realm_name = mongoengine.StringField(unique=True)
+    realm_members = mongoengine.StringField()
+    default = mongoengine.IntField()

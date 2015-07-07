@@ -38,7 +38,7 @@ class ServiceGroupsController(rest.RestController):
     def get_one(self, group_name):
         """Returns a service group."""
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
-        servicegroup = handler.get(group_name)
+        servicegroup = handler.get({"servicegroup_name": group_name})
         return servicegroup
 
     @util.policy_enforce(['authenticated'])
@@ -57,7 +57,7 @@ class ServiceGroupsController(rest.RestController):
     def delete(self, group_name):
         """Returns a specific service group."""
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
-        handler.delete(group_name)
+        handler.delete({"servicegroup_name": group_name})
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(servicegroup.ServiceGroup,
@@ -67,4 +67,4 @@ class ServiceGroupsController(rest.RestController):
     def put(self, group_name, servicegroup):
         """Update a specific service group."""
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
-        handler.update(group_name, servicegroup)
+        handler.update({"servicegroup_name": group_name}, servicegroup)

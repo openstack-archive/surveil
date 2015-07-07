@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import six
 import wsme
 import wsme.types as wtypes
 
@@ -26,24 +27,6 @@ class TimePeriod(types.Base):
         wtypes.DictType(wtypes.text, wtypes.text),
         mandatory=False
     )
-
-    def __init__(self, **kwargs):
-        super(TimePeriod, self).__init__(**kwargs)
-
-        periods = [i for i in kwargs.items() if isinstance(i[0], str)
-                   and i[0] not in ['timeperiod_name', 'exclude', 'periods']]
-        if len(periods) > 0:
-            self.periods = {}
-            for item in periods:
-                self.periods[item[0]] = item[1]
-
-    def as_dict(self):
-        timeperiod_dict = super(TimePeriod, self).as_dict()
-        periods = timeperiod_dict.pop("periods", None)
-        if periods:
-            for item in periods.items():
-                timeperiod_dict[item[0]] = item[1]
-        return timeperiod_dict
 
     @classmethod
     def sample(cls):
