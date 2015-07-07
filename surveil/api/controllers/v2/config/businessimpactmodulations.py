@@ -38,7 +38,9 @@ class BusinessImpactModulationsController(rest.RestController):
     def get_one(self, modulation_name):
         """Returns a specific business impact modulation."""
         handler = bh.BusinessImpactModulationHandler(pecan.request)
-        modulation = handler.get(modulation_name)
+        modulation = handler.get(
+            {"business_impact_modulation_name": modulation_name}
+        )
         return modulation
 
     @util.policy_enforce(['authenticated'])
@@ -58,7 +60,9 @@ class BusinessImpactModulationsController(rest.RestController):
     def delete(self, modulation_name):
         """Returns a specific business impact modulation."""
         handler = bh.BusinessImpactModulationHandler(pecan.request)
-        handler.delete(modulation_name)
+        handler.delete(
+            {"business_impact_modulation_name": modulation_name}
+        )
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(mod.BusinessImpactModulation,
@@ -68,4 +72,7 @@ class BusinessImpactModulationsController(rest.RestController):
     def put(self, modulaion_name, modulation):
         """Update a specific business impact modulation."""
         handler = bh.BusinessImpactModulationHandler(pecan.request)
-        handler.update(modulaion_name, modulation)
+        handler.update(
+            {"business_impact_modulation_name": modulaion_name},
+            modulation
+        )

@@ -12,18 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import macromodulation
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import macromodulation as datamodel
+from surveil.api.storage.mongodb.config import macromodulation as storage
+from surveil.api.handlers import mongodb_mongoengine_object_handler
 
 
-class MacroModulationHandler(mongo_object_handler.MongoObjectHandler):
+class MacroModulationHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
     """Fulfills a request on the Macro Modulation resource."""
 
     def __init__(self, *args, **kwargs):
         super(MacroModulationHandler, self).__init__(
-            'macromodulations',
-            'macromodulation_name',
-            macromodulation.MacroModulation,
+            datamodel.MacroModulation,
+            storage.MacroModulation,
             *args,
             **kwargs
         )
