@@ -38,7 +38,7 @@ class ContactsController(rest.RestController):
     def get_one(self, contact_name):
         """Returns a specific contact."""
         handler = contact_handler.ContactHandler(pecan.request)
-        contact = handler.get(contact_name)
+        contact = handler.get({"contact_name": contact_name})
         return contact
 
     @util.policy_enforce(['authenticated'])
@@ -56,7 +56,7 @@ class ContactsController(rest.RestController):
     def delete(self, contact_name):
         """Returns a specific contact."""
         handler = contact_handler.ContactHandler(pecan.request)
-        handler.delete(contact_name)
+        handler.delete({"contact_name": contact_name})
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(contact.Contact,
@@ -66,4 +66,4 @@ class ContactsController(rest.RestController):
     def put(self, contact_name, contact):
         """Returns a specific contact."""
         handler = contact_handler.ContactHandler(pecan.request)
-        handler.update(contact_name, contact)
+        handler.update({"contact_name": contact_name}, contact)
