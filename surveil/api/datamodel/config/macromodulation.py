@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import six
 import wsme
 import wsme.types as wtypes
 
@@ -34,7 +35,7 @@ class MacroModulation(types.Base):
 
         # Custom fields start with '_'. Detect them and assign them.
         macros = [i for i in kwargs.items()
-                  if isinstance(i[0], str) and i[0].startswith('_')]
+                  if isinstance(i[0], six.string_types) and i[0].startswith('_')]
         if len(macros) > 0:
             self.macros = {}
             for item in macros:

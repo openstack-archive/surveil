@@ -20,6 +20,8 @@ from oslo_config import cfg
 import pecan
 from pecan import hooks
 import pecan.testing
+import mongoengine
+import pymongo
 
 from surveil.tests import base
 
@@ -36,7 +38,11 @@ class FunctionalTest(base.BaseTestCase):
 
     def setUp(self):
 
-        self.mongoconnection = mongomock.Connection()
+        self.mongoconnection = pymongo.MongoClient(fsync=True)  #  mongomock.Connection()
+        self.mongoconnection.drop_database('shinken')
+        self.mongoconnection.drop_database('alignak_live')
+        self.mongoconnection.drop_database('surveil')
+
         self.ws_arbiter_url = "http://localhost:7760"
         self.influxdb_client = influxdb.InfluxDBClient.from_DSN(
             'influxdb://root:root@influxdb:8086/db'
@@ -52,6 +58,12 @@ class FunctionalTest(base.BaseTestCase):
                 state.request.mongo_connection = self.mongoclient
                 state.request.ws_arbiter_url = self.ws_arbiter_url
                 state.request.influxdb_client = self.influxdb_client
+
+                def get_connection(alias):
+                    return self.mongoclient
+
+                mongoengine.connection.get_connection = get_connection
+                mongoengine.connect('shinken')
 
         app_hooks = [
             TestHook(
@@ -103,4 +115,5 @@ class FunctionalTest(base.BaseTestCase):
             setattr(self, action, make_action(action))
 
     def tearDown(self):
+        self.mongoconnection.close()
         pecan.set_config({}, overwrite=True)
