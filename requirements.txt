@@ -13,3 +13,4 @@ pika
 python-surveilclient==0.10.0
 six
 docker-py
+mongoengine
