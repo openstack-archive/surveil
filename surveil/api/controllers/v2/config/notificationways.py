@@ -38,7 +38,9 @@ class NotificationWaysController(rest.RestController):
     def get_one(self, notificationway_name):
         """Returns a specific notification way."""
         handler = notificationway_handler.NotificationWayHandler(pecan.request)
-        notificationway = handler.get(notificationway_name)
+        notificationway = handler.get(
+            {"notificationway_name": notificationway_name}
+        )
         return notificationway
 
     @util.policy_enforce(['authenticated'])
@@ -60,7 +62,7 @@ class NotificationWaysController(rest.RestController):
     def delete(self, notificationway_name):
         """Returns a specific notification way."""
         handler = notificationway_handler.NotificationWayHandler(pecan.request)
-        handler.delete(notificationway_name)
+        handler.delete({"notificationway_name": notificationway_name})
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(notificationway.NotificationWay,
@@ -70,4 +72,7 @@ class NotificationWaysController(rest.RestController):
     def put(self, notificationway_name, notificationway):
         """Update a specific notification way."""
         handler = notificationway_handler.NotificationWayHandler(pecan.request)
-        handler.update(notificationway_name, notificationway)
+        handler.update(
+            {"notificationway_name": notificationway_name},
+            notificationway
+        )

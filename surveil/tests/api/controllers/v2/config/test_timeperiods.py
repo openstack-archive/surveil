@@ -26,13 +26,17 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
         self.timeperiods = [
             {
                 'timeperiod_name': 'nonworkhours',
-                'sunday': '00:00-24:00',
-                'monday': '00:00-09:00,17:00-24:00'
+                "periods": {
+                    'sunday': '00:00-24:00',
+                    'monday': '00:00-09:00,17:00-24:00'
+                }
             },
             {
                 'timeperiod_name': 'misc-single-days',
-                '1999-01-28': '00:00-24:00',
-                'day 2': '00:00-24:00',
+                "periods": {
+                    '1999-01-28': '00:00-24:00',
+                    'day 2': '00:00-24:00',
+                }
             },
         ]
         self.mongoconnection.shinken.timeperiods.insert(
@@ -75,10 +79,7 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
         self.post_json('/v2/config/timeperiods', t)
 
         self.assertIsNotNone(
-            self.mongoconnection.shinken.timeperiods.find_one(
-                {"timeperiod_name": 'someperiod',
-                 "monday": "fun day",
-                 "tuesday": "pizza day"})
+            self.mongoconnection.shinken.timeperiods.find_one(t)
         )
 
     def test_delete_timeperiod(self):
@@ -100,7 +101,7 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
         self.assertEqual(
             self.mongoconnection.shinken.timeperiods.find_one(
                 {'timeperiod_name': 'nonworkhours'}
-            )['sunday'],
+            )['periods']['sunday'],
             '00:00-24:00'
         )
 
@@ -113,6 +114,6 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
         self.assertEqual(
             self.mongoconnection.shinken.timeperiods.find_one(
                 {'timeperiod_name': 'nonworkhours'}
-            )['sunday'],
+            )['periods']['sunday'],
             'updated'
         )

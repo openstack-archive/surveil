@@ -38,7 +38,9 @@ class CheckModulationsController(rest.RestController):
     def get_one(self, checkmodulation_name):
         """Returns a specific check modulation."""
         handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
-        checkmodulation = handler.get(checkmodulation_name)
+        checkmodulation = handler.get(
+            {"checkmodulation_name": checkmodulation_name}
+        )
         return checkmodulation
 
     @util.policy_enforce(['authenticated'])
@@ -57,7 +59,7 @@ class CheckModulationsController(rest.RestController):
     def delete(self, checkmodulation_name):
         """Returns a specific check modulation."""
         handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
-        handler.delete(checkmodulation_name)
+        handler.delete({"checkmodulation_name": checkmodulation_name})
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(checkmodulation.CheckModulation,
@@ -67,4 +69,7 @@ class CheckModulationsController(rest.RestController):
     def put(self, checkmodulation_name, checkmodulation):
         """Update a specific check modulation."""
         handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
-        handler.update(checkmodulation_name, checkmodulation)
+        handler.update(
+            {"checkmodulation_name": checkmodulation_name},
+            checkmodulation
+        )

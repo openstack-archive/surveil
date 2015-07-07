@@ -38,7 +38,7 @@ class HostGroupsController(rest.RestController):
     def get_one(self, group_name):
         """Returns a host group."""
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        hostgroup = handler.get(group_name)
+        hostgroup = handler.get({"hostgroup_name": group_name})
         return hostgroup
 
     @util.policy_enforce(['authenticated'])
@@ -56,7 +56,7 @@ class HostGroupsController(rest.RestController):
     def delete(self, group_name):
         """Returns a specific host group."""
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        handler.delete(group_name)
+        handler.delete({"hostgroup_name": group_name})
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(hostgroup.HostGroup,
@@ -66,4 +66,4 @@ class HostGroupsController(rest.RestController):
     def put(self, group_name, hostgroup):
         """Update a specific host group."""
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        handler.update(group_name, hostgroup)
+        handler.update({"hostgroup_name": group_name}, hostgroup)

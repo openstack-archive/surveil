@@ -30,19 +30,21 @@ class TestHostController(functionalTest.FunctionalTest):
                 "max_check_attempts": 5, "check_period": "24x7",
                 "contacts": "admin,carl", "contact_groups": "router-admins",
                 "notification_interval": 30, "notification_period": "24x7",
+                "custom_fields": {}
             },
             {
                 "host_name": "bogus-router2", "address": "192.168.1.254",
                 "max_check_attempts": 5, "check_period": "24x7",
                 "contacts": "admin,carl", "contact_groups": "router-admins",
-                "notification_interval": 30, "notification_period": "24x7"
+                "notification_interval": 30, "notification_period": "24x7",
+                "custom_fields": {}
             },
             {
                 "host_name": "bogus-router333", "address": "192.168.1.254",
                 "max_check_attempts": 5, "check_period": "24x7",
                 "contacts": "admin,carl", "contact_groups": "router-admins",
                 "notification_interval": 30, "notification_period": "24x7",
-                'use': 'test'
+                'use': 'test', "custom_fields": {}
             },
         ]
         self.mongoconnection.shinken.hosts.insert(
@@ -80,22 +82,14 @@ class TestHostController(functionalTest.FunctionalTest):
     def test_get_all_hosts_templates(self):
         self.mongoconnection.shinken.hosts.insert(
             copy.deepcopy(
-                {"host_name": "bogus-router", "address": "192.168.1.254",
+                {"host_name": "bogus-router345345", "address": "192.168.1.254",
                  "max_check_attempts": 5, "check_period": "24x7",
                  "contacts": "admin,carl", "contact_groups": "router-admins",
                  "notification_interval": 30, "notification_period": "24x7",
-                 "register": "0"}
+                 "register": "0", "custom_fields": {}}
             )
         )
         response = self.get('/v2/config/hosts')
-
-        # Adjust self.host content to reflect custom_fields sub-dict
-        c_fields = {}
-        for h in self.hosts:
-            if '_CRITICAL' in h.keys():
-                c_fields['_CRITICAL'] = h['_CRITICAL']
-                h.pop('_CRITICAL')
-                h['custom_fields'] = c_fields
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -143,7 +137,8 @@ class TestHostController(functionalTest.FunctionalTest):
             'contact_groups': u'router-admins',
             'host_name': u'bogus-router333',
             'max_check_attempts': 5,
-            'use': u'test'
+            'use': u'test',
+            'custom_fields': {},
         }
 
         self.assertEqual(expected, mongo_host.as_dict())
@@ -167,7 +162,8 @@ class TestHostController(functionalTest.FunctionalTest):
             "contacts": "admin,carl",
             "contact_groups": "router-admins",
             "notification_interval": 3,
-            "notification_period": "24x7"
+            "notification_period": "24x7",
+            "custom_fields": {}
         }
         response = self.post_json("/v2/config/hosts", params=new_host)
 

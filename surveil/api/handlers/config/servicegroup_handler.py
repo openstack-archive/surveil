@@ -12,18 +12,20 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import servicegroup
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import servicegroup as datamodel
+from surveil.api.handlers import mongodb_mongoengine_object_handler
+from surveil.api.storage.mongodb.config import servicegroup as storage
 
 
-class ServiceGroupHandler(mongo_object_handler.MongoObjectHandler):
+class ServiceGroupHandler(
+    mongodb_mongoengine_object_handler.MongoObjectHandler
+):
     """Fulfills a request on the Service Group resource."""
 
     def __init__(self, *args, **kwargs):
         super(ServiceGroupHandler, self).__init__(
-            'servicegroups',
-            'servicegroup_name',
-            servicegroup.ServiceGroup,
+            datamodel.ServiceGroup,
+            storage.ServiceGroup,
             *args,
             **kwargs
         )
