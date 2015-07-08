@@ -20,17 +20,22 @@ def build_influxdb_query(live_query,
                          group_by=[],
                          order_by=[],
                          additional_filters={},
-                         limit=None):
+                         limit=None,
+                         ):
 
     query = ['SELECT * FROM', measurement]
 
     filters = {}
     time = None
+    offset = None
     if live_query:
         if live_query.filters:
             filters.update(json.loads(live_query.filters))
         if live_query.time_interval:
             time = live_query.time_interval
+        if live_query.paging:
+            limit = live_query.paging.size
+            offset = limit * live_query.paging.number
 
     filters.update(additional_filters)
     query += _build_where_clause(filters, time)
@@ -39,12 +44,15 @@ def build_influxdb_query(live_query,
         query.append('GROUP BY')
         query.append(', '.join(group_by))
 
-    if order_by:
-        query.append('ORDER BY')
-        query.append(', '.join(order_by))
+    # if order_by:
+        # query.append('ORDER BY')
+        # query.append(', '.join(order_by))
 
     if limit is not None:
         query.append('LIMIT %d' % limit)
+
+    if offset is not None:
+        query.append('OFFSET %d' % offset)
 
     return ' '.join(query)
 
