@@ -18,6 +18,7 @@ import wsme
 import wsme.types as wtypes
 
 from surveil.api.datamodel.status.metrics import time_interval
+from surveil.api.datamodel.status import paging
 from surveil.api.datamodel import types
 
 
@@ -33,6 +34,9 @@ class LiveQuery(types.Base):
     time_interval = wsme.wsattr(time_interval.TimeInterval, mandatory=False)
     "Time interval of the query."
 
+    paging = wsme.wsattr(paging.Paging, mandatory=False)
+    "Paging."
+
     @classmethod
     def sample(cls):
         return cls(
@@ -40,6 +44,10 @@ class LiveQuery(types.Base):
             time_interval=time_interval.TimeInterval(
                 start_time='2015-01-29T21:50:44Z',
                 end_time='2015-01-29T22:50:44Z'
+            ),
+            paging=paging.Paging(
+                number=3,
+                size=100
             ),
             filters=json.dumps({
                 "isnot": {

@@ -198,6 +198,10 @@ class TestHostMetric(functionalTest.FunctionalTest):
                 'time_interval': {
                     'start_time': '2015-04-19T00:09:24Z',
                     'end_time': '2015-04-19T02:09:25Z'
+                },
+                'paging': {
+                    'size': 10,
+                    'number': 3
                 }
             }
 
@@ -225,7 +229,8 @@ class TestHostMetric(functionalTest.FunctionalTest):
                  "and time <= '2015-04-19t02:09:25z' "
                  "and host_name='srv-monitoring-01' "
                  "and service_description='load' "
-                 "order by time desc"
+                 "order by time desc "
+                 "limit 10 offset 30"
                  ]
             )
             self.assert_count_equal_backport(
