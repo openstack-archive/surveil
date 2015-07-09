@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev li
 
 ### Alignak
 RUN apt-get update && apt-get install -y python-pip python-pycurl
-RUN useradd alignak && pip install https://github.com/Alignak-monitoring/alignak/archive/d7f457d5ed94f08d9a6a38809106d3e0d35a1712.tar.gz
+RUN useradd alignak && pip install https://github.com/aviau/alignak/archive/5bfb8dc70356b6f4d7b992efec839ceb43e085eb.tar.gz
 
 ## modules
 # mod-webui
@@ -31,13 +31,13 @@ RUN cd /tmp && \
     mv /tmp/mod-booster-nrpe-*/module /var/lib/alignak/modules/mod-booster-nrpe && \
     rm -rfv /tmp/mod-booster-nrpe*
 
-# mod-mongodb
-RUN pip install pymongo==3.0.2
+# mod-surveil-config
+RUN pip install python-surveilclient==0.10.0
 RUN cd /tmp && \
-    wget -O mod-mongodb.tar.gz https://github.com/shinken-monitoring/mod-mongodb/archive/5396fded1c56d57202236d1236703a160aec7375.tar.gz && \
-    tar -zxvf mod-mongodb.tar.gz && \
-    mv /tmp/mod-mongodb-*/module /var/lib/alignak/modules/mod-mongodb && \
-    rm -rfv /tmp/mod-mongodb*
+    wget -O mod-surveil-config.tar.gz https://github.com/Alignak-monitoring/mod-surveil-config/archive/34e8f9ea8fa7e71d24e8f1d887a0c00e69467470.tar.gz && \
+    tar -zxvf mod-surveil-config.tar.gz && \
+    mv /tmp/mod-surveil-config-*/alignak/modules/mod_surveil_config /var/lib/alignak/modules/mod-surveil-config && \
+    rm -rfv /tmp/mod-surveil-config*
 
 # mod-influxdb
 RUN pip install influxdb==2.3.0
@@ -55,6 +55,7 @@ RUN cd /tmp && \
     rm -rfv /tmp/mod-ws-arbiter*
 
 # mod-mongo-live-config
+RUN pip install pymongo==3.0.2
 RUN cd /tmp && \
     wget -O mod-mongo-live-config.tar.gz https://github.com/savoirfairelinux/mod-mongo-live-config/archive/0.3.2.tar.gz && \
     tar -zxvf mod-mongo-live-config.tar.gz && \
