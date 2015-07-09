@@ -25,24 +25,31 @@ class Host(types.Base):
     address = wsme.wsattr(wtypes.text, mandatory=False)
     """The address of the host. Normally, this is an IP address."""
 
-    max_check_attempts = wsme.wsattr(int, mandatory=False, default=3)
+    max_check_attempts = wsme.wsattr(int, mandatory=False)
 
-    check_period = wsme.wsattr(wtypes.text, mandatory=False, default='24x7')
+    check_period = wsme.wsattr(wtypes.text, mandatory=False)
     """The time period during which active checks of this host can be made."""
 
-    contacts = wsme.wsattr(wtypes.text, mandatory=False, default='')
+    contacts = wsme.wsattr(wtypes.text, mandatory=False)
     """A list of the short names of the contacts that should be notified."""
 
-    contact_groups = wsme.wsattr(wtypes.text, mandatory=False, default='')
+    contact_groups = wsme.wsattr(wtypes.text, mandatory=False)
     """List of the short names of the contact groups that should be notified"""
 
-    notification_interval = wsme.wsattr(int, mandatory=False, default=30)
+    notification_interval = wsme.wsattr(int, mandatory=False)
 
-    notification_period = wsme.wsattr(wtypes.text, mandatory=False,
-                                      default='24x7')
+    notification_period = wsme.wsattr(wtypes.text, mandatory=False)
 
     use = wsme.wsattr(wtypes.text, mandatory=False)
     """The template to use for this host"""
+
+    name = wsme.wsattr(wtypes.text, mandatory=False)
+
+    register = wsme.wsattr(wtypes.text, mandatory=False)
+
+    check_interval = wsme.wsattr(int, mandatory=False)
+
+    retry_interval = wsme.wsattr(int, mandatory=False)
 
     # TODO(aviau): Custom fields starting without '_' should raise an error.
     custom_fields = wsme.wsattr(
@@ -50,28 +57,6 @@ class Host(types.Base):
         mandatory=False
     )
     """Custom fields for the host"""
-
-    def __init__(self, **kwargs):
-        super(Host, self).__init__(**kwargs)
-
-        # Custom fields start with '_'. Detect them ans assign them.
-        custom_fields = [i for i in kwargs.items()
-                         if (isinstance(i[0], str)
-                             or isinstance(i[0], unicode))
-                         and i[0][0] == '_']
-
-        if len(custom_fields) > 0:
-            self.custom_fields = {}
-            for item in custom_fields:
-                self.custom_fields[item[0]] = item[1]
-
-    def as_dict(self):
-        host_dict = super(Host, self).as_dict()
-        custom_fields = host_dict.pop("custom_fields", None)
-        if custom_fields:
-            for item in custom_fields.items():
-                host_dict[item[0]] = item[1]
-        return host_dict
 
     @classmethod
     def sample(cls):
