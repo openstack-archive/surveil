@@ -24,11 +24,13 @@ from surveil.common import util
 class ServicesController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([service.Service])
-    def get_all(self):
+    @wsme_pecan.wsexpose([service.Service], int)
+    def get_all(self, templates=0):
         """Returns all services."""
         handler = service_handler.ServiceHandler(pecan.request)
-        services = handler.get_all()
+        services = handler.get_all(
+            templates=bool(templates)
+        )
         return services
 
     @util.policy_enforce(['authenticated'])

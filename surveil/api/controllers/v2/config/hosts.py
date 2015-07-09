@@ -115,11 +115,13 @@ class HostsController(rest.RestController):
         return HostController(host_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([host.Host])
-    def get_all(self):
+    @wsme_pecan.wsexpose([host.Host], int)
+    def get_all(self, templates=0):
         """Returns all hosts."""
         handler = host_handler.HostHandler(pecan.request)
-        hosts = handler.get_all()
+        hosts = handler.get_all(
+            templates=bool(templates)
+        )
         return hosts
 
     @util.policy_enforce(['authenticated'])

@@ -31,13 +31,14 @@ RUN cd /tmp && \
     mv /tmp/mod-booster-nrpe-*/module /var/lib/alignak/modules/mod-booster-nrpe && \
     rm -rfv /tmp/mod-booster-nrpe*
 
-# mod-mongodb
-RUN pip install pymongo==3.0.2
+# mod-surveil-config
+RUN apt-get update && apt-get install -y git
+RUN pip install -e git+https://github.com/aviau/python-surveilclient.git@templates#egg=python-surveilclient
 RUN cd /tmp && \
-    wget -O mod-mongodb.tar.gz https://github.com/shinken-monitoring/mod-mongodb/archive/5396fded1c56d57202236d1236703a160aec7375.tar.gz && \
-    tar -zxvf mod-mongodb.tar.gz && \
-    mv /tmp/mod-mongodb-*/module /var/lib/alignak/modules/mod-mongodb && \
-    rm -rfv /tmp/mod-mongodb*
+    wget -O mod-surveil-config.tar.gz https://github.com/Alignak-monitoring/mod-surveil-config/archive/6331d3626fd92deaeb5e372c5cdb1eedd8b09d9b.tar.gz && \
+    tar -zxvf mod-surveil-config.tar.gz && \
+    mv /tmp/mod-surveil-config-*/alignak/modules/mod_surveil_config /var/lib/alignak/modules/mod-surveil-config && \
+    rm -rfv /tmp/mod-surveil-config*
 
 # mod-influxdb
 RUN pip install influxdb==2.3.0
@@ -55,6 +56,7 @@ RUN cd /tmp && \
     rm -rfv /tmp/mod-ws-arbiter*
 
 # mod-mongo-live-config
+RUN pip install pymongo==3.0.2
 RUN cd /tmp && \
     wget -O mod-mongo-live-config.tar.gz https://github.com/savoirfairelinux/mod-mongo-live-config/archive/0.3.2.tar.gz && \
     tar -zxvf mod-mongo-live-config.tar.gz && \

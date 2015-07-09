@@ -33,6 +33,8 @@ class Command(types.Base):
     command_line = wsme.wsattr(wtypes.text, mandatory=True)
     """This directive is used to define what is actually executed by Shinken"""
 
+    module_type = wsme.wsattr(wtypes.text, mandatory=True)
+
     @classmethod
     def sample(cls):
         return cls(

@@ -1,3 +1,9 @@
+ambassador:
+  image: cpuguy83/docker-grand-ambassador
+  volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock"
+  command: "-name surveil_surveil_1 -name surveil_alignak_1"
+
 surveil:
   build: .
   links:
@@ -19,6 +25,7 @@ alignak:
     - mongo
     - influxdb
     - redis
+    - "ambassador:surveil"
   ports:
     - "7767:7767"
   environment:

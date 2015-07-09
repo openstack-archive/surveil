@@ -52,9 +52,12 @@ class ServiceHandler(handler.Handler):
             data.as_dict()
         )
 
-    def get_all(self, host_name=None):
+    def get_all(self, host_name=None, templates=False):
         """Return all services."""
-        filters = {"register": {"$ne": "0"}}
+        if templates is True:
+            filters = {}
+        else:
+            filters = {"register": {"$ne": "0"}}
 
         if host_name is not None:
             filters['host_name'] = host_name

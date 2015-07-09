@@ -43,6 +43,12 @@ class Service(types.Base):
 
     passive_checks_enabled = wsme.wsattr(wtypes.text, mandatory=False)
 
+    use = wsme.wsattr(wtypes.text, mandatory=False)
+
+    name = wsme.wsattr(wtypes.text, mandatory=False)
+
+    register = wsme.wsattr(wtypes.text, mandatory=False)
+
     @classmethod
     def sample(cls):
         return cls(
