@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y vim python-pip python3-pip python-dev l
 RUN virtualenv /opt/surveil/env
 
 # Surveil needs alignak (as a lib)
-RUN useradd alignak && /opt/surveil/env/bin/pip install pycurl https://github.com/Alignak-monitoring/alignak/archive/d7f457d5ed94f08d9a6a38809106d3e0d35a1712.tar.gz
+RUN useradd alignak && /opt/surveil/env/bin/pip install pycurl https://github.com/aviau/alignak/archive/5bfb8dc70356b6f4d7b992efec839ceb43e085eb.tar.gz
 
 # Download packs
 ENV MONITORING_TOOLS_VERSION 0.4.0
@@ -50,6 +50,9 @@ ENV SURVEIL_KEYSTONE_AUTH_PROTOCOL=http
 ENV SURVEIL_OS_USERNAME=admin
 ENV SURVEIL_OS_PASSWORD=password
 ENV SURVEIL_OS_TENANT_NAME=admin
+
+# Surveil API
+EXPOSE 5311
 
 CMD cd /opt/surveil && \
     ./setup.sh && \
