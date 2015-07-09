@@ -35,7 +35,7 @@ mongo:
       "mongod --nojournal --smallfiles"
 
 influxdb:
-  image: savoirfairelinux/influxdb:0.9.0
+  image: surveil/influxdb:0.9.1
   environment:
     PRE_CREATE_DB: "db"
   ports:
