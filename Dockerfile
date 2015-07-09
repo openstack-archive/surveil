@@ -51,6 +51,9 @@ ENV SURVEIL_OS_USERNAME=admin
 ENV SURVEIL_OS_PASSWORD=password
 ENV SURVEIL_OS_TENANT_NAME=admin
 
+# Surveil API
+EXPOSE 5311
+
 CMD cd /opt/surveil && \
     ./setup.sh && \
     ((sleep 40 && surveil-init --influxdb --packs --mongodb) &) && \

@@ -66,11 +66,15 @@ class MongoObjectHandler(handler.Handler):
             resource.as_dict()
         )
 
-    def get_all(self):
+    def get_all(self, templates=False):
         """Return all resources."""
+        if templates is True:
+            filters = {}
+        else:
+            filters = {"register": {"$ne": "0"}}
+
         resources = [r for r
                      in self._get_resource_collection()
-                     .find({"register": {"$ne": "0"}},
-                           {'_id': 0})]
+                     .find(filters, {'_id': 0})]
         resources = [self.resource_datamodel(**r) for r in resources]
         return resources

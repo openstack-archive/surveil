@@ -86,7 +86,7 @@ class TestHostController(functionalTest.FunctionalTest):
         )
         self.assertEqual(response.status_int, 200)
 
-    def test_get_all_hosts_no_templates(self):
+    def test_get_all_hosts_templates(self):
         self.mongoconnection.shinken.hosts.insert(
             copy.deepcopy(
                 {"host_name": "bogus-router", "address": "192.168.1.254",
@@ -110,6 +110,13 @@ class TestHostController(functionalTest.FunctionalTest):
             json.loads(response.body.decode()),
             self.hosts
         )
+
+        response = self.get('/v2/config/hosts',  params={'templates': 1})
+        self.assertEqual(
+            len(json.loads(response.body.decode())),
+            len(self.hosts) + 1
+        )
+
         self.assertEqual(response.status_int, 200)
 
     def test_get_specific_host(self):
