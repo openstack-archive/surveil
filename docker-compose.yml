@@ -46,7 +46,7 @@ redis:
   image: redis
 
 grafana:
-  image: savoirfairelinux/grafana:2.1.0-pre1
+  image: surveil/grafana:2.1.0-pre1
   environment:
     GRAFANA_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
     GRAFANA_AUTH_PROXY_ENABLED: true
@@ -55,7 +55,7 @@ grafana:
     - influxdb
 
 bansho:
-  image: savoirfairelinux/bansho
+  image: surveil/bansho
   environment:
     BANSHO_BACKEND: "surveil"
     BANSHO_SURVEIL_URL: "http://surveil:5311/"
