@@ -77,7 +77,7 @@ class TestServiceController(functionalTest.FunctionalTest):
         )
         self.assertEqual(response.status_int, 200)
 
-    def test_get_all_services_no_templates(self):
+    def test_get_all_services_templates(self):
         self.mongoconnection.shinken.services.insert(
             copy.deepcopy(
                 {"host_name": "sample-server3",
@@ -100,6 +100,14 @@ class TestServiceController(functionalTest.FunctionalTest):
             json.loads(response.body.decode()),
             self.services
         )
+
+        response = self.get('/v2/config/services', params={"templates": 1})
+
+        self.assertEqual(
+            len(json.loads(response.body.decode())),
+            len(self.services) + 1
+        )
+
         self.assertEqual(response.status_int, 200)
 
     def test_add_service(self):
