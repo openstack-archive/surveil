@@ -32,8 +32,7 @@ RUN cd /tmp && \
     rm -rfv /tmp/mod-booster-nrpe*
 
 # mod-surveil-config
-RUN apt-get update && apt-get install -y git
-RUN pip install -e git+https://github.com/aviau/python-surveilclient.git@templates#egg=python-surveilclient
+RUN pip install python-surveilclient==0.11.0
 RUN cd /tmp && \
     wget -O mod-surveil-config.tar.gz https://github.com/Alignak-monitoring/mod-surveil-config/archive/6331d3626fd92deaeb5e372c5cdb1eedd8b09d9b.tar.gz && \
     tar -zxvf mod-surveil-config.tar.gz && \
