@@ -46,7 +46,7 @@ The surveil-init command will flush existing MongoDB Alignak config, create an I
 
 The surveil-webui-init command will pre-create data sources in Grafana: ::
 
-    surveil-webui-init -H localhost -U root -P root -p 8086 -g "http://localhost/surveil/grafana"
+    surveil-webui-init -H localhost -U root -P root -p 8086 -N db -g "http://localhost/surveil/grafana"
 
 
 2. Testing the API
