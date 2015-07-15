@@ -4,7 +4,7 @@
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -12,7 +12,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import functools
 import json
+import time
+
+from surveil.api.datamodel.status import event
 
 
 def build_influxdb_query(live_query,
@@ -20,8 +24,8 @@ def build_influxdb_query(live_query,
                          group_by=[],
                          order_by=[],
                          additional_filters={},
-                         limit=None):
-
+                         limit=None,
+                         multiple_series=False):
     query = ['SELECT * FROM', measurement]
 
     filters = {}
@@ -33,8 +37,11 @@ def build_influxdb_query(live_query,
         if live_query.time_interval:
             time = live_query.time_interval
         if live_query.paging:
-            limit = live_query.paging.size
-            offset = limit * live_query.paging.page
+            if multiple_series:
+                limit = live_query.paging.size * (live_query.paging.page + 1)
+            else:
+                limit = live_query.paging.size
+                offset = live_query.paging.page
 
     filters.update(additional_filters)
     query += _build_where_clause(filters, time)
@@ -51,7 +58,7 @@ def build_influxdb_query(live_query,
         query.append('LIMIT %d' % limit)
 
     if offset is not None:
-        query.append('OFFSET %d' % offset)
+        query.append('OFFSET %d' % limit)
 
     return ' '.join(query)
 
@@ -90,3 +97,89 @@ def _build_where_clause(filters, time=None):
                                    value))
 
     return clause
+
+
+def paging(response, live_query=None):
+    if live_query and live_query.paging:
+        limit_paging = live_query.paging.size * (live_query.paging.page + 1)
+        limit = live_query.paging.size+live_query.paging.page
+        offset_paging = live_query.paging.page*live_query.paging.size
+        tag_list = enumerate(response.keys())
+
+        def sort_by_time(init, serie):
+
+            tag = next(tag_list)
+            host_name = tag[1][1]['host_name']
+            service_description = tag[1][1]['service_description']
+            event_type = tag[1][1]['event_type']
+
+            for point in serie:
+                event_dict = _event_dict_from_influx_item(point)
+                ts = time.strptime(event_dict['time'][:-1],
+                                   '%Y-%m-%dT%H:%M:%S')
+                event_dict['timestamp'] = time.mktime(ts)
+
+                if host_name is not '':
+                    event_dict['host_name'] = host_name
+
+                if service_description is not '':
+                    event_dict['service_description'] = service_description
+
+                if event_type is not '':
+                    event_dict['event_type'] = event_type
+
+                init.append(event_dict)
+
+            init = sorted(init, key=lambda event: event.get('timestamp'),
+                          reverse=True)
+            return init[:limit_paging]
+
+        resp_list = functools.reduce(sort_by_time, response, [])
+
+        event_list = []
+
+        for resp in resp_list:
+            del resp['timestamp']
+            event_list.append(event.Event(**resp))
+
+        return event_list[offset_paging:limit+1]
+
+    else:
+        events = []
+
+        for item in response.items():
+            tags = item[0][1]
+            for point in response.get_points(tags=tags):
+                point.update(tags)
+                event_dict = _event_dict_from_influx_item(point)
+                events.append(event.Event(**event_dict))
+
+        return events
+
+
+def _event_dict_from_influx_item(item):
+    mappings = [
+        'time',
+        'event_type',
+        'host_name',
+        'service_description',
+        'state',
+        'state_type',
+        'attempts',
+        'downtime_type',
+        'notification_type',
+        'notification_method',
+        'contact',
+        'alert_type',
+        'output',
+        'acknowledgement'
+    ]
+
+    event_dict = {}
+
+    for field in mappings:
+        value = item.get(field, None)
+        if value is not None and value != "null":
+            event_dict[field] = value
+
+    return event_dict
