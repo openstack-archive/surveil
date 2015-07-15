@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import functools
 import json
 
 
@@ -20,8 +21,8 @@ def build_influxdb_query(live_query,
                          group_by=[],
                          order_by=[],
                          additional_filters={},
-                         limit=None):
-
+                         limit=None,
+                         multiple_series=False):
     query = ['SELECT * FROM', measurement]
 
     filters = {}
@@ -33,8 +34,11 @@ def build_influxdb_query(live_query,
         if live_query.time_interval:
             time = live_query.time_interval
         if live_query.paging:
-            limit = live_query.paging.size
-            offset = limit * live_query.paging.page
+            if multiple_series:
+                limit = live_query.paging.size * (live_query.paging.page + 1)
+            else:
+                limit = live_query.paging.size
+                offset = (live_query.paging.page + 1) * live_query.paging.size
 
     filters.update(additional_filters)
     query += _build_where_clause(filters, time)
@@ -90,3 +94,66 @@ def _build_where_clause(filters, time=None):
                                    value))
 
     return clause
+
+
+def paging(response, klass, live_query=None):
+    """Paging function
+
+    :param response: a python-influxdb resulset
+    :param klass: an Surveil API datamodel classe
+    :param live_query: an influxdb_query
+    :return: a dict of klass object. If the live query contain paging,
+    the dict is sorted by klass time attribute and contain
+    live_query.paging.size object for the live_query.paging.page page
+    """
+    if live_query and live_query.paging:
+        limit_paging = live_query.paging.size * (live_query.paging.page + 1)
+        limit = live_query.paging.size + live_query.paging.page
+        offset_paging = live_query.paging.page * live_query.paging.size
+
+        def sort_by_time(init, tag_point):
+            event = {}
+            event.update(tag_point[0])
+            event.update(tag_point[1])
+            init.append(klass(**event))
+            init.sort(key=lambda event: event.time,
+                      reverse=True)
+            return init[:limit_paging]
+
+        response = [(tag[1], _dict_from_influx_item(klass, point))
+                    for tag, points in response.items()
+                    for point in points]
+
+        event_list = functools.reduce(sort_by_time, response, [])
+
+        return event_list[offset_paging:limit+1]
+
+    else:
+        events = []
+
+        for item in response.items():
+            tags = item[0][1]
+            for point in response.get_points(tags=tags):
+                point.update(tags)
+                event_dict = _dict_from_influx_item(klass, point)
+                events.append(klass(**event_dict))
+
+        return events
+
+
+def _dict_from_influx_item(klass, item):
+    """Create a dict representing a python-influxdb item
+
+    :param item: an python influxdb item object
+    :param klass: an Surveil API datamodel classe
+    :return: a dict (klass_attribute:item_value)
+
+    >>> _event_dict_from_influx_item(Event, {"time": 4})
+    {'time': 4}
+    >>> _event_dict_from_influx_item(Event, {"time": "null"})
+    {}
+    """
+
+    mappings = [attr.name for attr in getattr(klass, "_wsme_attributes")]
+    return dict([(field, item.get(field, None)) for field in mappings
+                 if item.get(field, None) not in [None, "null"]])
