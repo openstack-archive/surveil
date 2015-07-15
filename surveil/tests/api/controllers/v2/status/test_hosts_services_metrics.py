@@ -230,7 +230,7 @@ class TestHostMetric(functionalTest.FunctionalTest):
                  "and host_name='srv-monitoring-01' "
                  "and service_description='load' "
                  "order by time desc "
-                 "limit 10 offset 30"
+                 "limit 10 offset 40"
                  ]
             )
             self.assert_count_equal_backport(
