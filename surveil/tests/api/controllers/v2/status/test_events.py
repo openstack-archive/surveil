@@ -20,7 +20,7 @@ from surveil.tests.api import functionalTest
 
 
 class TestEvents(functionalTest.FunctionalTest):
-
+    
     def setUp(self):
         super(TestEvents, self).setUp()
         self.influxdb_response = json.dumps({
@@ -44,7 +44,7 @@ class TestEvents(functionalTest.FunctionalTest):
                             ],
                             "values": [
                                 [
-                                    "2015-06-04T18:55:12Z",
+                                    "2015-06-04T18:55:19Z",
                                     1,
                                     "Connection refused",
                                     "CRITICAL",
@@ -52,7 +52,7 @@ class TestEvents(functionalTest.FunctionalTest):
                                     "SERVICE"
                                 ],
                                 [
-                                    '2015-06-04T18:55:12Z',
+                                    '2015-06-04T18:55:18Z',
                                     2,
                                     'Connection refused',
                                     'CRITICAL',
@@ -60,7 +60,7 @@ class TestEvents(functionalTest.FunctionalTest):
                                     'SERVICE'
                                 ],
                                 [
-                                    '2015-06-04T18:55:12Z',
+                                    '2015-06-04T18:55:17Z',
                                     3,
                                     'Connection refused',
                                     'CRITICAL',
@@ -86,7 +86,7 @@ class TestEvents(functionalTest.FunctionalTest):
                             ],
                             'values': [
                                 [
-                                    '2015-06-04T18:55:12Z',
+                                    '2015-06-04T18:55:16Z',
                                     1,
                                     'Warning - Connection refused',
                                     'CRITICAL',
@@ -94,7 +94,7 @@ class TestEvents(functionalTest.FunctionalTest):
                                     'SERVICE'
                                 ],
                                 [
-                                    '2015-06-04T18:55:12Z',
+                                    '2015-06-04T18:55:15Z',
                                     2,
                                     'Warning - Connection refused',
                                     'WARNING',
@@ -120,7 +120,7 @@ class TestEvents(functionalTest.FunctionalTest):
                             ],
                             'values': [
                                 [
-                                    '2015-06-04T18:55:12Z',
+                                    '2015-06-04T18:55:14Z',
                                     'SERVICE',
                                     'admin',
                                     'CRITICAL',
@@ -128,7 +128,7 @@ class TestEvents(functionalTest.FunctionalTest):
                                     None
                                 ],
                                 [
-                                    '2015-06-04T18:55:12Z',
+                                    '2015-06-04T18:55:13Z',
                                     'SERVICE',
                                     'admin',
                                     'CRITICAL',
@@ -174,7 +174,7 @@ class TestEvents(functionalTest.FunctionalTest):
                 "host_name": "myServiceIsDown",
                 "event_type": "ALERT",
                 "service_description": "iAmADownService",
-                "time": "2015-06-04T18:55:12Z",
+                "time": "2015-06-04T18:55:19Z",
                 "attempts": 1,
                 "output": "Connection refused",
                 "state": "CRITICAL",
@@ -185,7 +185,7 @@ class TestEvents(functionalTest.FunctionalTest):
                 'host_name': 'myServiceIsDown',
                 'event_type': 'ALERT',
                 'service_description': 'iAmADownService',
-                'time': '2015-06-04T18:55:12Z',
+                'time': '2015-06-04T18:55:18Z',
                 'attempts': 2,
                 'output': 'Connection refused',
                 'state': 'CRITICAL',
@@ -196,7 +196,7 @@ class TestEvents(functionalTest.FunctionalTest):
                 'host_name': 'myServiceIsDown',
                 'event_type': 'ALERT',
                 'service_description': 'iAmADownService',
-                'time': '2015-06-04T18:55:12Z',
+                'time': '2015-06-04T18:55:17Z',
                 'attempts': 3,
                 'output': 'Connection refused',
                 'state': 'CRITICAL',
@@ -207,7 +207,7 @@ class TestEvents(functionalTest.FunctionalTest):
                 'host_name': 'savoirfairelinux',
                 'event_type': 'ALERT',
                 'service_description': 'CPU',
-                'time': '2015-06-04T18:55:12Z',
+                'time': '2015-06-04T18:55:16Z',
                 'attempts': 1,
                 'output': 'Warning - Connection refused',
                 'state': 'CRITICAL',
@@ -218,7 +218,7 @@ class TestEvents(functionalTest.FunctionalTest):
                 'host_name': 'savoirfairelinux',
                 'event_type': 'ALERT',
                 'service_description': 'CPU',
-                'time': '2015-06-04T18:55:12Z',
+                'time': '2015-06-04T18:55:15Z',
                 'attempts': 2,
                 'output': 'Warning - Connection refused',
                 'state': 'WARNING',
@@ -229,7 +229,7 @@ class TestEvents(functionalTest.FunctionalTest):
                 'host_name': 'savoirfairelinux',
                 'event_type': 'NOTIFICATION',
                 'service_description': 'CPU',
-                'time': '2015-06-04T18:55:12Z',
+                'time': '2015-06-04T18:55:14Z',
                 'notification_type': 'SERVICE',
                 'contact': 'admin',
                 'state': 'CRITICAL',
@@ -239,7 +239,7 @@ class TestEvents(functionalTest.FunctionalTest):
                 'host_name': 'savoirfairelinux',
                 'event_type': 'NOTIFICATION',
                 'service_description': 'CPU',
-                'time': '2015-06-04T18:55:12Z',
+                'time': '2015-06-04T18:55:13Z',
                 'notification_type': 'SERVICE',
                 'contact': 'admin',
                 'state': 'CRITICAL',
@@ -343,4 +343,46 @@ class TestEvents(functionalTest.FunctionalTest):
                     'state': 'CRITICAL',
                     'notification_method': 'notify-service-by-email'
                 }]
+            )
+
+    def test_paging(self):
+        with requests_mock.Mocker() as m:
+            m.register_uri(requests_mock.GET,
+                           'http://influxdb:8086/query',
+                           text=self.influxdb_response)
+
+            query = {'paging': {'page': 1, 'size': 2}}
+
+            response = self.post_json('/v2/status/events', params=query)
+
+            self.assertEqual(
+                m.last_request.qs['q'],
+                ["select * from event limit 4"]
+            )
+
+            self.assert_count_equal_backport(
+                json.loads(response.body.decode()), [
+
+                    {
+                        'host_name': 'myServiceIsDown',
+                        'event_type': 'ALERT',
+                        'service_description': 'iAmADownService',
+                        'time': '2015-06-04T18:55:17Z',
+                        'attempts': 3,
+                        'output': 'Connection refused',
+                        'state': 'CRITICAL',
+                        'state_type': 'SOFT',
+                        'alert_type': 'SERVICE'
+                    },
+                    {
+                        'host_name': 'savoirfairelinux',
+                        'event_type': 'ALERT',
+                        'service_description': 'CPU',
+                        'time': '2015-06-04T18:55:16Z',
+                        'attempts': 1,
+                        'output': 'Warning - Connection refused',
+                        'state': 'CRITICAL',
+                        'state_type': 'HARD',
+                        'alert_type': 'SERVICE'
+                    }]
             )
