@@ -18,8 +18,6 @@ from surveil.api.datamodel.status import live_service
 from surveil.api.handlers import handler
 from surveil.api.handlers.status import mongodb_query
 
-import wsme
-
 
 class ServiceHandler(handler.Handler):
     """Fulfills a request on live services."""
@@ -35,14 +33,20 @@ class ServiceHandler(handler.Handler):
     def get_all(self, live_query=None):
         """Return all live services."""
 
-        if live_query:
-            lq_filters, lq_fields = _translate_live_query(live_query)
-        else:
-            lq_filters = {}
-            lq_fields = {}
+        service_mappings = {
+            "last_check": "last_chk",
+            "description": "service_description",
+            "plugin_output": "output",
+            "acknowledged": "problem_has_been_acknowledged",
+        }
 
-        query, fields = mongodb_query.build_mongodb_query(lq_filters,
-                                                          lq_fields)
+        if live_query:
+            lq = mongodb_query.translate_live_query(live_query.as_dict(),
+                                                    service_mappings)
+        else:
+            lq = {}
+
+        query, fields = mongodb_query.build_mongodb_query(lq)
 
         if fields != {}:
             mongo_dicts = (self.request.mongo_connection.
@@ -61,40 +65,6 @@ class ServiceHandler(handler.Handler):
             services.append(service)
 
         return services
-
-
-def _translate_live_query(live_query):
-    """Translate field names in a live query so that they match mongodb."""
-
-    #  Mappings
-    mapping = {
-        "last_check": "last_chk",
-        "description": "service_description",
-        "plugin_output": "output",
-        "acknowledged": "problem_has_been_acknowledged",
-    }
-
-    #  Load the fields
-    if live_query.fields != wsme.Unset:
-        fields = live_query.fields
-    else:
-        fields = []
-
-    #  Translate the fields
-    lq_fields = []
-    for field in fields:
-        lq_fields.append(mapping.get(field, field))
-
-    #  Load the filters
-    filters = json.loads(live_query.filters)
-
-    #  Translate the filters
-    for filter in filters.values():
-        for field in filter.keys():
-            value = filter.pop(field)
-            filter[mapping.get(field, field)] = value
-
-    return filters, lq_fields
 
 
 def _service_dict_from_mongo_item(mongo_item):

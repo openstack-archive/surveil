@@ -33,20 +33,25 @@ class MongoDBQueryTest(base.BaseTestCase):
             })
         )
 
-        lq_filters, lq_fields = live_service_handler._translate_live_query(
-            query
+        service_mappings = {
+            "last_check": "last_chk",
+            "description": "service_description",
+            "plugin_output": "output",
+            "acknowledged": "problem_has_been_acknowledged",
+        }
+        lq = mongodb_query.translate_live_query(
+            query.as_dict(),
+            service_mappings
         )
 
         self.assertEqual(
-            lq_fields, ['host_name', 'last_chk']
+            lq,
+            {'fields': [u'host_name', 'last_chk'],
+             'filters': {u'isnot': {u'state': [0, 1],
+                                    'last_chk': [u'test_keystone']}}}
         )
 
-        self.assertEqual(lq_filters,
-                         {'isnot': {'state': [0, 1],
-                                    'last_chk': ['test_keystone']}})
-
-        query, fields = mongodb_query.build_mongodb_query(lq_filters,
-                                                          lq_fields)
+        query, fields = mongodb_query.build_mongodb_query(lq)
 
         expected_query = {
             "state": {"$nin": [0, 1]},
