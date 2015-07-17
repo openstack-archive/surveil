@@ -12,13 +12,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import json
-
 from surveil.api.datamodel.status import live_host
 from surveil.api.handlers import handler
 from surveil.api.handlers.status import mongodb_query
-
-import wsme
 
 
 class HostHandler(handler.Handler):
@@ -35,21 +31,23 @@ class HostHandler(handler.Handler):
     def get_all(self, live_query=None):
         """Return all live hosts."""
 
+        host_mappings = {
+            "last_check": "last_chk",
+            "description": "display_name",
+            "plugin_output": "output",
+            "acknowledged": "problem_has_been_acknowledged"
+        }
+
         if live_query:
-            lq_filters, lq_fields = _translate_live_query(live_query)
+            lq = mongodb_query.translate_live_query(live_query.as_dict(),
+                                                    host_mappings)
         else:
-            lq_filters = {}
-            lq_fields = {}
+            lq = {}
 
-        query, fields = mongodb_query.build_mongodb_query(lq_filters,
-                                                          lq_fields)
+        query = mongodb_query.build_mongodb_query(lq)
 
-        if fields != {}:
-            mongo_dicts = (self.request.mongo_connection.
-                           alignak_live.hosts.find(query, fields))
-        else:
-            mongo_dicts = (self.request.mongo_connection.
-                           alignak_live.hosts.find(query))
+        mongo_dicts = (self.request.mongo_connection.
+                       alignak_live.hosts.find(*query))
 
         host_dicts = [
             _host_dict_from_mongo_item(s) for s in mongo_dicts
@@ -61,38 +59,6 @@ class HostHandler(handler.Handler):
             hosts.append(host)
 
         return hosts
-
-
-def _translate_live_query(live_query):
-    #  Mappings
-    mapping = {
-        "last_check": "last_chk",
-        "description": "display_name",
-        "plugin_output": "output",
-        "acknowledged": "problem_has_been_acknowledged"
-    }
-
-    #  Load the fields
-    if live_query.fields != wsme.Unset:
-        fields = live_query.fields
-    else:
-        fields = []
-
-    #  Translate the fields
-    lq_fields = []
-    for field in fields:
-        lq_fields.append(mapping.get(field, field))
-
-    #  Load the filters
-    filters = json.loads(live_query.filters)
-
-    #  Translate the filters
-    for filter in filters.values():
-        for field in filter.keys():
-            value = filter.pop(field)
-            filter[mapping.get(field, field)] = value
-
-    return filters, lq_fields
 
 
 def _host_dict_from_mongo_item(mongo_item):

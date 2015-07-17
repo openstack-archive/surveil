@@ -12,22 +12,32 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import json
 
-def build_mongodb_query(lq_filters, lq_fields):
-    #  Build the query
-    query = {}
-    for filter_name, filter_data in lq_filters.items():
+
+def build_mongodb_query(live_query):
+    query = []
+
+    #  Build the filters
+    filters = {}
+    for filter_name, filter_data in live_query.get('filters', {}).items():
         for field, values in filter_data.items():
-            query[field] = {
+            filters[field] = {
                 _get_mongo_filter(filter_name): values
             }
 
+    if filters:
+        query.append(filters)
+
     #  Build the required fields
     fields = {}
-    for field in lq_fields:
+    for field in live_query.get("fields", []):
         fields[field] = 1
 
-    return query, fields
+    if fields:
+        query.append(fields)
+
+    return query
 
 
 def _get_mongo_filter(livequery_filter):
@@ -36,3 +46,28 @@ def _get_mongo_filter(livequery_filter):
         "isnot": "$nin"
     }
     return filters[livequery_filter]
+
+
+def translate_live_query(live_query, mappings):
+    """Translate field names in a live query so that they match mongodb."""
+
+    #  Load the fields
+    fields = live_query.get("fields", [])
+
+    #  Translate the fields
+    translated_fields = []
+    for field in fields:
+        translated_fields.append(mappings.get(field, field))
+    live_query["fields"] = translated_fields
+
+    #  Load the filters
+    filters = json.loads(live_query.get("filters", '{}'))
+
+    #  Translate the filters
+    for filter in filters.values():
+        for field in filter.keys():
+            value = filter.pop(field)
+            filter[mappings.get(field, field)] = value
+    live_query["filters"] = filters
+
+    return live_query
