@@ -12,18 +12,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.config import realm
-from surveil.api.handlers import mongo_object_handler
+from surveil.api.datamodel.config import realm as datamodel
+from surveil.api.handlers import mongodb_mongoengine_object_handler
+from surveil.api.storage.mongodb.config import realm as storage
 
 
-class RealmHandler(mongo_object_handler.MongoObjectHandler):
+class RealmHandler(mongodb_mongoengine_object_handler.MongoObjectHandler):
     """Fulfills a request on the Realm resource."""
 
     def __init__(self, *args, **kwargs):
         super(RealmHandler, self).__init__(
-            'realms',
-            'realm_name',
-            realm.Realm,
+            datamodel.Realm,
+            storage.Realm,
             *args,
             **kwargs
         )

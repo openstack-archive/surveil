@@ -38,7 +38,7 @@ class RealmsController(rest.RestController):
     def get_one(self, realm_name):
         """Returns a specific realm."""
         handler = realm_handler.RealmHandler(pecan.request)
-        realm = handler.get(realm_name)
+        realm = handler.get({"realm_name": realm_name})
         return realm
 
     @util.policy_enforce(['authenticated'])
@@ -56,7 +56,7 @@ class RealmsController(rest.RestController):
     def delete(self, realm_name):
         """Deletes a specific realm."""
         handler = realm_handler.RealmHandler(pecan.request)
-        handler.delete(realm_name)
+        handler.delete({"realm_name": realm_name})
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(realm.Realm,
@@ -66,4 +66,7 @@ class RealmsController(rest.RestController):
     def put(self, realm_name, realm):
         """Updates a specific realm."""
         handler = realm_handler.RealmHandler(pecan.request)
-        handler.update(realm_name, realm)
+        handler.update(
+            {"realm_name": realm_name},
+            realm
+        )

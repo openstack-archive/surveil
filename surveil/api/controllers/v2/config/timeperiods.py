@@ -38,7 +38,7 @@ class TimePeriodsController(rest.RestController):
     def get_one(self, timeperiod_name):
         """Returns a specific time period."""
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
-        timeperiod = handler.get(timeperiod_name)
+        timeperiod = handler.get({"timeperiod_name": timeperiod_name})
         return timeperiod
 
     @util.policy_enforce(['authenticated'])
@@ -56,7 +56,7 @@ class TimePeriodsController(rest.RestController):
     def delete(self, timeperiod_name):
         """Returns a specific time period."""
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
-        handler.delete(timeperiod_name)
+        handler.delete({"timeperiod_name": timeperiod_name})
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(timeperiod.TimePeriod,
@@ -66,4 +66,4 @@ class TimePeriodsController(rest.RestController):
     def put(self, timeperiod_name, timeperiod):
         """Update a specific time period."""
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
-        handler.update(timeperiod_name, timeperiod)
+        handler.update({"timeperiod_name": timeperiod_name}, timeperiod)
