@@ -36,13 +36,11 @@ class HostHandler(handler.Handler):
         """Return all live hosts."""
 
         if live_query:
-            lq_filters, lq_fields = _translate_live_query(live_query)
+            lq = _translate_live_query(live_query.as_dict())
         else:
-            lq_filters = {}
-            lq_fields = {}
+            lq = {}
 
-        query, fields = mongodb_query.build_mongodb_query(lq_filters,
-                                                          lq_fields)
+        query, fields = mongodb_query.build_mongodb_query(lq)
 
         if fields != {}:
             mongo_dicts = (self.request.mongo_connection.
@@ -73,26 +71,25 @@ def _translate_live_query(live_query):
     }
 
     #  Load the fields
-    if live_query.fields != wsme.Unset:
-        fields = live_query.fields
-    else:
-        fields = []
+    fields = live_query.get("fields", [])
 
     #  Translate the fields
-    lq_fields = []
+    translated_fields = []
     for field in fields:
-        lq_fields.append(mapping.get(field, field))
+        translated_fields.append(mapping.get(field, field))
+    live_query["fields"] = translated_fields
 
     #  Load the filters
-    filters = json.loads(live_query.filters)
+    filters = json.loads(live_query.get("filters", '{}'))
 
     #  Translate the filters
     for filter in filters.values():
         for field in filter.keys():
             value = filter.pop(field)
             filter[mapping.get(field, field)] = value
+    live_query["filters"] = filters
 
-    return filters, lq_fields
+    return live_query
 
 
 def _host_dict_from_mongo_item(mongo_item):
