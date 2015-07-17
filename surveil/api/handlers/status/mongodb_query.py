@@ -13,18 +13,18 @@
 # under the License.
 
 
-def build_mongodb_query(lq_filters, lq_fields):
+def build_mongodb_query(live_query):
     #  Build the query
     query = {}
-    for filter_name, filter_data in lq_filters.items():
+    for filter_name, filter_data in live_query.get('filters', {}).items():
         for field, values in filter_data.items():
             query[field] = {
                 _get_mongo_filter(filter_name): values
             }
 
-    #  Build the required fields
+   #  Build the required fields
     fields = {}
-    for field in lq_fields:
+    for field in live_query.get("fields", []):
         fields[field] = 1
 
     return query, fields
