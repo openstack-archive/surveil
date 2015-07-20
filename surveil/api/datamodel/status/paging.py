@@ -19,10 +19,10 @@ from surveil.api.datamodel import types
 
 class Paging(types.Base):
 
-    size = wsme.wsattr(int, mandatory=False)
+    size = wsme.wsattr(int, mandatory=True)
     """Size of the result."""
 
-    page = wsme.wsattr(int, mandatory=False)
+    page = wsme.wsattr(int, mandatory=True)
     """Page number."""
 
     @classmethod

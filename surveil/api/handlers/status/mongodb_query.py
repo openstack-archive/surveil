@@ -17,6 +17,7 @@ import json
 
 def build_mongodb_query(live_query):
     query = []
+    kwargs = {}
 
     #  Build the filters
     filters = {}
@@ -37,7 +38,13 @@ def build_mongodb_query(live_query):
     if fields:
         query.append(fields)
 
-    return query
+    # Paging
+    paging = live_query.get('paging', None)
+    if paging is not None:
+        kwargs['limit'] = paging.size
+        kwargs['skip'] = paging.size * paging.page
+
+    return query, kwargs
 
 
 def _get_mongo_filter(livequery_filter):
