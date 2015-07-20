@@ -18,9 +18,9 @@ import mongoengine
 class HostGroup(mongoengine.Document):
     meta = {'collection': 'hostgroups'}
     hostgroup_name = mongoengine.StringField(unique=True)
-    members = mongoengine.StringField()
+    members = mongoengine.ListField()
     alias = mongoengine.StringField()
-    hostgroup_members = mongoengine.StringField()
+    hostgroup_members = mongoengine.ListField()
     notes = mongoengine.StringField()
     notes_url = mongoengine.StringField()
     action_url = mongoengine.StringField()

@@ -19,7 +19,7 @@ from surveil.api.datamodel import types
 
 
 class Service(types.Base):
-    host_name = wsme.wsattr(wtypes.text, mandatory=True)
+    host_name = wsme.wsattr([wtypes.text], mandatory=True)
 
     service_description = wsme.wsattr(wtypes.text, mandatory=True)
 
@@ -37,13 +37,13 @@ class Service(types.Base):
 
     notification_period = wsme.wsattr(wtypes.text, mandatory=False)
 
-    contacts = wsme.wsattr(wtypes.text, mandatory=False)
+    contacts = wsme.wsattr([wtypes.text], mandatory=False)
 
-    contact_groups = wsme.wsattr(wtypes.text, mandatory=False)
+    contact_groups = wsme.wsattr([wtypes.text], mandatory=False)
 
     passive_checks_enabled = wsme.wsattr(wtypes.text, mandatory=False)
 
-    use = wsme.wsattr(wtypes.text, mandatory=False)
+    use = wsme.wsattr([wtypes.text], mandatory=False)
 
     name = wsme.wsattr(wtypes.text, mandatory=False)
 

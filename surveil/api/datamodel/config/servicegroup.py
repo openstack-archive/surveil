@@ -20,9 +20,9 @@ from surveil.api.datamodel import types
 
 class ServiceGroup(types.Base):
     servicegroup_name = wsme.wsattr(wtypes.text, mandatory=True)
-    members = wsme.wsattr(wtypes.text, mandatory=True)
+    members = wsme.wsattr([wtypes.text], mandatory=True)
     alias = wsme.wsattr(wtypes.text, mandatory=False)
-    servicegroup_members = wsme.wsattr(wtypes.text, mandatory=False)
+    servicegroup_members = wsme.wsattr([wtypes.text], mandatory=False)
     notes = wsme.wsattr(wtypes.text, mandatory=False)
     notes_url = wsme.wsattr(wtypes.text, mandatory=False)
     action_url = wsme.wsattr(wtypes.text, mandatory=False)

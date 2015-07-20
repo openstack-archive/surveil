@@ -20,7 +20,7 @@ from surveil.api.datamodel import types
 
 class Realm(types.Base):
     realm_name = wsme.wsattr(wtypes.text, mandatory=True)
-    realm_members = wsme.wsattr(wtypes.text, mandatory=True)
+    realm_members = wsme.wsattr([wtypes.text], mandatory=True)
     default = wsme.wsattr(int, mandatory=True)
 
     @classmethod

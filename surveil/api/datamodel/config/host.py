@@ -30,21 +30,22 @@ class Host(types.Base):
     check_period = wsme.wsattr(wtypes.text, mandatory=False)
     """The time period during which active checks of this host can be made."""
 
-    contacts = wsme.wsattr(wtypes.text, mandatory=False)
+    contacts = wsme.wsattr([wtypes.text], mandatory=False)
     """A list of the short names of the contacts that should be notified."""
 
-    contact_groups = wsme.wsattr(wtypes.text, mandatory=False)
+    contact_groups = wsme.wsattr([wtypes.text], mandatory=False)
     """List of the short names of the contact groups that should be notified"""
 
     notification_interval = wsme.wsattr(int, mandatory=False)
 
     notification_period = wsme.wsattr(wtypes.text, mandatory=False)
 
-    use = wsme.wsattr(wtypes.text, mandatory=False)
+    use = wsme.wsattr([wtypes.text], mandatory=False)
     """The template to use for this host"""
 
     name = wsme.wsattr(wtypes.text, mandatory=False)
 
+    # TODO(aviau): int!
     register = wsme.wsattr(wtypes.text, mandatory=False)
 
     check_interval = wsme.wsattr(int, mandatory=False)

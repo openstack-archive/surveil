@@ -22,10 +22,10 @@ class NotificationWay(types.Base):
     notificationway_name = wsme.wsattr(wtypes.text, mandatory=True)
     host_notification_period = wsme.wsattr(wtypes.text, mandatory=True)
     service_notification_period = wsme.wsattr(wtypes.text, mandatory=True)
-    host_notification_options = wsme.wsattr(wtypes.text, mandatory=True)
-    service_notification_options = wsme.wsattr(wtypes.text, mandatory=True)
-    host_notification_commands = wsme.wsattr(wtypes.text, mandatory=True)
-    service_notification_commands = wsme.wsattr(wtypes.text, mandatory=True)
+    host_notification_options = wsme.wsattr([wtypes.text], mandatory=True)
+    service_notification_options = wsme.wsattr([wtypes.text], mandatory=True)
+    host_notification_commands = wsme.wsattr([wtypes.text], mandatory=True)
+    service_notification_commands = wsme.wsattr([wtypes.text], mandatory=True)
     min_business_impact = wsme.wsattr(int, mandatory=False)
 
     @classmethod

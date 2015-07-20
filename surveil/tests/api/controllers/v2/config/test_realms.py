@@ -27,12 +27,12 @@ class TestRealmsController(functionalTest.FunctionalTest):
         self.realms = [
             {
                 'realm_name': 'World',
-                'realm_members': 'Europe,America,Asia',
+                'realm_members': ['Europe', 'America', 'Asia'],
                 'default': 0
             },
             {
                 'realm_name': 'Anti-world',
-                'realm_members': 'void,black-hole',
+                'realm_members': ['void', 'black-hole'],
                 'default': 1
             },
         ]
@@ -60,7 +60,7 @@ class TestRealmsController(functionalTest.FunctionalTest):
     def test_create_realm(self):
         r = realm.Realm(
             realm_name='John',
-            realm_members="marie,bob,joe",
+            realm_members=['marie', 'bob', 'joe'],
             default=1
         )
 
@@ -86,13 +86,13 @@ class TestRealmsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.realms.find_one(
                 {'realm_name': 'World'}
             )['realm_members'],
-            'Europe,America,Asia'
+            ['Europe', 'America', 'Asia']
         )
 
         self.put_json(
             '/v2/config/realms/World',
             {"realm_name": "World",
-             "realm_members": "updated",
+             "realm_members": ["updated"],
              "default": 0}
         )
 
@@ -100,5 +100,5 @@ class TestRealmsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.realms.find_one(
                 {'realm_name': 'World'}
             )['realm_members'],
-            'updated'
+            ['updated']
         )

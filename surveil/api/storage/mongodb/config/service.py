@@ -17,9 +17,9 @@ import mongoengine
 
 class Service(mongoengine.Document):
     meta = {'collection': 'services'}
-    host_name = mongoengine.StringField(unique=True)
-    service_description = mongoengine.StringField()
-    contacts = mongoengine.StringField()
+    host_name = mongoengine.ListField()
+    service_description = mongoengine.StringField(unique=True)
+    contacts = mongoengine.ListField()
     check_command = mongoengine.StringField()
     max_check_attempts = mongoengine.IntField()
     check_interval = mongoengine.IntField()
@@ -27,8 +27,8 @@ class Service(mongoengine.Document):
     check_period = mongoengine.StringField()
     notification_interval = mongoengine.IntField()
     notification_period = mongoengine.StringField()
-    contact_groups = mongoengine.StringField()
+    contact_groups = mongoengine.ListField()
     passive_checks_enabled = mongoengine.StringField()
-    use = mongoengine.StringField()
+    use = mongoengine.ListField()
     name = mongoengine.StringField()
     register = mongoengine.StringField()
