@@ -7,9 +7,6 @@ RUN apt-get update && apt-get install -y vim python-pip python3-pip python-dev l
 # VirtualEnv
 RUN virtualenv /opt/surveil/env
 
-# Surveil needs alignak (as a lib)
-RUN useradd alignak && /opt/surveil/env/bin/pip install pycurl https://github.com/Alignak-monitoring/alignak/archive/d7f457d5ed94f08d9a6a38809106d3e0d35a1712.tar.gz
-
 # Download packs
 ENV MONITORING_TOOLS_VERSION 0.4.0
 RUN apt-get install -y subversion && \

@@ -15,7 +15,6 @@
 """Script to reinitialize surveil."""
 
 import optparse
-import subprocess
 import sys
 
 import influxdb
@@ -23,6 +22,7 @@ import pymongo
 import surveilclient.client as sc
 
 from surveil.api import config
+from surveil.cmd import pack_upload
 
 
 def main():
@@ -49,6 +49,14 @@ def main():
                       action='store_true')
     opts, _ = parser.parse_args(sys.argv)
 
+    surveil_api_url = 'http://localhost:5311/v2'
+    surveil_auth_url = 'http://localhost:5311/v2/auth'
+    surveil_api_version = '2_0'
+
+    cli_surveil = sc.Client(surveil_api_url,
+                            auth_url=surveil_auth_url,
+                            version=surveil_api_version)
+
     # Create a basic config in mongodb
     mongo = pymongo.MongoClient(config.surveil_api_config['mongodb_uri'])
 
@@ -71,73 +79,43 @@ def main():
     if opts.packs:
         print ("Uploading packs...")
         # Load the shinken packs
-        subprocess.call(
-            [
-                "surveil-pack-upload",
-                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
-                "/usr/share/monitoring/packs/sfl/openstack-keystone-http/",
-            ]
+        pack_upload.upload_pack(
+            "/usr/share/monitoring/packs/sfl/openstack-keystone-http/",
+            cli_surveil
         )
 
-        subprocess.call(
-            [
-                "surveil-pack-upload",
-                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
-                "/usr/share/monitoring/packs/sfl/openstack-glance-http/",
-            ]
+        pack_upload.upload_pack(
+            "/usr/share/monitoring/packs/sfl/openstack-glance-http/",
+            cli_surveil
         )
-
-        subprocess.call(
-            [
-                "surveil-pack-upload",
-                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
-                "/usr/share/monitoring/packs/sfl/generic-host/",
-            ]
+        pack_upload.upload_pack(
+            "/usr/share/monitoring/packs/sfl/generic-host/",
+            cli_surveil
         )
-
-        subprocess.call(
-            [
-                "surveil-pack-upload",
-                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
-                "/usr/share/monitoring/packs/sfl/linux-system-nrpe/",
-            ]
+        pack_upload.upload_pack(
+            "/usr/share/monitoring/packs/sfl/linux-system-nrpe/",
+            cli_surveil
         )
-
-        subprocess.call(
-            [
-                "surveil-pack-upload",
-                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
-                "/usr/share/monitoring/packs/sfl/openstack-nova-http/",
-            ]
+        pack_upload.upload_pack(
+            "/usr/share/monitoring/packs/sfl/openstack-nova-http/",
+            cli_surveil
         )
-
-        subprocess.call(
-            [
-                "surveil-pack-upload",
-                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
-                "/usr/share/monitoring/packs/sfl/openstack-cinder-http/",
-            ]
+        pack_upload.upload_pack(
+            "/usr/share/monitoring/packs/sfl/openstack-cinder-http/",
+            cli_surveil
         )
-
-        subprocess.call(
-            [
-                "surveil-pack-upload",
-                "--mongo-uri=" + config.surveil_api_config['mongodb_uri'],
-                "/usr/share/monitoring/packs/sfl/openstack-host/",
-            ]
+        pack_upload.upload_pack(
+            "/usr/share/monitoring/packs/sfl/openstack-host/",
+            cli_surveil
         )
-
-    cli_surveil = sc.Client('http://localhost:5311/v2',
-                            auth_url='http://localhost:5311/v2/auth',
-                            version='2_0')
 
     # if --demo is specified, you get more hosts.
     if opts.demo is True:
         print("Creating demo configuration...")
         # shinken's ws-arbiter
         cli_surveil.config.hosts.create(
-            use="generic-host",
-            contact_groups="admins",
+            use=["generic-host"],
+            contact_groups=["admins"],
             host_name="ws-arbiter",
             address="localhost"
         )
@@ -145,9 +123,9 @@ def main():
             check_command="check_tcp!7760",
             check_interval="5",
             check_period="24x7",
-            contact_groups="admins",
-            contacts="admin",
-            host_name="ws-arbiter",
+            contact_groups=["admins"],
+            contacts=["admin"],
+            host_name=["ws-arbiter"],
             max_check_attempts="5",
             notification_interval="30",
             notification_period="24x7",
@@ -158,7 +136,7 @@ def main():
         # Linux-keystone template
         cli_surveil.config.hosts.create(
             host_name='test_keystone',
-            use='openstack-keystone-http',
+            use=['openstack-keystone-http'],
             address='127.0.0.1',
             custom_fields={
                 "_OS_AUTH_URL": "bla",
@@ -173,7 +151,7 @@ def main():
         # openstack-host template
         cli_surveil.config.hosts.create(
             host_name='openstackceilometer-host',
-            use='openstack-host',
+            use=['openstack-host'],
             address='127.0.0.1',
             custom_fields={
                 "_OS_AUTH_URL": "bla",
@@ -188,7 +166,7 @@ def main():
         # DOWN HOST (cant resolve)
         cli_surveil.config.hosts.create(
             host_name='srv-apache-01',
-            use='linux-system-nrpe',
+            use=['linux-system-nrpe'],
             address='srv-apache-01',
             custom_fields={
                 "_TRAFFICLIMIT": "100000",
@@ -199,7 +177,7 @@ def main():
         cli_surveil.config.hosts.create(
             host_name='myparentisdown',
             address='dfgsdgsdgf',
-            parents='srv-apache-01',
+            parents=['srv-apache-01'],
         )
 
         # UP host, no template
@@ -211,7 +189,7 @@ def main():
         # NRPE host, UP
         cli_surveil.config.hosts.create(
             host_name='srv-monitoring-01',
-            use='linux-system-nrpe',
+            use=['linux-system-nrpe'],
             address='127.0.0.1',
             custom_fields={
                 "_TRAFFICLIMIT": "500000",
@@ -221,8 +199,8 @@ def main():
         # Has parent, UP
         cli_surveil.config.hosts.create(
             host_name='sw-iwebcore-01',
-            parents='srv-monitoring-01',
-            use='generic-host',
+            parents=['srv-monitoring-01'],
+            use=['generic-host'],
             address='127.0.0.1',
             custom_fields={
                 "_TRAFFICLIMIT": "200000",
@@ -232,8 +210,8 @@ def main():
         # Has chain of 2 parents, UP
         cli_surveil.config.hosts.create(
             host_name='srv-ldap-01',
-            parents='sw-iwebcore-01',
-            use='generic-host',
+            parents=['sw-iwebcore-01'],
+            use=['generic-host'],
             address='127.0.0.1',
             custom_fields={
                 "_TRAFFICLIMIT": "5000000",
@@ -242,8 +220,8 @@ def main():
 
         # UP host with down service
         cli_surveil.config.hosts.create(
-            use="generic-host",
-            contact_groups="admins",
+            use=["generic-host"],
+            contact_groups=["admins"],
             host_name="myserviceisdown",
             address="localhost"
         )
@@ -251,9 +229,9 @@ def main():
             check_command="check_tcp!4553",
             check_interval="5",
             check_period="24x7",
-            contact_groups="admins",
-            contacts="admin",
-            host_name="myserviceisdown",
+            contact_groups=["admins"],
+            contacts=["admin"],
+            host_name=["myserviceisdown"],
             max_check_attempts="5",
             notification_interval="30",
             notification_period="24x7",

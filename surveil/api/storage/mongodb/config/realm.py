@@ -17,6 +17,6 @@ import mongoengine
 
 class Realm(mongoengine.Document):
     meta = {'collection': 'realms'}
-    realm_name = mongoengine.StringField()
-    realm_members = mongoengine.StringField()
+    realm_name = mongoengine.StringField(unique=True)
+    realm_members = mongoengine.ListField()
     default = mongoengine.IntField()
