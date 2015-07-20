@@ -20,14 +20,18 @@ from surveil.api.datamodel import types
 
 class ContactGroup(types.Base):
     contactgroup_name = wsme.wsattr(wtypes.text, mandatory=True)
-    members = wsme.wsattr(wtypes.text, mandatory=False)
+    members = wsme.wsattr([wtypes.text], mandatory=False)
     alias = wsme.wsattr(wtypes.text, mandatory=False)
-    contactgroup_members = wsme.wsattr(wtypes.text, mandatory=False)
+    contactgroup_members = wsme.wsattr([wtypes.text], mandatory=False)
 
     @classmethod
     def sample(cls):
         return cls(
             contactgroup_name='novell-admins',
             alias='Novell Administrators',
-            members='jdoe,rtobert,tzach'
+            members=[
+                'jdoe',
+                'rtobert',
+                'tzach'
+            ]
         )

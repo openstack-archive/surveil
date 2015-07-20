@@ -20,7 +20,7 @@ from surveil.api.datamodel import types
 
 class TimePeriod(types.Base):
     timeperiod_name = wsme.wsattr(wtypes.text, mandatory=True)
-    exclude = wsme.wsattr(wtypes.text, mandatory=False)
+    exclude = wsme.wsattr([wtypes.text], mandatory=False)
 
     periods = wsme.wsattr(
         wtypes.DictType(wtypes.text, wtypes.text),
