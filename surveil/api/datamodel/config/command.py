@@ -27,10 +27,10 @@ from surveil.api.datamodel import types
 
 
 class Command(types.Base):
-    command_name = wsme.wsattr(wtypes.text, mandatory=True)
+    command_name = wsme.wsattr(wtypes.text, mandatory=False)
     """The name of the command"""
 
-    command_line = wsme.wsattr(wtypes.text, mandatory=True)
+    command_line = wsme.wsattr(wtypes.text, mandatory=False)
     """This directive is used to define what is actually executed by Shinken"""
 
     module_type = wsme.wsattr(wtypes.text, mandatory=False)

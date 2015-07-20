@@ -19,11 +19,11 @@ from surveil.api.datamodel import types
 
 
 class CheckModulation(types.Base):
-    checkmodulation_name = wsme.wsattr(wtypes.text, mandatory=True)
+    checkmodulation_name = wsme.wsattr(wtypes.text, mandatory=False)
 
-    check_command = wsme.wsattr(wtypes.text, mandatory=True)
+    check_command = wsme.wsattr(wtypes.text, mandatory=False)
 
-    check_period = wsme.wsattr(wtypes.text, mandatory=True)
+    check_period = wsme.wsattr(wtypes.text, mandatory=False)
 
     @classmethod
     def sample(cls):

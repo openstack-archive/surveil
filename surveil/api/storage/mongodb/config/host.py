@@ -20,16 +20,16 @@ class Host(mongoengine.Document):
         'collection': 'hosts',
         'strict': False
     }
-    host_name = mongoengine.StringField()
+    name = mongoengine.StringField(unique=True, sparse=True)
+    host_name = mongoengine.StringField(unique=True, sparse=True)
     address = mongoengine.StringField()
     max_check_attempts = mongoengine.IntField()
     check_period = mongoengine.StringField()
-    contacts = mongoengine.StringField()
-    contact_groups = mongoengine.StringField()
+    contacts = mongoengine.ListField()
+    contact_groups = mongoengine.ListField()
     notification_interval = mongoengine.IntField()
     notification_period = mongoengine.StringField()
-    use = mongoengine.StringField()
-    name = mongoengine.StringField()
+    use = mongoengine.ListField()
     register = mongoengine.StringField()
     check_interval = mongoengine.IntField()
     retry_interval = mongoengine.IntField()
