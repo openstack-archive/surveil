@@ -30,21 +30,22 @@ class Host(types.Base):
     check_period = wsme.wsattr(wtypes.text, mandatory=False)
     """The time period during which active checks of this host can be made."""
 
-    contacts = wsme.wsattr(wtypes.text, mandatory=False)
+    contacts = wsme.wsattr([wtypes.text], mandatory=False)
     """A list of the short names of the contacts that should be notified."""
 
-    contact_groups = wsme.wsattr(wtypes.text, mandatory=False)
+    contact_groups = wsme.wsattr([wtypes.text], mandatory=False)
     """List of the short names of the contact groups that should be notified"""
 
     notification_interval = wsme.wsattr(int, mandatory=False)
 
     notification_period = wsme.wsattr(wtypes.text, mandatory=False)
 
-    use = wsme.wsattr(wtypes.text, mandatory=False)
+    use = wsme.wsattr([wtypes.text], mandatory=False)
     """The template to use for this host"""
 
     name = wsme.wsattr(wtypes.text, mandatory=False)
 
+    # TODO(aviau): int!
     register = wsme.wsattr(wtypes.text, mandatory=False)
 
     check_interval = wsme.wsattr(int, mandatory=False)
@@ -61,13 +62,14 @@ class Host(types.Base):
     @classmethod
     def sample(cls):
         return cls(
-            use="generic-host",
+            use=["generic-host"],
             host_name="bogus-router",
             address="192.168.1.254",
             max_check_attempts=5,
             check_period="24x7",
-            contacts="admin,carl",
-            contact_groups="router-admins",
+            contacts=["admin",
+                      "carl"],
+            contact_groups=["router-admins"],
             notification_interval=30,
             notification_period="24x7",
             custom_fields={"OS_AUTH_URL": "http://localhost:8080/v2"}

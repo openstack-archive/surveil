@@ -28,19 +28,19 @@ class TestNotificationWayController(functionalTest.FunctionalTest):
                 'notificationway_name': 'email_in_day',
                 'host_notification_period': '24x7',
                 'service_notification_period': '24x7',
-                'host_notification_options': 'd,u',
-                'service_notification_options': 'w,c,r',
-                'host_notification_commands': 'notify-service',
-                'service_notification_commands': 'notify-host'
+                'host_notification_options': ['d', 'u'],
+                'service_notification_options': ['w', 'c', 'r'],
+                'host_notification_commands': ['notify-service'],
+                'service_notification_commands': ['notify-host']
             },
             {
                 'notificationway_name': 'email_all_time',
                 'host_notification_period': '24x7',
                 'service_notification_period': '24x7',
-                'host_notification_options': 'd,r,f,u',
-                'service_notification_options': 'w,f,c,r',
-                'host_notification_commands': 'notify-service',
-                'service_notification_commands': 'notify-host',
+                'host_notification_options': ['d', 'r', 'f', 'u'],
+                'service_notification_options': ['w', 'f', 'c', 'r'],
+                'host_notification_commands': ['notify-service'],
+                'service_notification_commands': ['notify-host'],
                 'min_business_impact': 5
             }
         ]
@@ -58,19 +58,19 @@ class TestNotificationWayController(functionalTest.FunctionalTest):
                     'notificationway_name': 'email_in_day',
                     'host_notification_period': '24x7',
                     'service_notification_period': '24x7',
-                    'host_notification_options': 'd,u',
-                    'service_notification_options': 'w,c,r',
-                    'host_notification_commands': 'notify-service',
-                    'service_notification_commands': 'notify-host'
+                    'host_notification_options': ['d', 'u'],
+                    'service_notification_options': ['w', 'c', 'r'],
+                    'host_notification_commands': ['notify-service'],
+                    'service_notification_commands': ['notify-host']
                 },
                 {
                     'notificationway_name': 'email_all_time',
                     'host_notification_period': '24x7',
                     'service_notification_period': '24x7',
-                    'host_notification_options': 'd,r,f,u',
-                    'service_notification_options': 'w,f,c,r',
-                    'host_notification_commands': 'notify-service',
-                    'service_notification_commands': 'notify-host',
+                    'host_notification_options': ['d', 'r', 'f', 'u'],
+                    'service_notification_options': ['w', 'f', 'c', 'r'],
+                    'host_notification_commands': ['notify-service'],
+                    'service_notification_commands': ['notify-host'],
                     'min_business_impact': 5
                 }
             ]
@@ -86,10 +86,10 @@ class TestNotificationWayController(functionalTest.FunctionalTest):
                 'notificationway_name': 'email_all_time',
                 'host_notification_period': '24x7',
                 'service_notification_period': '24x7',
-                'host_notification_options': 'd,r,f,u',
-                'service_notification_options': 'w,f,c,r',
-                'host_notification_commands': 'notify-service',
-                'service_notification_commands': 'notify-host',
+                'host_notification_options': ['d', 'r', 'f', 'u'],
+                'service_notification_options': ['w', 'f', 'c', 'r'],
+                'host_notification_commands': ['notify-service'],
+                'service_notification_commands': ['notify-host'],
                 'min_business_impact': 5
             }
         )
@@ -99,10 +99,10 @@ class TestNotificationWayController(functionalTest.FunctionalTest):
             'notificationway_name': 'test_create_notification',
             'host_notification_period': '24x7',
             'service_notification_period': '24x7',
-            'host_notification_options': 'd,r,f,u',
-            'service_notification_options': 'w,f,c,r',
-            'host_notification_commands': 'notify-service',
-            'service_notification_commands': 'notify-host',
+            'host_notification_options': ['d', 'r', 'f', 'u'],
+            'service_notification_options': ['w', 'f', 'c', 'r'],
+            'host_notification_commands': ['notify-service'],
+            'service_notification_commands': ['notify-host'],
             'min_business_impact': 5
         }
 
@@ -146,10 +146,10 @@ class TestNotificationWayController(functionalTest.FunctionalTest):
                 'notificationway_name': 'email_all_time',
                 'host_notification_period': '24x7',
                 'service_notification_period': '24x7',
-                'host_notification_options': 'd,r,f,u',
-                'service_notification_options': 'w,f,c,r',
-                'host_notification_commands': 'notify-service',
-                'service_notification_commands': 'notify-host',
+                'host_notification_options': ['d', 'r', 'f', 'u'],
+                'service_notification_options': ['w', 'f', 'c', 'r'],
+                'host_notification_commands': ['notify-service'],
+                'service_notification_commands': ['notify-host'],
                 'min_business_impact': 3
             }
         )
@@ -157,6 +157,6 @@ class TestNotificationWayController(functionalTest.FunctionalTest):
         self.assertEqual(
             self.mongoconnection.shinken.notificationways.find_one(
                 {'notificationway_name': 'email_all_time'}
-                )['min_business_impact'],
+            )['min_business_impact'],
             3
         )

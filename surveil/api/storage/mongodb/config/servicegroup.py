@@ -18,9 +18,9 @@ import mongoengine
 class ServiceGroup(mongoengine.Document):
     meta = {'collection': 'servicegroups'}
     servicegroup_name = mongoengine.StringField(unique=True)
-    members = mongoengine.StringField()
+    members = mongoengine.ListField()
     alias = mongoengine.StringField()
-    servicegroup_members = mongoengine.StringField()
+    servicegroup_members = mongoengine.ListField()
     notes = mongoengine.StringField()
     notes_url = mongoengine.StringField()
     action_url = mongoengine.StringField()

@@ -27,11 +27,13 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
         self.groups = [
             {
                 'hostgroup_name': 'novell-servers',
-                'members': 'netware1,netware2,netware3,netware4',
+                'members': ['netware1', 'netware2', 'netware3', 'netware4'],
+                'hostgroup_members': []
             },
             {
                 'hostgroup_name': 'otherservers',
-                'members': 'googul,sfl',
+                'members': ['googul', 'sfl'],
+                'hostgroup_members': []
             },
         ]
         self.mongoconnection.shinken.hostgroups.insert(
@@ -58,7 +60,7 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
     def test_create_hostgroup(self):
         s = hostgroup.HostGroup(
             hostgroup_name='John',
-            members="marie,bob,joe",
+            members=['marie', 'bob', 'joe'],
         )
 
         self.post_json('/v2/config/hostgroups', s.as_dict())
@@ -83,18 +85,18 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.hostgroups.find_one(
                 {'hostgroup_name': 'novell-servers'}
             )['members'],
-            'netware1,netware2,netware3,netware4'
+            ['netware1', 'netware2', 'netware3', 'netware4']
         )
 
         self.put_json(
             '/v2/config/hostgroups/novell-servers',
             {"hostgroup_name": "novell-servers",
-             "members": "updated"}
+             "members": ["updated"]}
         )
 
         self.assertEqual(
             self.mongoconnection.shinken.hostgroups.find_one(
                 {'hostgroup_name': 'novell-servers'}
             )['members'],
-            'updated'
+            ['updated']
         )

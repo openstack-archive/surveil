@@ -26,25 +26,41 @@ class TestHostController(functionalTest.FunctionalTest):
         super(TestHostController, self).setUp()
         self.hosts = [
             {
-                "host_name": "bogus-router", "address": "192.168.1.254",
-                "max_check_attempts": 5, "check_period": "24x7",
-                "contacts": "admin,carl", "contact_groups": "router-admins",
-                "notification_interval": 30, "notification_period": "24x7",
-                "custom_fields": {}
+                "host_name": "bogus-router",
+                "address": "192.168.1.254",
+                "max_check_attempts": 5,
+                "check_period": "24x7",
+                "contacts": ["admin", "carl"],
+                "contact_groups": ["router-admins"],
+                "notification_interval": 30,
+                "notification_period": "24x7",
+                "custom_fields": {},
+                "use": []
             },
             {
-                "host_name": "bogus-router2", "address": "192.168.1.254",
-                "max_check_attempts": 5, "check_period": "24x7",
-                "contacts": "admin,carl", "contact_groups": "router-admins",
-                "notification_interval": 30, "notification_period": "24x7",
-                "custom_fields": {}
+                "host_name": "bogus-router2",
+                "address": "192.168.1.254",
+                "max_check_attempts": 5,
+                "check_period": "24x7",
+                "contacts": ["admin", "carl"],
+                "contact_groups": ["router-admins"],
+                "notification_interval": 30,
+                "notification_period": "24x7",
+                "custom_fields": {},
+                "use": []
             },
             {
-                "host_name": "bogus-router333", "address": "192.168.1.254",
-                "max_check_attempts": 5, "check_period": "24x7",
-                "contacts": "admin,carl", "contact_groups": "router-admins",
-                "notification_interval": 30, "notification_period": "24x7",
-                'use': 'test', "custom_fields": {}
+                "host_name": "bogus-router333",
+                "address": "192.168.1.254",
+                "max_check_attempts": 5,
+                "check_period": "24x7",
+                "contacts": ["admin", "carl"],
+                "contact_groups": ["router-admins"],
+                "notification_interval": 30,
+                "notification_period": "24x7",
+                'use': ['test'],
+                "custom_fields": {},
+                "use": []
             },
         ]
         self.mongoconnection.shinken.hosts.insert(
@@ -53,7 +69,7 @@ class TestHostController(functionalTest.FunctionalTest):
 
         self.services = [
             {
-                "host_name": "bogus-router",
+                "host_name": ["bogus-router"],
                 "service_description": "service-example",
                 "check_command": "check-disk!/dev/sdb1",
                 "max_check_attempts": 5,
@@ -62,8 +78,9 @@ class TestHostController(functionalTest.FunctionalTest):
                 "check_period": "24x7",
                 "notification_interval": 30,
                 "notification_period": "24x7",
-                "contacts": "surveil-ptl,surveil-bob",
-                "contact_groups": "linux-admins"
+                "contacts": ["surveil-ptl", "surveil-bob"],
+                "contact_groups": ["linux-admins"],
+                "use": []
             }
         ]
         self.mongoconnection.shinken.services.insert(
@@ -82,11 +99,17 @@ class TestHostController(functionalTest.FunctionalTest):
     def test_get_all_hosts_templates(self):
         self.mongoconnection.shinken.hosts.insert(
             copy.deepcopy(
-                {"host_name": "bogus-router345345", "address": "192.168.1.254",
-                 "max_check_attempts": 5, "check_period": "24x7",
-                 "contacts": "admin,carl", "contact_groups": "router-admins",
-                 "notification_interval": 30, "notification_period": "24x7",
-                 "register": "0", "custom_fields": {}}
+                {"host_name": "bogus-router345345",
+                 "address": "192.168.1.254",
+                 "max_check_attempts": 5,
+                 "check_period": "24x7",
+                 "contacts": ["admin", "carl"],
+                 "contact_groups": ["router-admins"],
+                 "notification_interval": 30,
+                 "notification_period": "24x7",
+                 "register": "0",
+                 "custom_fields": {},
+                 "use": []}
             )
         )
         response = self.get('/v2/config/hosts')
@@ -116,7 +139,7 @@ class TestHostController(functionalTest.FunctionalTest):
     def test_update_host(self):
         put_host = {
             u'host_name': u'bogus-router333',
-            u'contacts': u'newcontacts',
+            u'contacts': [u'newcontacts'],
         }
         response = self.put_json(
             "/v2/config/hosts/bogus-router333", params=put_host
@@ -132,12 +155,12 @@ class TestHostController(functionalTest.FunctionalTest):
             'address': u'192.168.1.254',
             'check_period': u'24x7',
             'notification_interval': 30,
-            'contacts': u'newcontacts',
+            'contacts': [u'newcontacts'],
             'notification_period': u'24x7',
-            'contact_groups': u'router-admins',
+            'contact_groups': [u'router-admins'],
             'host_name': u'bogus-router333',
             'max_check_attempts': 5,
-            'use': u'test',
+            'use': [],
             'custom_fields': {},
         }
 
@@ -159,11 +182,12 @@ class TestHostController(functionalTest.FunctionalTest):
             "address": "192.168.1.254",
             "max_check_attempts": 5,
             "check_period": "24x7",
-            "contacts": "admin,carl",
-            "contact_groups": "router-admins",
+            "contacts": ["admin", "carl"],
+            "contact_groups": ["router-admins"],
             "notification_interval": 3,
             "notification_period": "24x7",
-            "custom_fields": {}
+            "custom_fields": {},
+            "use": []
         }
         response = self.post_json("/v2/config/hosts", params=new_host)
 

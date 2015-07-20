@@ -22,10 +22,10 @@ class NotificationWay(types.Base):
     notificationway_name = wsme.wsattr(wtypes.text, mandatory=True)
     host_notification_period = wsme.wsattr(wtypes.text, mandatory=True)
     service_notification_period = wsme.wsattr(wtypes.text, mandatory=True)
-    host_notification_options = wsme.wsattr(wtypes.text, mandatory=True)
-    service_notification_options = wsme.wsattr(wtypes.text, mandatory=True)
-    host_notification_commands = wsme.wsattr(wtypes.text, mandatory=True)
-    service_notification_commands = wsme.wsattr(wtypes.text, mandatory=True)
+    host_notification_options = wsme.wsattr([wtypes.text], mandatory=True)
+    service_notification_options = wsme.wsattr([wtypes.text], mandatory=True)
+    host_notification_commands = wsme.wsattr([wtypes.text], mandatory=True)
+    service_notification_commands = wsme.wsattr([wtypes.text], mandatory=True)
     min_business_impact = wsme.wsattr(int, mandatory=False)
 
     @classmethod
@@ -34,8 +34,8 @@ class NotificationWay(types.Base):
             notificationway_name="email_in_day",
             host_notification_period="24x7",
             service_notification_period="24x7",
-            host_notification_options="d,u,r,f,s",
-            service_notification_options="w,u,c,r,f",
-            service_notification_commands="notify-service",
-            host_notification_commands="notify-host"
+            host_notification_options=["d", "u", "r", "f", "s"],
+            service_notification_options=["w", "u", "c", "r", "f"],
+            service_notification_commands=["notify-service"],
+            host_notification_commands=["notify-host"]
             )
