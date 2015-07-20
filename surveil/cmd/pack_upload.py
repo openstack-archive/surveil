@@ -16,12 +16,12 @@
 """Script to push a Shinken pack to Surveil"""
 
 import argparse
-import fnmatch
 import os
 import sys
 
+from surveil.cmd import surveil_from_nagios
+
 from pymongo import mongo_client
-from alignak.objects import config
 
 
 def main():
@@ -41,32 +41,8 @@ def main():
     pack_dir = options.pack[0]
     pack_name = os.path.basename(os.path.normpath(pack_dir))
 
-    # Find the .cfg files
-    cfg_files = [
-        os.path.join(dirpath, f)
-        for dirpath, dirnames, files in os.walk(pack_dir)
-        for f in fnmatch.filter(files, '*.cfg')
-    ]
-
-    # Load the config
-    conf = config.Config()
-    loaded_conf = conf.read_config(cfg_files)
-    raw_objects = conf.read_config_buf(loaded_conf)
-
-    # Remove the empty items
-    non_empty_config = {k: v for k, v in raw_objects.items() if v}
-
-    for config_type in non_empty_config:
-        for config_item in non_empty_config[config_type]:
-            # Tag the config objects
-            config_item['SURVEIL_PACK_NAME'] = pack_name
-
-            # Replace lists with csv
-            items_to_modify = (
-                [i for i in config_item.items() if isinstance(i[1], list)]
-            )
-            for i in items_to_modify:
-                config_item[i[0]] = ','.join(i[1])
+    surveil_config = surveil_from_nagios.load_config(pack_dir)
+    surveil_config = tag_configuration(surveil_config, pack_name)
 
     # Remove the existing pack from mongodb
     mongo = mongo_client.MongoClient(options.mongo_uri)
@@ -79,7 +55,15 @@ def main():
         mongo_shinken[collection].remove({'SURVEIL_PACK_NAME': pack_name})
 
     # Add the replacement pack
-    for config_type in non_empty_config:
-            mongo_shinken[config_type + 's'].insert(
-                non_empty_config[config_type]
+    for config_type in surveil_config:
+            mongo_shinken[config_type].insert(
+                surveil_config[config_type]
             )
+
+
+def tag_configuration(config, pack_name):
+    for collection in config.values():
+        for object in collection:
+            object['SURVEIL_PACK_NAME'] = pack_name
+    return config
+
