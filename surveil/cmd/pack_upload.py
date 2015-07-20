@@ -1,27 +1,25 @@
 # Copyright 2014 - Savoir-Faire Linux inc.
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see `<http://www.gnu.org/licenses/>`.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 
 """Script to push a Shinken pack to Surveil"""
 
 import argparse
-import fnmatch
-import os
 import sys
 
-from pymongo import mongo_client
-from alignak.objects import config
+import surveilclient.client as sc
+
+from surveil.cmd import surveil_from_nagios
 
 
 def main():
@@ -30,56 +28,37 @@ def main():
         prog='surveil-pack-upload',
         add_help=False,
     )
-    parser.add_argument('--mongo-uri',
-                        default='mongodb://localhost:27017',
-                        help='Defaults to localhost', type=str)
-    parser.add_argument('pack', metavar='[Pack]', type=str, nargs=1,
+    parser.add_argument('--surveil_api_url',
+                        default='http://localhost:5311/v2',
+                        type=str)
+    parser.add_argument('--surveil_auth_url',
+                        default='http://localhost:5311/v2/auth',
+                        type=str)
+    parser.add_argument('--surveil_api_version',
+                        default='2_0',
+                        type=str)
+    parser.add_argument('pack',
+                        metavar='[Pack]',
+                        type=str,
+                        nargs=1,
                         help='Pack directory')
 
     (options, args) = parser.parse_known_args(sys.argv[1:])
 
-    pack_dir = options.pack[0]
-    pack_name = os.path.basename(os.path.normpath(pack_dir))
+    cli_surveil = sc.Client(options.surveil_api_url,
+                            auth_url=options.surveil_auth_url,
+                            version=options.surveil_api_version)
 
-    # Find the .cfg files
-    cfg_files = [
-        os.path.join(dirpath, f)
-        for dirpath, dirnames, files in os.walk(pack_dir)
-        for f in fnmatch.filter(files, '*.cfg')
-    ]
+    upload_pack(options.pack[0], cli_surveil)
 
-    # Load the config
-    conf = config.Config()
-    loaded_conf = conf.read_config(cfg_files)
-    raw_objects = conf.read_config_buf(loaded_conf)
 
-    # Remove the empty items
-    non_empty_config = {k: v for k, v in raw_objects.items() if v}
+def upload_pack(pack_dir, client):
+    # pack_name = os.path.basename(os.path.normpath(pack_dir))
 
-    for config_type in non_empty_config:
-        for config_item in non_empty_config[config_type]:
-            # Tag the config objects
-            config_item['SURVEIL_PACK_NAME'] = pack_name
+    surveil_config = surveil_from_nagios.load_config(pack_dir)
 
-            # Replace lists with csv
-            items_to_modify = (
-                [i for i in config_item.items() if isinstance(i[1], list)]
-            )
-            for i in items_to_modify:
-                config_item[i[0]] = ','.join(i[1])
-
-    # Remove the existing pack from mongodb
-    mongo = mongo_client.MongoClient(options.mongo_uri)
-    mongo_shinken = mongo.shinken
-    for collection in (
-            [c for c
-             in mongo_shinken.collection_names()
-             if not c.startswith("system.")]
-    ):
-        mongo_shinken[collection].remove({'SURVEIL_PACK_NAME': pack_name})
-
-    # Add the replacement pack
-    for config_type in non_empty_config:
-            mongo_shinken[config_type + 's'].insert(
-                non_empty_config[config_type]
-            )
+    config_manager = client.config
+    for object_type, objects in surveil_config.items():
+        object_manager = getattr(config_manager, object_type)
+        for object in objects:
+            object_manager.create(**object)

@@ -34,7 +34,7 @@ RUN cd /tmp && \
 # mod-surveil
 RUN pip install python-surveilclient==0.11.0
 RUN cd /tmp && \
-    wget -O mod-surveil-config.tar.gz https://github.com/Alignak-monitoring/mod-surveil/archive/8d7e37333de85f5e90d6fe1780e55e4d90515a2f.tar.gz && \
+    wget -O mod-surveil-config.tar.gz https://github.com/Alignak-monitoring/mod-surveil/archive/fdc98b4fc036aa483ecb58459f11f9a87cf2254a.tar.gz && \
     tar -zxvf mod-surveil-config.tar.gz && \
     mv /tmp/mod-surveil-*/alignak/modules/mod_surveil /var/lib/alignak/modules/mod-surveil && \
     rm -rfv /tmp/mod-surveil*
