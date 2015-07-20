@@ -27,11 +27,20 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
         self.groups = [
             {
                 'servicegroup_name': 'dbservices',
-                'members': 'ms1,SQL Server,ms1,SQL Serverc Agent,ms1,SQL DTC',
+                'members': ['ms1',
+                            'SQL Server',
+                            'ms1',
+                            'SQL Serverc Agent',
+                            'ms1',
+                            'SQL DTC'],
+                'servicegroup_members': []
             },
             {
                 'servicegroup_name': 'otherservices',
-                'members': 'some,other,member',
+                'members': ['some',
+                            'other',
+                            'member'],
+                'servicegroup_members': []
             },
         ]
         self.mongoconnection.shinken.servicegroups.insert(
@@ -58,7 +67,7 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
     def test_create_servicegroup(self):
         s = servicegroup.ServiceGroup(
             servicegroup_name='John',
-            members="marie,bob,joe",
+            members=['marie', 'bob', 'joe'],
         )
 
         self.post_json('/v2/config/servicegroups', s.as_dict())
@@ -83,18 +92,23 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.servicegroups.find_one(
                 {'servicegroup_name': 'dbservices'}
             )['members'],
-            'ms1,SQL Server,ms1,SQL Serverc Agent,ms1,SQL DTC'
+            ['ms1',
+             'SQL Server',
+             'ms1',
+             'SQL Serverc Agent',
+             'ms1',
+             'SQL DTC']
         )
 
         self.put_json(
             '/v2/config/servicegroups/dbservices',
             {"servicegroup_name": "dbservices",
-             "members": "updated"}
+             "members": ["updated"]}
         )
 
         self.assertEqual(
             self.mongoconnection.shinken.servicegroups.find_one(
                 {'servicegroup_name': 'dbservices'}
             )['members'],
-            'updated'
+            ['updated']
         )

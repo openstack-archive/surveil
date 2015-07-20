@@ -19,8 +19,8 @@ from surveil.api.datamodel import types
 
 
 class MacroModulation(types.Base):
-    macromodulation_name = wsme.wsattr(wtypes.text, mandatory=True)
-    modulation_period = wsme.wsattr(wtypes.text, mandatory=True)
+    macromodulation_name = wsme.wsattr(wtypes.text, mandatory=False)
+    modulation_period = wsme.wsattr(wtypes.text, mandatory=False)
 
     macros = wsme.wsattr(
         wtypes.DictType(wtypes.text, int),
