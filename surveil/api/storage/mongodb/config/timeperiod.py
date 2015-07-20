@@ -20,3 +20,4 @@ class TimePeriod(mongoengine.Document):
     timeperiod_name = mongoengine.StringField(unique=True)
     exclude = mongoengine.StringField()
     periods = mongoengine.DictField()
+    alias = mongoengine.StringField()

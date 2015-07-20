@@ -25,7 +25,7 @@ class TestServiceController(functionalTest.FunctionalTest):
         super(TestServiceController, self).setUp()
         self.services = [
             {
-                "host_name": "sample-server1",
+                "host_name": ["sample-server1"],
                 "service_description": "check-",
                 "check_command": "check-disk!/dev/sdb1",
                 "max_check_attempts": 5,
@@ -34,12 +34,13 @@ class TestServiceController(functionalTest.FunctionalTest):
                 "check_period": "24x7",
                 "notification_interval": 30,
                 "notification_period": "24x7",
-                "contacts": "surveil-ptl,surveil-bob",
-                "contact_groups": "linux-admins"
+                "contacts": ["surveil-ptl", "surveil-bob"],
+                "contact_groups": ["linux-admins"],
+                "use": []
             },
             {
-                "host_name": "sample-server2",
-                "service_description": "check-disk-sdb",
+                "host_name": ["sample-server2"],
+                "service_description": "check-disk-sdb2",
                 "check_command": "check-disk!/dev/sdb1",
                 "max_check_attempts": 5,
                 "check_interval": 5,
@@ -47,12 +48,13 @@ class TestServiceController(functionalTest.FunctionalTest):
                 "check_period": "24x7",
                 "notification_interval": 30,
                 "notification_period": "24x7",
-                "contacts": "surveil-ptl,surveil-bob",
-                "contact_groups": "linux-admins"
+                "contacts": ["surveil-ptl", "surveil-bob"],
+                "contact_groups": ["linux-admins"],
+                "use": []
             },
             {
-                "host_name": "sample-server3",
-                "service_description": "check-disk-sdb",
+                "host_name": ["sample-server3"],
+                "service_description": "check-disk-sdb3",
                 "check_command": "check-disk!/dev/sdb1",
                 "max_check_attempts": 5,
                 "check_interval": 5,
@@ -60,8 +62,9 @@ class TestServiceController(functionalTest.FunctionalTest):
                 "check_period": "24x7",
                 "notification_interval": 30,
                 "notification_period": "24x7",
-                "contacts": "surveil-ptl,surveil-bob",
-                "contact_groups": "linux-admins"
+                "contacts": ["surveil-ptl", "surveil-bob"],
+                "contact_groups": ["linux-admins"],
+                "use": []
             },
         ]
         self.mongoconnection.shinken.services.insert(
@@ -80,8 +83,8 @@ class TestServiceController(functionalTest.FunctionalTest):
     def test_get_all_services_templates(self):
         self.mongoconnection.shinken.services.insert(
             copy.deepcopy(
-                {"host_name": "sample-server444",
-                 "service_description": "check-disk-sdb",
+                {"host_name": ["sample-server444"],
+                 "service_description": "check-disk-sdb2",
                  "check_command": "check-disk!/dev/sdb1",
                  "max_check_attempts": 5,
                  "check_interval": 5,
@@ -89,9 +92,9 @@ class TestServiceController(functionalTest.FunctionalTest):
                  "check_period": "24x7",
                  "notification_interval": 30,
                  "notification_period": "24x7",
-                 "contacts": "surveil-ptl,surveil-bob",
+                 "contacts": ["surveil-ptl", "surveil-bob"],
                  "register": "0",
-                 "contact_groups": "linux-admins"}
+                 "contact_groups": ["linux-admins"]}
             )
         )
         response = self.get('/v2/config/services')
@@ -112,7 +115,7 @@ class TestServiceController(functionalTest.FunctionalTest):
 
     def test_add_service(self):
         new_service = {
-            "host_name": "SOMEHOSTNAME",
+            "host_name": ["SOMEHOSTNAME"],
             "service_description": "check-new-thing",
             "check_command": "check-disk!/dev/sdb1",
             "max_check_attempts": 5,
@@ -121,8 +124,9 @@ class TestServiceController(functionalTest.FunctionalTest):
             "check_period": "24x7",
             "notification_interval": 30,
             "notification_period": "24x7",
-            "contacts": "surveil-ptl,surveil-bob",
-            "contact_groups": "linux-admins"
+            "contacts": ["surveil-ptl", "surveil-bob"],
+            "contact_groups": ["linux-admins"],
+            "use": []
         }
         response = self.post_json(
             "/v2/config/services",
