@@ -18,6 +18,6 @@ import mongoengine
 class ContactGroup(mongoengine.Document):
     meta = {'collection': 'contactgroups'}
     contactgroup_name = mongoengine.StringField(unique=True)
-    members = mongoengine.StringField()
+    members = mongoengine.ListField()
     alias = mongoengine.StringField()
-    contactgroup_members = mongoengine.StringField()
+    contactgroup_members = mongoengine.ListField()
