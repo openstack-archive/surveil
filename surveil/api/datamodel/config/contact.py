@@ -19,7 +19,7 @@ from surveil.api.datamodel import types
 
 
 class Contact(types.Base):
-    contact_name = wsme.wsattr(wtypes.text, mandatory=True)
+    contact_name = wsme.wsattr(wtypes.text, mandatory=False)
 
     host_notifications_enabled = wsme.wsattr(int, mandatory=False)
 
@@ -29,13 +29,17 @@ class Contact(types.Base):
 
     service_notification_period = wsme.wsattr(wtypes.text, mandatory=False)
 
-    host_notification_options = wsme.wsattr(wtypes.text, mandatory=False)
+    host_notification_options = wsme.wsattr(wtypes.ArrayType(wtypes.text),
+                                            mandatory=False)
 
-    service_notification_options = wsme.wsattr(wtypes.text, mandatory=False)
+    service_notification_options = wsme.wsattr(wtypes.ArrayType(wtypes.text),
+                                               mandatory=False)
 
-    host_notification_commands = wsme.wsattr(wtypes.text, mandatory=False)
+    host_notification_commands = wsme.wsattr(wtypes.ArrayType(wtypes.text),
+                                             mandatory=False)
 
-    service_notification_commands = wsme.wsattr(wtypes.text, mandatory=False)
+    service_notification_commands = wsme.wsattr(wtypes.ArrayType(wtypes.text),
+                                                mandatory=False)
 
     email = wsme.wsattr(wtypes.text, mandatory=False)
 
