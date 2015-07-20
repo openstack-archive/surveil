@@ -19,7 +19,7 @@ from surveil.api.datamodel import types
 
 
 class Service(types.Base):
-    host_name = wsme.wsattr(wtypes.text, mandatory=True)
+    host_name = wsme.wsattr([wtypes.text], mandatory=True)
 
     service_description = wsme.wsattr(wtypes.text, mandatory=True)
 
@@ -37,13 +37,13 @@ class Service(types.Base):
 
     notification_period = wsme.wsattr(wtypes.text, mandatory=False)
 
-    contacts = wsme.wsattr(wtypes.text, mandatory=False)
+    contacts = wsme.wsattr([wtypes.text], mandatory=False)
 
-    contact_groups = wsme.wsattr(wtypes.text, mandatory=False)
+    contact_groups = wsme.wsattr([wtypes.text], mandatory=False)
 
     passive_checks_enabled = wsme.wsattr(wtypes.text, mandatory=False)
 
-    use = wsme.wsattr(wtypes.text, mandatory=False)
+    use = wsme.wsattr([wtypes.text], mandatory=False)
 
     name = wsme.wsattr(wtypes.text, mandatory=False)
 
@@ -52,7 +52,7 @@ class Service(types.Base):
     @classmethod
     def sample(cls):
         return cls(
-            host_name="sample-server",
+            host_name=["sample-server"],
             service_description="check-disk-sdb",
             check_command="check-disk!/dev/sdb1",
             max_check_attempts=5,
@@ -61,7 +61,7 @@ class Service(types.Base):
             check_period="24x7",
             notification_interval=3,
             notification_period="24x7",
-            contacts="surveil-ptl,surveil-bob",
-            contact_groups="linux-admins",
+            contacts=["surveil-ptl", "surveil-bob"],
+            contact_groups=["linux-admins"],
             passive_checks_enabled='1',
         )

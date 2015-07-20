@@ -20,13 +20,13 @@ from surveil.api.datamodel import types
 
 class Realm(types.Base):
     realm_name = wsme.wsattr(wtypes.text, mandatory=True)
-    realm_members = wsme.wsattr(wtypes.text, mandatory=True)
+    realm_members = wsme.wsattr([wtypes.text], mandatory=True)
     default = wsme.wsattr(int, mandatory=True)
 
     @classmethod
     def sample(cls):
         return cls(
             realm_name='World',
-            realm_members='Europe,America,Asia',
+            realm_members=['Europe', 'America', 'Asia'],
             default=0
         )

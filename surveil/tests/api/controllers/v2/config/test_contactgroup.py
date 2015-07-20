@@ -27,11 +27,13 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
         self.groups = [
             {
                 'contactgroup_name': 'novell-admins',
-                'members': 'jdoe,rtobert,tzach',
+                'members': ["jdoe", "rtobert", "tzach"],
+                'contactgroup_members': []
             },
             {
                 'contactgroup_name': 'linux-adminx',
-                'members': 'linus,richard',
+                'members': ['linus', 'richard'],
+                'contactgroup_members': []
             },
         ]
         self.mongoconnection.shinken.contactgroups.insert(
@@ -58,7 +60,7 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
     def test_create_contactgroup(self):
         g = contactgroup.ContactGroup(
             contactgroup_name='John',
-            members="marie,bob,joe",
+            members=["marie", "bob", "joe"],
         )
 
         self.post_json('/v2/config/contactgroups', g.as_dict())
@@ -83,18 +85,18 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.contactgroups.find_one(
                 {'contactgroup_name': 'novell-admins'}
             )['members'],
-            'jdoe,rtobert,tzach'
+            ['jdoe', 'rtobert', 'tzach']
         )
 
         self.put_json(
             '/v2/config/contactgroups/novell-admins',
             {"contactgroup_name": "novell-admins",
-             "members": "updated"}
+             "members": ["updated"]}
         )
 
         self.assertEqual(
             self.mongoconnection.shinken.contactgroups.find_one(
                 {'contactgroup_name': 'novell-admins'}
             )['members'],
-            'updated'
+            ['updated']
         )

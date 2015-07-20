@@ -20,9 +20,9 @@ from surveil.api.datamodel import types
 
 class ServiceGroup(types.Base):
     servicegroup_name = wsme.wsattr(wtypes.text, mandatory=True)
-    members = wsme.wsattr(wtypes.text, mandatory=True)
+    members = wsme.wsattr([wtypes.text], mandatory=True)
     alias = wsme.wsattr(wtypes.text, mandatory=False)
-    servicegroup_members = wsme.wsattr(wtypes.text, mandatory=False)
+    servicegroup_members = wsme.wsattr([wtypes.text], mandatory=False)
     notes = wsme.wsattr(wtypes.text, mandatory=False)
     notes_url = wsme.wsattr(wtypes.text, mandatory=False)
     action_url = wsme.wsattr(wtypes.text, mandatory=False)
@@ -32,5 +32,10 @@ class ServiceGroup(types.Base):
         return cls(
             servicegroup_name='dbservices',
             alias='Database Services',
-            members='ms1,SQL Server,ms1,SQL Serverc Agent,ms1,SQL DTC'
+            members=['ms1',
+                     'SQL Server',
+                     'ms1',
+                     'SQL Serverc Agent',
+                     'ms1',
+                     'SQL DTC']
         )
