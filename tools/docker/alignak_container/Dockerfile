@@ -92,7 +92,7 @@ RUN apt-get update && apt-get install -y subversion && \
 RUN mkdir -p /opt/surveilplugins
 RUN virtualenv /opt/surveilplugins/env
 ENV PATH=$PATH:/opt/surveilplugins/env/bin
-RUN /opt/surveilplugins/env/bin/pip install "pbr>=0.6,!=0.7,<1.0" shinkenplugins python-keystoneclient python-glanceclient
+RUN /opt/surveilplugins/env/bin/pip install "pbr>=1.3,<2.0" shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
 RUN mkdir -p /usr/lib/monitoring/plugins/sfl

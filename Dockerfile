@@ -24,7 +24,7 @@ RUN apt-get install -y subversion && \
     apt-get remove -y subversion
 
 ADD requirements.txt /opt/surveil/requirements.txt
-RUN /opt/surveil/env/bin/pip install -U "pbr>=0.6,!=0.7,<1.0"
+RUN /opt/surveil/env/bin/pip install -U "pbr>=1.3,<2.0"
 RUN /opt/surveil/env/bin/pip install -r /opt/surveil/requirements.txt
 
 ADD tools/docker/surveil_container/setup.sh /opt/surveil/setup.sh
