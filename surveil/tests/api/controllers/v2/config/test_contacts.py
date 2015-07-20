@@ -27,11 +27,19 @@ class TestContactsController(functionalTest.FunctionalTest):
         self.contacts = [
             {
                 'contact_name': 'bobby',
-                'email': 'bob@bob.com'
+                'email': 'bob@bob.com',
+                'service_notification_options': [],
+                'service_notification_commands': [],
+                'host_notification_options': [],
+                'host_notification_commands': []
             },
             {
                 'contact_name': 'marie',
-                'email': 'marie@marie.com'
+                'email': 'marie@marie.com',
+                'service_notification_options': [],
+                'service_notification_commands': [],
+                'host_notification_options': [],
+                'host_notification_commands': []
             },
         ]
         self.mongoconnection.shinken.contacts.insert(

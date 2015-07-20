@@ -19,11 +19,11 @@ from surveil.api.datamodel import types
 
 
 class BusinessImpactModulation(types.Base):
-    business_impact_modulation_name = wsme.wsattr(wtypes.text, mandatory=True)
+    business_impact_modulation_name = wsme.wsattr(wtypes.text, mandatory=False)
 
-    business_impact = wsme.wsattr(int, mandatory=True)
+    business_impact = wsme.wsattr(int, mandatory=False)
 
-    modulation_period = wsme.wsattr(wtypes.text, mandatory=True)
+    modulation_period = wsme.wsattr(wtypes.text, mandatory=False)
 
     @classmethod
     def sample(cls):
