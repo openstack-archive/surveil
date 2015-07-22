@@ -15,6 +15,7 @@
 import json
 
 from surveil.api.datamodel.status import live_query
+from surveil.api.datamodel.status import paging
 from surveil.api.handlers.status import mongodb_query
 from surveil.tests import base
 
@@ -29,7 +30,8 @@ class MongoDBQueryTest(base.BaseTestCase):
                     "state": [0, 1],
                     "last_check": ["test_keystone"]
                 }
-            })
+            }),
+            paging=paging.Paging(size=7, page=4)
         )
 
         service_mappings = {
@@ -47,10 +49,11 @@ class MongoDBQueryTest(base.BaseTestCase):
             lq,
             {'fields': [u'host_name', 'last_chk'],
              'filters': {u'isnot': {u'state': [0, 1],
-                                    'last_chk': [u'test_keystone']}}}
+                                    'last_chk': [u'test_keystone']}},
+             'paging': query.paging},
         )
 
-        query = mongodb_query.build_mongodb_query(lq)
+        query, kwargs = mongodb_query.build_mongodb_query(lq)
 
         expected_query = {
             "state": {"$nin": [0, 1]},
@@ -64,3 +67,4 @@ class MongoDBQueryTest(base.BaseTestCase):
 
         self.assertEqual(query[0], expected_query)
         self.assertEqual(query[1], expected_fields)
+        self.assertEqual(kwargs, {'limit': 7, 'skip': 28})

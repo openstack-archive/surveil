@@ -165,6 +165,34 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         self.assert_count_equal_backport(json.loads(response.body.decode()),
                                          expected)
 
+    def test_query_host_paging(self):
+        query = {
+            'paging': {
+                'page': 1,
+                'size': 2
+            }
+        }
+
+        response = self.post_json("/v2/status/hosts", params=query)
+
+        self.assertEqual(
+            json.loads(response.body.decode()),
+            [
+                {'acknowledged': True,
+                 'address': u'127.0.0.1',
+                 'childs': [u'test_keystone'],
+                 'description': u'ws-arbiter',
+                 'host_name': u'ws-arbiter',
+                 'last_check': 1429405764,
+                 'last_state_change': 1429405765,
+                 'long_output': u'What a;\nlong;\noutput;',
+                 'parents': [u'parent.com'],
+                 'plugin_output': u'OK - localhost: rta 0.030ms, lost 0%',
+                 'services': [],
+                 'state': u'OK'}
+            ]
+        )
+
     def test_get_specific_host(self):
 
         response = self.get("/v2/status/hosts/localhost")

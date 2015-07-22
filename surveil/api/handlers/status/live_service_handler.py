@@ -44,10 +44,10 @@ class ServiceHandler(handler.Handler):
         else:
             lq = {}
 
-        query = mongodb_query.build_mongodb_query(lq)
+        query, kwargs = mongodb_query.build_mongodb_query(lq)
 
         mongo_dicts = (self.request.mongo_connection.
-                       alignak_live.services.find(*query))
+                       alignak_live.services.find(*query, **kwargs))
 
         service_dicts = [
             _service_dict_from_mongo_item(s) for s in mongo_dicts
