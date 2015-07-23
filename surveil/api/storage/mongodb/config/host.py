@@ -17,7 +17,7 @@ import mongoengine
 
 class Host(mongoengine.Document):
     meta = {'collection': 'hosts'}
-    host_name = mongoengine.StringField(unique=True)
+    host_name = mongoengine.StringField()
     address = mongoengine.StringField()
     max_check_attempts = mongoengine.IntField()
     check_period = mongoengine.StringField()
