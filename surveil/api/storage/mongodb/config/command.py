@@ -16,7 +16,10 @@ import mongoengine
 
 
 class Command(mongoengine.Document):
-    meta = {'collection': 'commands'}
-    command_name = mongoengine.StringField(unique=True)
+    meta = {
+        'collection': 'commands',
+        'strict': False
+    }
+    command_name = mongoengine.StringField()
     command_line = mongoengine.StringField()
     module_type = mongoengine.StringField()
