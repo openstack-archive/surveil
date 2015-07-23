@@ -31,13 +31,13 @@ RUN cd /tmp && \
     mv /tmp/mod-booster-nrpe-*/module /var/lib/alignak/modules/mod-booster-nrpe && \
     rm -rfv /tmp/mod-booster-nrpe*
 
-# mod-surveil-config
+# mod-surveil
 RUN pip install python-surveilclient==0.11.0
 RUN cd /tmp && \
-    wget -O mod-surveil-config.tar.gz https://github.com/Alignak-monitoring/mod-surveil-config/archive/6331d3626fd92deaeb5e372c5cdb1eedd8b09d9b.tar.gz && \
+    wget -O mod-surveil-config.tar.gz https://github.com/Alignak-monitoring/mod-surveil/archive/8d7e37333de85f5e90d6fe1780e55e4d90515a2f.tar.gz && \
     tar -zxvf mod-surveil-config.tar.gz && \
-    mv /tmp/mod-surveil-config-*/alignak/modules/mod_surveil_config /var/lib/alignak/modules/mod-surveil-config && \
-    rm -rfv /tmp/mod-surveil-config*
+    mv /tmp/mod-surveil-*/alignak/modules/mod_surveil /var/lib/alignak/modules/mod-surveil && \
+    rm -rfv /tmp/mod-surveil*
 
 # mod-influxdb
 RUN pip install influxdb==2.3.0

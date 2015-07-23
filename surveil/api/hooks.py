@@ -13,6 +13,7 @@
 # under the License.
 
 import influxdb
+import mongoengine
 from pecan import hooks
 import pymongo
 
@@ -32,6 +33,7 @@ class DBHook(hooks.PecanHook):
         state.request.influxdb_client = influxdb.InfluxDBClient.from_DSN(
             self.influxdb_url
         )
+        mongoengine.connect('shinken', host=self.mongo_url)
 
     def after(self, state):
         self.mongoclient.close()
