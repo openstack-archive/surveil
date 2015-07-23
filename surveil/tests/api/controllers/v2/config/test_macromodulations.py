@@ -101,7 +101,7 @@ class TestMacroModulationController(functionalTest.FunctionalTest):
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.macromodulations.find_one(
-                m
+                {'macromodulation_name': 'TEST_CREATE_MODULATION'}
             )
         )
 

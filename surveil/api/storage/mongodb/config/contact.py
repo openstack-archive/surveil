@@ -17,7 +17,7 @@ import mongoengine
 
 class Contact(mongoengine.Document):
     meta = {'collection': 'contacts'}
-    contact_name = mongoengine.StringField(unique=True)
+    contact_name = mongoengine.StringField()
     host_notifications_enabled = mongoengine.StringField()
     service_notifications_enabled = mongoengine.StringField()
     host_notification_period = mongoengine.StringField()

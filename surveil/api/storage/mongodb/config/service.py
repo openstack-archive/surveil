@@ -16,8 +16,11 @@ import mongoengine
 
 
 class Service(mongoengine.Document):
-    meta = {'collection': 'services'}
-    host_name = mongoengine.StringField(unique=True)
+    meta = {
+        'collection': 'services',
+        'strict': False
+    }
+    host_name = mongoengine.StringField()
     service_description = mongoengine.StringField()
     contacts = mongoengine.StringField()
     check_command = mongoengine.StringField()

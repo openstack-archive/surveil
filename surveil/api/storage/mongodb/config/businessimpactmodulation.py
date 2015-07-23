@@ -17,6 +17,6 @@ import mongoengine
 
 class BusinessImpactModulation(mongoengine.Document):
     meta = {'collection': 'businessimpactmodulations'}
-    business_impact_modulation_name = mongoengine.StringField(unique=True)
+    business_impact_modulation_name = mongoengine.StringField()
     business_impact = mongoengine.IntField()
     modulation_period = mongoengine.StringField()
