@@ -34,3 +34,4 @@ class Host(mongoengine.Document):
     check_interval = mongoengine.IntField()
     retry_interval = mongoengine.IntField()
     custom_fields = mongoengine.DictField()
+    passive_checks_enabled = mongoengine.IntField()
