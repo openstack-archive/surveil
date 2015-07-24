@@ -44,7 +44,7 @@ class Service(types.Base):
     contact_groups = wsme.wsattr(wtypes.ArrayType(wtypes.text),
                                  mandatory=False)
 
-    passive_checks_enabled = wsme.wsattr(wtypes.text, mandatory=False)
+    passive_checks_enabled = wsme.wsattr(int, mandatory=False)
 
     use = wsme.wsattr(wtypes.ArrayType(wtypes.text),
                       mandatory=False)

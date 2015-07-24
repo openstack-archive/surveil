@@ -133,6 +133,14 @@ def main():
             service_description="check-ws-arbiter"
         )
 
+        # Passive checks host
+        cli_surveil.config.hosts.create(
+            host_name='passive_check_host',
+            use=['generic-host'],
+            address='127.0.0.1',
+            passive_checks_enabled=1
+        )
+
         # Linux-keystone template
         cli_surveil.config.hosts.create(
             host_name='test_keystone',
