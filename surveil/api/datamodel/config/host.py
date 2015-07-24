@@ -53,6 +53,8 @@ class Host(types.Base):
 
     retry_interval = wsme.wsattr(int, mandatory=False)
 
+    passive_checks_enabled = wsme.wsattr(wtypes.text, mandatory=False)
+
     # TODO(aviau): Custom fields starting without '_' should raise an error.
     custom_fields = wsme.wsattr(
         wtypes.DictType(wtypes.text, wtypes.text),

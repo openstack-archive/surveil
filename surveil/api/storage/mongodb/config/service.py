@@ -31,7 +31,7 @@ class Service(mongoengine.Document):
     notification_interval = mongoengine.IntField()
     notification_period = mongoengine.StringField()
     contact_groups = mongoengine.ListField()
-    passive_checks_enabled = mongoengine.StringField()
+    passive_checks_enabled = mongoengine.IntField()
     use = mongoengine.ListField()
     name = mongoengine.StringField(unique=True, sparse=True)
     register = mongoengine.StringField()
