@@ -54,5 +54,5 @@ EXPOSE 5311
 
 CMD cd /opt/surveil && \
     ./setup.sh && \
-    ((sleep 40 && surveil-init --influxdb --packs --mongodb) &) && \
+    ((sleep 50 && surveil-init --influxdb --packs --mongodb) &) && \
     surveil-api
