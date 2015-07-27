@@ -25,6 +25,10 @@ server = {
 config = configparser.ConfigParser()
 config.read("/etc/surveil/surveil.cfg")
 
+authentication = {
+    'config_file': 'policy.json',
+}
+
 surveil_api_config = {
     "mongodb_uri": config.get("surveil", "mongodb_uri"),
     "ws_arbiter_url": config.get("surveil", "ws_arbiter_url"),
