@@ -14,13 +14,17 @@
 
 import mongoengine
 
+from surveil.api.storage.mongodb.config import host
+from surveil.api.storage.mongodb import foreign_key_field
+
 
 class Service(mongoengine.Document):
     meta = {
         'collection': 'services',
         'strict': False
     }
-    host_name = mongoengine.ListField()
+    host_name = foreign_key_field.ForeignKeyListField(host.Host,
+                                                      ['host_name', 'name'])
     service_description = mongoengine.StringField()
     contacts = mongoengine.ListField()
     check_command = mongoengine.StringField()
