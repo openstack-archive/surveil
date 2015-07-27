@@ -75,7 +75,7 @@ def load_config(path):
 
     nagios_config = {}
 
-    for cfg_file in cfg_files:
+    for cfg_file in sorted(cfg_files):
         # Open the file
         f = open(cfg_file, 'r')
         config_string = f.read()
