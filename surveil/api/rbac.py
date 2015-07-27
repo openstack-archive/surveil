@@ -17,18 +17,39 @@
 
 """Access Control Lists (ACL's) control access the API server."""
 
+import os
+
 from oslo_config import cfg
 from oslo_policy import policy
+import pecan
+
+import surveil.api.app as app
 
 _ENFORCER = None
 
+print app.global_pecan_config_file
+print pecan.conf
+print os.path.dirname('/')
+print getattr(app, 'global_pecan_config_file')
 
-policy_opts = [
-    cfg.StrOpt('config_dir', default='/etc/surveil/'),
-    cfg.StrOpt('config_file', default='policy.json'),
-    cfg.StrOpt('project', default='surveil')
-]
+policy_opts = [cfg.StrOpt('project', default='surveil')]
 
+if app.global_pecan_config_file:
+    config_dir = \
+        cfg.StrOpt('config_dir',
+                   default=os.path.dirname(app.global_pecan_config_file))
+else:
+    config_dir = cfg.StrOpt('config_dir', "")
+if hasattr(pecan.conf, 'authentication'):
+    config_file = \
+        cfg.StrOpt('config_file',
+                   default=pecan.conf.authentication.get('config_file',
+                                                         'policy.json'))
+else:
+    config_file = cfg.StrOpt('config_file', 'policy.json')
+
+policy_opts.append(config_dir)
+policy_opts.append(config_file)
 
 CONF = cfg.CONF
 
