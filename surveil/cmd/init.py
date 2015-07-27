@@ -18,10 +18,12 @@ import optparse
 import sys
 
 import influxdb
+import pecan
+from pecan import configuration
 import pymongo
+from six.moves import configparser
 import surveilclient.client as sc
 
-from surveil.api import config
 from surveil.cmd import pack_upload
 
 
@@ -47,18 +49,34 @@ def main():
                       dest='packs',
                       help="Upload/Update configuration packs to MongoDB",
                       action='store_true')
+    parser.add_option('--pecan_config', '-P',
+                      default='/etc/surveil/config.py',
+                      dest='pecan_config',
+                      help='Pecan config file (config.py)')
+    parser.add_option('--config_file', '-c',
+                      default='/etc/surveil/surveil.cfg',
+                      dest='config_file',
+                      help='Pecan config file (surveil.cfg)')
+
     opts, _ = parser.parse_args(sys.argv)
 
     surveil_api_url = 'http://localhost:5311/v2'
     surveil_auth_url = 'http://localhost:5311/v2/auth'
     surveil_api_version = '2_0'
 
+    config = configparser.ConfigParser()
+    config.read(opts.config_file)
+    surveil_cfg = {"surveil_api_config":
+                   dict([i for i in config.items("surveil")])}
+    configuration.set_config(surveil_cfg, overwrite=True)
+    configuration.set_config(opts.pecan_config, overwrite=False)
+
     cli_surveil = sc.Client(surveil_api_url,
                             auth_url=surveil_auth_url,
                             version=surveil_api_version)
 
     # Create a basic config in mongodb
-    mongo = pymongo.MongoClient(config.surveil_api_config['mongodb_uri'])
+    mongo = pymongo.MongoClient(pecan.conf.surveil_api_config['mongodb_uri'])
 
     if opts.mongodb is True:
         # Drop the current shinken config
@@ -69,7 +87,7 @@ def main():
         print("Pre-creating InfluxDB database...")
         # Create the InfluxDB database
         influx_client = influxdb.InfluxDBClient.from_DSN(
-            config.surveil_api_config['influxdb_uri']
+            pecan.conf.surveil_api_config['influxdb_uri']
         )
 
         databases = influx_client.get_list_database()
