@@ -58,7 +58,7 @@ def upload_pack(pack_dir, client):
     surveil_config = surveil_from_nagios.load_config(pack_dir)
 
     config_manager = client.config
-    for object_type, objects in surveil_config.items():
+    for object_type, objects in surveil_config:
         object_manager = getattr(config_manager, object_type)
         for object in objects:
             object_manager.create(**object)
