@@ -14,6 +14,7 @@
 
 """Script to reinitialize surveil."""
 
+import imp
 import optparse
 import sys
 
@@ -21,7 +22,6 @@ import influxdb
 import pymongo
 import surveilclient.client as sc
 
-from surveil.api import config
 from surveil.cmd import pack_upload
 
 
@@ -47,11 +47,17 @@ def main():
                       dest='packs',
                       help="Upload/Update configuration packs to MongoDB",
                       action='store_true')
+    parser.add_option('-c', '--config-file',
+                      default='/etc/surveil/config.py',
+                      dest='config_file',
+                      help='Surveil config.py file')
     opts, _ = parser.parse_args(sys.argv)
 
     surveil_api_url = 'http://localhost:5311/v2'
     surveil_auth_url = 'http://localhost:5311/v2/auth'
     surveil_api_version = '2_0'
+
+    config = imp.load_source('config', opts.config_file)
 
     cli_surveil = sc.Client(surveil_api_url,
                             auth_url=surveil_auth_url,
