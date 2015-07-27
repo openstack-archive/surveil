@@ -14,16 +14,20 @@
 
 import mongoengine
 
+from surveil.api.storage.mongodb import foreign_key_field
+from surveil.api.storage.mongodb.config import command
+from surveil.api.storage.mongodb.config import host
+
 
 class Service(mongoengine.Document):
     meta = {
         'collection': 'services',
         'strict': False
     }
-    host_name = mongoengine.ListField()
+    host_name = foreign_key_field.ForeignKeyListField(host.Host, 'host_name')
     service_description = mongoengine.StringField()
     contacts = mongoengine.ListField()
-    check_command = mongoengine.StringField()
+    check_command = foreign_key_field.ForeignKeyStringField(command.Command, 'command_name')
     max_check_attempts = mongoengine.IntField()
     check_interval = mongoengine.IntField()
     retry_interval = mongoengine.IntField()

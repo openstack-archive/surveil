@@ -93,7 +93,9 @@ def load_config(path):
 
     surveil_config = _transform_config(nagios_config)
 
-    return surveil_config
+    sorted_surveil_config = _sort_config(surveil_config)
+
+    return sorted_surveil_config
 
 
 def _load_nagios_config(config_string):
@@ -220,7 +222,55 @@ def _transform_property_names(config_object, object_type):
     return transformed_object
 
 
+def _sort_config(surveil_config):
+
+    # Sort object types
+    correct_order = {
+        "timeperiods": 1,
+        "contacts": 2,
+        "contactgroups": 3,
+        "commands": 4,
+        "hosts": 5,
+        "services": 6
+    }
+    sorted_object_types = sorted(surveil_config.items(),
+                                 key=lambda x: correct_order.get(x[0], 99))
+
+    sorted_config = []
+
+    # Sort objects
+    for item in sorted_object_types:
+        object_type = item[0]
+        objects = item[1]
+
+        if object_type in ['hosts', 'services']:
+            objects = _sort_objects(objects)
+
+        sorted_config.append((object_type, objects))
+
+    return sorted_config
+
+
+def _sort_objects(objects):
+    sorted_objects = []
+    while len(objects) > 0:
+
+        for object in objects:
+            host_dependencies = object.get('use', [])
+            unsolved_dependencies = [
+                d for d in host_dependencies
+                if not any(o.get('name', None) == d
+                           for o in sorted_objects)
+            ]
+
+            if len(unsolved_dependencies) == 0:
+                break
+
+        sorted_objects.append(object)
+        objects.remove(object)
+
+    return sorted_objects
+
+
 if __name__ == "__main__":
     main()
-
-

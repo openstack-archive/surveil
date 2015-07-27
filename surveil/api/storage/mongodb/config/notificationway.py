@@ -17,7 +17,7 @@ import mongoengine
 
 class NotificationWays(mongoengine.Document):
     meta = {'collection': 'notificationways'}
-    notificationway_name = mongoengine.StringField()
+    notificationway_name = mongoengine.StringField(unique=True)
     host_notification_period = mongoengine.StringField()
     service_notification_period = mongoengine.StringField()
     host_notification_options = mongoengine.ListField()
