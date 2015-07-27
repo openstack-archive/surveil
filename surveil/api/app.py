@@ -12,24 +12,22 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from __future__ import print_function
 from __future__ import unicode_literals
 
+import argparse
 import os
+import subprocess
+import sys
+import threading
+import time
+from wsgiref import simple_server
 
 from paste import deploy
+
 import pecan
-
-
-def get_config_filename():
-    abspath = os.path.abspath(__file__)
-    path = os.path.dirname(abspath)
-    filename = "config.py"
-    return os.path.join(path, filename)
-
-
-def get_pecan_config():
-    # Set up the pecan configuration
-    return pecan.configuration.conf_from_file(get_config_filename())
+from pecan.commands import BaseCommand, ServeCommand
+from pecan.configuration import set_config
 
 
 def setup_app(pecan_config):
@@ -44,22 +42,108 @@ def setup_app(pecan_config):
     return app
 
 
-def load_app():
-    return deploy.loadapp('config:/etc/surveil/api_paste.ini')
-
-
 def app_factory(global_config, **local_conf):
-    return VersionSelectorApplication()
+    return VersionSelectorApplication(global_pecan_config_file)
 
 
 class VersionSelectorApplication(object):
-    def __init__(self):
-        pc = get_pecan_config()
+    def __init__(self, pecan_conf_file):
+        pc = pecan.configuration.conf_from_file(pecan_conf_file)
 
         self.v1 = setup_app(pecan_config=pc)
         self.v2 = setup_app(pecan_config=pc)
+        self.config = pc
 
     def __call__(self, environ, start_response):
         if environ['PATH_INFO'].startswith('/v1/'):
             return self.v1(environ, start_response)
         return self.v2(environ, start_response)
+
+
+class SurveilCommand(ServeCommand):
+
+    def run(self, args):
+        global global_pecan_config_file
+        global_pecan_config_file = args.config_file
+        super(ServeCommand, self).run(args)
+        app = self.load_app()
+        self.args = args
+        self.serve(app, app.config)
+
+    def load_app(self):
+        set_config(self.args.config_file, overwrite=True)
+        return deploy.loadapp('config:%s' % self.args.api_paste_config)
+
+    def create_subprocess(self):
+        self.server_process = subprocess.Popen(
+            [arg for arg in sys.argv if arg not in ['--reload', '-r']],
+            stdout=sys.stdout, stderr=sys.stderr
+        )
+
+    # TODO: delete this function when
+    # https://review.openstack.org/#/c/206213/
+    # will be released
+    def watch_and_spawn(self, conf):
+        import watchdog.events as events
+        import watchdog.observers as observers
+
+        print('Monitoring for changes...',
+              file=sys.stderr)
+
+        self.create_subprocess()
+        parent = self
+
+        class AggressiveEventHandler(events.FileSystemEventHandler):
+
+            def __init__(self):
+                self.wait = False
+
+            def should_reload(self, event):
+                for t in (
+                    events.FileSystemMovedEvent,
+                    events.FileModifiedEvent,
+                    events.DirModifiedEvent
+                ):
+                    if isinstance(event, t):
+                        return True
+                return False
+
+            def ignore_events_one_sec(self):
+                if not self.wait:
+                    self.wait = True
+                    t = threading.Thread(target=self.wait_one_sec)
+                    t.start()
+
+            def wait_one_sec(self):
+                time.sleep(1)
+                self.wait = False
+
+            def on_modified(self, event):
+                if self.should_reload(event) and not self.wait:
+                    print("Some source files have been modified",
+                          file=sys.stderr)
+                    print("Restarting server...",
+                          file=sys.stderr)
+                    parent.server_process.kill()
+                    self.ignore_events_one_sec()
+                    parent.create_subprocess()
+
+        paths = self.paths_to_monitor(conf)
+
+        event_handler = AggressiveEventHandler()
+
+        for path, recurse in paths:
+            observer = observers.Observer()
+            observer.schedule(
+                event_handler,
+                path=path,
+                recursive=recurse
+            )
+            observer.start()
+
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            pass
+
