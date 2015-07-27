@@ -27,17 +27,25 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
         self.groups = [
             {
                 'contactgroup_name': 'novell-admins',
-                'members': ["jdoe", "rtobert", "tzach"],
+                'members': ["bob", "alice"],
                 'contactgroup_members': []
             },
             {
                 'contactgroup_name': 'linux-adminx',
-                'members': ['linus', 'richard'],
+                'members': ['bob'],
                 'contactgroup_members': []
             },
         ]
         self.mongoconnection.shinken.contactgroups.insert(
             copy.deepcopy(self.groups)
+        )
+
+        self.contacts = [
+            {"contact_name": "bob"},
+            {"contact_name": "alice"},
+        ]
+        self.mongoconnection.shinken.contacts.insert(
+            copy.deepcopy(self.contacts)
         )
 
     def test_get_all_contactgroups(self):
@@ -60,7 +68,7 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
     def test_create_contactgroup(self):
         g = contactgroup.ContactGroup(
             contactgroup_name='John',
-            members=["marie", "bob", "joe"],
+            members=["bob", "alice"],
         )
 
         self.post_json('/v2/config/contactgroups', g.as_dict())
@@ -85,18 +93,18 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.contactgroups.find_one(
                 {'contactgroup_name': 'novell-admins'}
             )['members'],
-            ['jdoe', 'rtobert', 'tzach']
+            ['bob', 'alice']
         )
 
         self.put_json(
             '/v2/config/contactgroups/novell-admins',
             {"contactgroup_name": "novell-admins",
-             "members": ["updated"]}
+             "members": ["bob"]}
         )
 
         self.assertEqual(
             self.mongoconnection.shinken.contactgroups.find_one(
                 {'contactgroup_name': 'novell-admins'}
             )['members'],
-            ['updated']
+            ['bob']
         )

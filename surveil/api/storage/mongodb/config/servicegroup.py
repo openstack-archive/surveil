@@ -14,11 +14,17 @@
 
 import mongoengine
 
+from surveil.api.storage.mongodb.config import service
+from surveil.api.storage.mongodb import foreign_key_field
+
 
 class ServiceGroup(mongoengine.Document):
     meta = {'collection': 'servicegroups'}
     servicegroup_name = mongoengine.StringField(unique=True)
-    members = mongoengine.ListField()
+    members = foreign_key_field.ForeignKeyListField(
+        service.Service,
+        ['service_description', 'name']
+    )
     alias = mongoengine.StringField()
     servicegroup_members = mongoengine.ListField()
     notes = mongoengine.StringField()

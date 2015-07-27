@@ -27,24 +27,26 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
         self.groups = [
             {
                 'servicegroup_name': 'dbservices',
-                'members': ['ms1',
-                            'SQL Server',
-                            'ms1',
-                            'SQL Serverc Agent',
-                            'ms1',
-                            'SQL DTC'],
+                'members': ['service1'],
                 'servicegroup_members': []
             },
             {
                 'servicegroup_name': 'otherservices',
-                'members': ['some',
-                            'other',
-                            'member'],
+                'members': ['service1',
+                            'service2'],
                 'servicegroup_members': []
             },
         ]
         self.mongoconnection.shinken.servicegroups.insert(
             copy.deepcopy(self.groups)
+        )
+
+        self.services = [
+            {'service_description': "service1"},
+            {'service_description': "service2"}
+        ]
+        self.mongoconnection.shinken.services.insert(
+            copy.deepcopy(self.services)
         )
 
     def test_get_all_servicegroups(self):
@@ -67,7 +69,7 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
     def test_create_servicegroup(self):
         s = servicegroup.ServiceGroup(
             servicegroup_name='John',
-            members=['marie', 'bob', 'joe'],
+            members=['service1'],
         )
 
         self.post_json('/v2/config/servicegroups', s.as_dict())
@@ -92,23 +94,18 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.servicegroups.find_one(
                 {'servicegroup_name': 'dbservices'}
             )['members'],
-            ['ms1',
-             'SQL Server',
-             'ms1',
-             'SQL Serverc Agent',
-             'ms1',
-             'SQL DTC']
+            ['service1']
         )
 
         self.put_json(
             '/v2/config/servicegroups/dbservices',
             {"servicegroup_name": "dbservices",
-             "members": ["updated"]}
+             "members": ["service2"]}
         )
 
         self.assertEqual(
             self.mongoconnection.shinken.servicegroups.find_one(
                 {'servicegroup_name': 'dbservices'}
             )['members'],
-            ['updated']
+            ['service2']
         )

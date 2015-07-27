@@ -14,10 +14,14 @@
 
 import mongoengine
 
+from surveil.api.storage.mongodb.config import contact
+from surveil.api.storage.mongodb import foreign_key_field
+
 
 class ContactGroup(mongoengine.Document):
     meta = {'collection': 'contactgroups'}
-    contactgroup_name = mongoengine.StringField()
-    members = mongoengine.ListField()
+    contactgroup_name = mongoengine.StringField(unique=True)
+    members = foreign_key_field.ForeignKeyListField(contact.Contact,
+                                                    ['contact_name'])
     alias = mongoengine.StringField()
     contactgroup_members = mongoengine.ListField()
