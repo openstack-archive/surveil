@@ -14,6 +14,8 @@
 
 from six.moves import configparser
 
+import pecan
+
 from surveil.api import hooks
 
 # Server Specific Configurations
@@ -22,20 +24,16 @@ server = {
     'host': '0.0.0.0'
 }
 
-config = configparser.ConfigParser()
-config.read("/etc/surveil/surveil.cfg")
-
-surveil_api_config = {
-    "mongodb_uri": config.get("surveil", "mongodb_uri"),
-    "ws_arbiter_url": config.get("surveil", "ws_arbiter_url"),
-    "influxdb_uri": config.get("surveil", "influxdb_uri")
+authentication = {
+    'config_file': 'policy.json',
 }
+
 
 app_hooks = [
     hooks.DBHook(
-        surveil_api_config['mongodb_uri'],
-        surveil_api_config['ws_arbiter_url'],
-        surveil_api_config['influxdb_uri']
+        pecan.conf.surveil_api_config['mongodb_uri'],
+        pecan.conf.surveil_api_config['ws_arbiter_url'],
+        pecan.conf.surveil_api_config['influxdb_uri']
     )
 ]
 
