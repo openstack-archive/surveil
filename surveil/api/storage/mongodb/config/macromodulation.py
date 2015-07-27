@@ -17,6 +17,6 @@ import mongoengine
 
 class MacroModulation(mongoengine.Document):
     meta = {'collection': 'macromodulations'}
-    macromodulation_name = mongoengine.StringField()
+    macromodulation_name = mongoengine.StringField(unique=True)
     modulation_period = mongoengine.StringField()
     macros = mongoengine.DictField()
