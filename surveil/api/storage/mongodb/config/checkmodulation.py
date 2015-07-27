@@ -17,6 +17,6 @@ import mongoengine
 
 class CheckModulation(mongoengine.Document):
     meta = {'collection': 'checkmodulations'}
-    checkmodulation_name = mongoengine.StringField()
+    checkmodulation_name = mongoengine.StringField(unique=True)
     check_command = mongoengine.StringField()
     check_period = mongoengine.StringField()

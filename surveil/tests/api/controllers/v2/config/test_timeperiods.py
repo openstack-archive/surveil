@@ -79,7 +79,9 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
         self.post_json('/v2/config/timeperiods', t)
 
         self.assertIsNotNone(
-            self.mongoconnection.shinken.timeperiods.find_one(t)
+            self.mongoconnection.shinken.timeperiods.find_one(
+                {"timeperiod_name": 'someperiod'}
+            )
         )
 
     def test_delete_timeperiod(self):
