@@ -30,12 +30,48 @@ Disabling permissions
 
 Depending on what you are working on, it might be practical to disable permissions. This can be done by editing the ``policy.json`` file found at ``etc/surveil/policy.json``.
 
-For example, you could modify the following line: ::
+For example, you could modify the following lines: ::
 
-        "surveil:admin": "rule:admin_required",
+    "admin_required": "role:admin or is_admin:1",
+    "surveil_required": "role:surveil or rule:admin_required",
+
+    "surveil:admin": "rule:admin_required",
+    "surveil:authenticated": "rule:surveil_required",
 
 by: ::
 
-    "surveil:admin": "rule:pass",
+    "admin_required": "@",
+    "surveil_required": "@",
+
+    "surveil:admin": "@",
+    "surveil:authenticated": "@",
 
 This will modify permissions so that all API calls that require the ``admin`` rule now pass without any verification.
+
+
+Developping the API without docker
+----------------------------------
+
+You can get development environment without docker
+
+::
+
+    git clone https://review.openstack.org/stackforge/surveil￼
+    cd surveil
+    virtualenv env
+    source env/bin/activate
+    pip install -r requirements.txt
+    python setup.py develop
+    python setup.py install_data
+    surveil-api -p env/etc/surveil/config.py -a env/etc/surveil/api_paste.ini -c env/etc/surveil/surveil.cfg -r
+
+Edit your config files
+
+::
+
+    vim env/etc/surveil/config.py
+    vim env/etc/surveil/surveil.cfg
+    vim env/etc/surveil/policy.json
+    vim env/etc/surveil/api_paste.ini
+
+Don't forget to start your databases (MongoDB and InfluxDB)
