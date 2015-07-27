@@ -16,16 +16,14 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
+import argparse
 import os
-import subprocess
 import sys
-import threading
-import time
-from wsgiref import simple_server
 
 from oslo_config import cfg
+from pecan.commands.base import CommandRunner
 
-import surveil.api.app as app
+from surveil.api.app import SurveilCommand
 
 CONF = cfg.CONF
 
@@ -40,100 +38,37 @@ OPTS = [
 CONF.register_opts(OPTS)
 
 
-class ServerManager:
+class SurveilCommandRunner(CommandRunner):
 
     def __init__(self):
-        self.config = {}
-        self.config_file = ""
-        self.server_process = None
-        self.should_run = True
+        super(SurveilCommandRunner, self).__init__()
+        self.parser = argparse.ArgumentParser(description='Surveil API server')
+        self.parser.add_argument('--reload', '-r', action='store_true',
+                   help='Automatically reload as code changes')
+        self.parser.add_argument('--config-file', '-c',
+                       default='/etc/surveil/config.py',
+                       help='Pecan config file (config.py)')
+        self.parser.add_argument('--api_paste_config', '-a',
+                       default='/etc/surveil/api_paste.ini',
+                       help='API Paste config file (api_paste.ini)')
 
-    def run(self, pecan_config, config_file):
-        self.config = pecan_config
-        self.config_file = config_file
+    def run(self, args):
+        namespace = self.parser.parse_args(args)
+        # Get absolute paths
+        namespace.config_file = os.path.join(os.getcwd(), namespace.config_file)
+        namespace.api_paste_config = os.path.join(os.getcwd(), namespace.api_paste_config)
 
-        if '--reload' in sys.argv:
-            self.watch_and_spawn()
-        else:
-            self.start_server()
+        # Check conf files exist
+        if not os.path.isfile(namespace.config_file):
+            print("Bad config file: %s" % namespace.config_file, file=sys.stderr)
+            sys.exit(1)
+        if not os.path.isfile(namespace.api_paste_config):
+            print("Bad config file: %s" % namespace.api_paste_config, file=sys.stderr)
+            sys.exit(2)
 
-    def create_subprocess(self):
-        self.server_process = subprocess.Popen(['surveil-api'])
+        SurveilCommand().run(namespace)
 
-    def start_server(self):
-        pecan_app = app.load_app()
-        host, port = self.config.server.host, self.config.server.port
-        srv = simple_server.make_server(host, port, pecan_app)
-        srv.serve_forever()
-
-    def watch_and_spawn(self):
-        import watchdog.events as events
-        import watchdog.observers as observers
-
-        print('Monitoring for changes...',
-              file=sys.stderr)
-
-        self.create_subprocess()
-        parent = self
-
-        class AggressiveEventHandler(events.FileSystemEventHandler):
-
-            def __init__(self):
-                self.wait = False
-
-            def should_reload(self, event):
-                for t in (
-                    events.FileSystemMovedEvent,
-                    events.FileModifiedEvent,
-                    events.DirModifiedEvent
-                ):
-                    if isinstance(event, t):
-                        return True
-                return False
-
-            def ignore_events_one_sec(self):
-                if not self.wait:
-                    self.wait = True
-                    t = threading.Thread(target=self.wait_one_sec)
-                    t.start()
-
-            def wait_one_sec(self):
-                time.sleep(1)
-                self.wait = False
-
-            def on_modified(self, event):
-                if self.should_reload(event) and not self.wait:
-                    print("Some source files have been modified",
-                          file=sys.stderr)
-                    print("Restarting server...",
-                          file=sys.stderr)
-                    parent.server_process.kill()
-                    self.ignore_events_one_sec()
-                    parent.create_subprocess()
-
-        path = self.path_to_monitor()
-
-        event_handler = AggressiveEventHandler()
-
-        observer = observers.Observer()
-        observer.schedule(
-            event_handler,
-            path=path,
-            recursive=True
-        )
-        observer.start()
-
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            pass
-
-    def path_to_monitor(self):
-        module = __import__('surveil')
-        return os.path.dirname(module.__file__)
-
-
-def main():
-    srv = ServerManager()
-    srv.run(app.get_pecan_config(), app.get_config_filename())
+    @classmethod
+    def handle_command_line(cls):  # pragma: nocover
+        runner = SurveilCommandRunner()
+        runner.run(sys.argv[1:])
