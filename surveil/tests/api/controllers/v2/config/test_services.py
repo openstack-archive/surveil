@@ -71,6 +71,13 @@ class TestServiceController(functionalTest.FunctionalTest):
             copy.deepcopy(self.services)
         )
 
+        self.hosts = [
+            {"host_name": "sample-server1"}
+        ]
+        self.mongoconnection.shinken.hosts.insert(
+            copy.deepcopy(self.services)
+        )
+
     def test_get_all_services(self):
         response = self.get('/v2/config/services')
 
@@ -115,7 +122,7 @@ class TestServiceController(functionalTest.FunctionalTest):
 
     def test_add_service(self):
         new_service = {
-            "host_name": ["SOMEHOSTNAME"],
+            "host_name": ["sample-server1"],
             "service_description": "check-new-thing",
             "check_command": "check-disk!/dev/sdb1",
             "max_check_attempts": 5,

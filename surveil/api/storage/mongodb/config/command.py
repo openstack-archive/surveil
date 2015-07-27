@@ -20,6 +20,6 @@ class Command(mongoengine.Document):
         'collection': 'commands',
         'strict': False
     }
-    command_name = mongoengine.StringField()
+    command_name = mongoengine.StringField(unique=True)
     command_line = mongoengine.StringField()
     module_type = mongoengine.StringField()

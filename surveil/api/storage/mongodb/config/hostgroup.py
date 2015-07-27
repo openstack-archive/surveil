@@ -14,11 +14,15 @@
 
 import mongoengine
 
+from surveil.api.storage.mongodb.config import host
+from surveil.api.storage.mongodb import foreign_key_field
+
 
 class HostGroup(mongoengine.Document):
     meta = {'collection': 'hostgroups'}
     hostgroup_name = mongoengine.StringField(unique=True)
-    members = mongoengine.ListField()
+    members = foreign_key_field.ForeignKeyListField(host.Host,
+                                                    ['host_name', 'name'])
     alias = mongoengine.StringField()
     hostgroup_members = mongoengine.ListField()
     notes = mongoengine.StringField()

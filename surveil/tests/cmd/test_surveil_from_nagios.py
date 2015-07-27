@@ -33,47 +33,46 @@ class TestSurveilFromNagios(base_test.BaseTestCase):
 
         self.assert_count_equal_backport(
             surveil_cfg,
-            {
-                'hosts': [
-                    {
-                        'custom_fields': {'_custom_yolo': 'sdfsdf'},
-                        'contact_groups': [
-                            'admins'
-                        ],
-                        'use': [
-                            'generic-host'
-                        ],
-                        'host_name': 'localhost',
-                        'check_interval': 324,
-                        'address': 'localhost'}
-                ],
-                'services': [
-                    {
-                        'host_name': [
-                            'hai'
-                        ]
-                    },
-                    {
-                        'host_name': [
-                            'test'
-                        ]
-                    }
-                ],
-                'timeperiods': [
-                    {
-                        'timeperiod_name': 'workhours',
-                        'alias': 'Normal Work Hours',
-                        'periods':
-                            {
-                                'friday': '09:00-17:00',
-                                'monday': '09:00-17:00',
-                                'thursday': '09:00-17:00',
-                                'tuesday': '09:00-17:00',
-                                'wednesday': '09:00-17:00'
-                            }
-                    }
-                ]
-            }
+            [
+                ('timeperiods',
+                 [
+                     {
+                         'alias': 'Normal Work Hours',
+                         'timeperiod_name': 'workhours',
+                         'periods': {
+                             'tuesday': '09:00-17:00',
+                             'friday': '09:00-17:00',
+                             'thursday': '09:00-17:00',
+                             'wednesday': '09:00-17:00',
+                             'monday': '09:00-17:00'
+                         }
+                     }
+                 ]),
+                ('hosts',
+                 [
+                     {
+                         'name': 'generic-host',
+                         'custom_fields': {}},
+                     {
+                         'use': ['generic-host'],
+                         'custom_fields': {}},
+                     {
+                         'use': ['generic-host', 'non-existing-thing'],
+                         'contact_groups': ['admins'],
+                         'host_name': 'localhost',
+                         'check_interval': 324,
+                         'address': 'localhost',
+                         'custom_fields': {
+                             '_custom_yolo': 'sdfsdf'
+                         }
+                     },
+
+                 ]),
+                ('services',
+                 [
+                     {'host_name': ['hai']},
+                     {'host_name': ['test']}])
+            ]
         )
 
     def test_load_single_file(self):
@@ -88,5 +87,5 @@ class TestSurveilFromNagios(base_test.BaseTestCase):
 
         self.assertEqual(
             single_file_config,
-            {'services': [{'host_name': ['hai']}]}
+            [('services', [{'host_name': ['hai']}])]
         )
