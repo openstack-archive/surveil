@@ -128,7 +128,7 @@ class TestServiceController(functionalTest.FunctionalTest):
             "contact_groups": ["linux-admins"],
             "use": []
         }
-        response = self.post_json(
+        response = self.put_json(
             "/v2/config/services",
             params=new_service
         )

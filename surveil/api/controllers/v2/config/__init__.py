@@ -46,5 +46,5 @@ class ConfigController(rest.RestController):
                                  BusinessImpactModulationsController())
     notificationways = notificationways.NotificationWaysController()
     checkmodulations = checkmodulations.CheckModulationsController()
-    macromodulations = macromodulations.MacroModulationController()
+    macromodulations = macromodulations.MacroModulationsController()
     # engine = EngineController()

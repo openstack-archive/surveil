@@ -25,25 +25,21 @@ from surveil.common import util
 
 class ContactsController(rest.RestController):
 
+    @pecan.expose()
+    def _lookup(self, contact_name, *remainder):
+        return ContactController(contact_name), remainder
+
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([contact.Contact])
     def get_all(self):
-        """Returns all hosts."""
+        """Returns all contacts."""
         handler = contact_handler.ContactHandler(pecan.request)
         hosts = handler.get_all()
         return hosts
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(contact.Contact, wtypes.text)
-    def get_one(self, contact_name):
-        """Returns a specific contact."""
-        handler = contact_handler.ContactHandler(pecan.request)
-        contact = handler.get({"contact_name": contact_name})
-        return contact
-
-    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=contact.Contact, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new contact.
 
         :param data: a contact within the request body.
@@ -51,19 +47,33 @@ class ContactsController(rest.RestController):
         handler = contact_handler.ContactHandler(pecan.request)
         handler.create(data)
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(contact.Contact, wtypes.text, status_code=204)
-    def delete(self, contact_name):
-        """Returns a specific contact."""
-        handler = contact_handler.ContactHandler(pecan.request)
-        handler.delete({"contact_name": contact_name})
+
+class ContactController(rest.RestController):
+
+    def __init__(self, contact_name):
+        pecan.request.context['contact_name'] = contact_name
+        self._id = contact_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(contact.Contact,
-                         wtypes.text,
-                         body=contact.Contact,
-                         status_code=204)
-    def put(self, contact_name, contact):
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
         """Returns a specific contact."""
         handler = contact_handler.ContactHandler(pecan.request)
-        handler.update({"contact_name": contact_name}, contact)
+        handler.delete({"contact_name": self._id})
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None,
+                         body=contact.Contact,
+                         status_code=204)
+    def put(self, contact):
+        """Returns a specific contact."""
+        handler = contact_handler.ContactHandler(pecan.request)
+        handler.update({"contact_name": self._id}, contact)
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(contact.Contact, wtypes.text)
+    def get(self):
+        """Returns a specific contact."""
+        handler = contact_handler.ContactHandler(pecan.request)
+        contact = handler.get({"contact_name": self._id})
+        return contact
