@@ -14,7 +14,7 @@
 
 import json
 
-from surveil.api.datamodel.status import live_query
+from surveil.api.datamodel import live_query
 from surveil.api.handlers.status import fields_filter
 from surveil.tests import base
 

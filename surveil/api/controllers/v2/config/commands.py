@@ -17,6 +17,7 @@ from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import command
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import command_handler
 from surveil.common import util
 
@@ -60,11 +61,11 @@ class CommandsController(rest.RestController):
         return CommandController(command_id), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([command.Command])
-    def get_all(self):
+    @wsme_pecan.wsexpose([command.Command], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all commands."""
         handler = command_handler.CommandHandler(pecan.request)
-        commands = handler.get_all()
+        commands = handler.get_all(data)
         return commands
 
     @util.policy_enforce(['authenticated'])

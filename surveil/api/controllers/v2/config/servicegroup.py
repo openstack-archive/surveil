@@ -19,6 +19,7 @@ import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import servicegroup
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import servicegroup_handler
 from surveil.common import util
 
@@ -30,11 +31,11 @@ class ServiceGroupsController(rest.RestController):
         return ServiceGroupController(servicegroup_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([servicegroup.ServiceGroup])
-    def get_all(self):
+    @wsme_pecan.wsexpose([servicegroup.ServiceGroup], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all service groups."""
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
-        service_groups = handler.get_all()
+        service_groups = handler.get_all(data)
         return service_groups
 
     @util.policy_enforce(['authenticated'])

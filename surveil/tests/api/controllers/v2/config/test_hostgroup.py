@@ -49,7 +49,7 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_hostgroups(self):
-        response = self.get('/v2/config/hostgroups')
+        response = self.post_json('/v2/config/hostgroups', params={})
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),

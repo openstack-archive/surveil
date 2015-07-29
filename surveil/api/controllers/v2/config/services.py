@@ -17,6 +17,7 @@ from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import service
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import service_handler
 from surveil.common import util
 
@@ -24,13 +25,11 @@ from surveil.common import util
 class ServicesController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([service.Service], int)
-    def get_all(self, templates=0):
+    @wsme_pecan.wsexpose([service.Service], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all services."""
         handler = service_handler.ServiceHandler(pecan.request)
-        services = handler.get_all(
-            exclude_templates=(not bool(templates))
-        )
+        services = handler.get_all(data)
         return services
 
     @util.policy_enforce(['authenticated'])
