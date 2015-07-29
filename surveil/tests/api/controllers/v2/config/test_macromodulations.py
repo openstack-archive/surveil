@@ -46,7 +46,7 @@ class TestMacroModulationController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_macromodulations(self):
-        response = self.get('/v2/config/macromodulations')
+        response = self.post_json('/v2/config/macromodulations', params={})
 
         self.assert_count_equal_backport(
             [

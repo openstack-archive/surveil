@@ -19,6 +19,7 @@ import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import notificationway
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import notificationway_handler
 from surveil.common import util
 
@@ -30,11 +31,11 @@ class NotificationWaysController(rest.RestController):
         return NotificationWayController(notificationway_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([notificationway.NotificationWay])
-    def get_all(self):
+    @wsme_pecan.wsexpose([notificationway.NotificationWay], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all notification ways."""
         handler = notificationway_handler.NotificationWayHandler(pecan.request)
-        notificationsway = handler.get_all()
+        notificationsway = handler.get_all(data)
         return notificationsway
 
     @util.policy_enforce(['authenticated'])
