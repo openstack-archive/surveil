@@ -19,6 +19,7 @@ import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import contact
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import contact_handler
 from surveil.common import util
 
@@ -30,11 +31,11 @@ class ContactsController(rest.RestController):
         return ContactController(contact_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([contact.Contact])
-    def get_all(self):
+    @wsme_pecan.wsexpose([contact.Contact], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all contacts."""
         handler = contact_handler.ContactHandler(pecan.request)
-        hosts = handler.get_all()
+        hosts = handler.get_all(data)
         return hosts
 
     @util.policy_enforce(['authenticated'])

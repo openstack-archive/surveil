@@ -34,7 +34,7 @@ class TestCommandController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_commands(self):
-        response = self.get('/v2/config/commands')
+        response = self.post_json('/v2/config/commands', params={})
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),

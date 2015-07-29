@@ -18,6 +18,7 @@ import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import host
 from surveil.api.datamodel.config import service
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import host_handler
 from surveil.api.handlers.config import service_handler
 from surveil.common import util
@@ -66,9 +67,9 @@ class HostServicesSubController(rest.RestController):
     def get_all(self):
         """Returns all services assocaited with this host."""
         handler = service_handler.ServiceHandler(pecan.request)
-        services = handler.get_all(
-            host_name=pecan.request.context['host_name']
-        )
+        services = handler.get_all(lq.LiveQuery(
+            filters='{"is":{"host_name": ["%s"]}}'
+                    % pecan.request.context['host_name']))
         return services
 
     @pecan.expose()
@@ -123,13 +124,11 @@ class HostsController(rest.RestController):
         return HostController(host_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([host.Host], int)
-    def get_all(self, templates=0):
+    @wsme_pecan.wsexpose([host.Host], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all hosts."""
         handler = host_handler.HostHandler(pecan.request)
-        hosts = handler.get_all(
-            exclude_templates=(not bool(templates))
-        )
+        hosts = handler.get_all(data)
         return hosts
 
     @util.policy_enforce(['authenticated'])

@@ -12,7 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from surveil.api.datamodel.status import live_query as q
+from surveil.api.datamodel import live_query as q
 from surveil.api.datamodel.status.metrics import metric as m
 from surveil.api.handlers import handler
 from surveil.api.handlers.status import influxdb_query

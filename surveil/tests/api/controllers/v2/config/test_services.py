@@ -79,7 +79,7 @@ class TestServiceController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_services(self):
-        response = self.get('/v2/config/services')
+        response = self.post_json('/v2/config/services', params={})
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -101,21 +101,36 @@ class TestServiceController(functionalTest.FunctionalTest):
                  "notification_period": "24x7",
                  "contacts": ["surveil-ptl", "surveil-bob"],
                  "register": "0",
-                 "contact_groups": ["linux-admins"]}
+                 "contact_groups": ["linux-admins"],
+                 "use": []}
             )
         )
-        response = self.get('/v2/config/services')
+
+        post_lq = {"filters": '{"is":{"register": "0"}}'}
+        response = self.post_json('/v2/config/services', params=post_lq)
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
-            self.services
+            [{"host_name": ["sample-server444"],
+              "service_description": "check-disk-sdb2",
+              "check_command": "check-disk!/dev/sdb1",
+              "max_check_attempts": 5,
+              "check_interval": 5,
+              "retry_interval": 3,
+              "check_period": "24x7",
+              "notification_interval": 30,
+              "notification_period": "24x7",
+              "contacts": ["surveil-ptl", "surveil-bob"],
+              "register": "0",
+              "contact_groups": ["linux-admins"],
+              "use":[]}]
         )
 
-        response = self.get('/v2/config/services', params={"templates": 1})
+        response = self.post_json('/v2/config/services', params=post_lq)
 
         self.assertEqual(
             len(json.loads(response.body.decode())),
-            len(self.services) + 1
+            1
         )
 
         self.assertEqual(response.status_int, 200)

@@ -14,7 +14,7 @@
 
 import json
 
-from surveil.api.datamodel.status import live_query
+from surveil.api.datamodel import live_query
 from surveil.api.datamodel.status.metrics import time_interval
 from surveil.api.handlers.status import influxdb_query
 from surveil.tests import base
