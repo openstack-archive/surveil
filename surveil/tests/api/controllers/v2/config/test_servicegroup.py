@@ -70,7 +70,7 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
             members=['marie', 'bob', 'joe'],
         )
 
-        self.post_json('/v2/config/servicegroups', s.as_dict())
+        self.put_json('/v2/config/servicegroups', s.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.servicegroups.find_one(s.as_dict())

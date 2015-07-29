@@ -25,6 +25,10 @@ from surveil.common import util
 
 class HostGroupsController(rest.RestController):
 
+    @pecan.expose()
+    def _lookup(self, hostgroup_name, *remainder):
+        return HostGroupController(hostgroup_name), remainder
+
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([hostgroup.HostGroup])
     def get_all(self):
@@ -34,16 +38,8 @@ class HostGroupsController(rest.RestController):
         return host_groups
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(hostgroup.HostGroup, wtypes.text)
-    def get_one(self, group_name):
-        """Returns a host group."""
-        handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        hostgroup = handler.get({"hostgroup_name": group_name})
-        return hostgroup
-
-    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=hostgroup.HostGroup, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new host group.
 
         :param data: a host group within the request body.
@@ -51,19 +47,33 @@ class HostGroupsController(rest.RestController):
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
         handler.create(data)
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(hostgroup.HostGroup, wtypes.text, status_code=204)
-    def delete(self, group_name):
-        """Returns a specific host group."""
-        handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        handler.delete({"hostgroup_name": group_name})
+
+class HostGroupController(rest.RestController):
+
+    def __init__(self, hostgroup_name):
+        pecan.request.context['hostgroup_name'] = hostgroup_name
+        self._id = hostgroup_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(hostgroup.HostGroup,
-                         wtypes.text,
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
+        """Returns a specific host group."""
+        handler = hostgroup_handler.HostGroupHandler(pecan.request)
+        handler.delete({"hostgroup_name": self._id})
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None,
                          body=hostgroup.HostGroup,
                          status_code=204)
-    def put(self, group_name, hostgroup):
+    def put(self,  hostgroup):
         """Update a specific host group."""
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        handler.update({"hostgroup_name": group_name}, hostgroup)
+        handler.update({"hostgroup_name": self._id}, hostgroup)
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(hostgroup.HostGroup, wtypes.text)
+    def get(self):
+        """Returns a host group."""
+        handler = hostgroup_handler.HostGroupHandler(pecan.request)
+        hostgroup = handler.get({"hostgroup_name": self._id})
+        return hostgroup
