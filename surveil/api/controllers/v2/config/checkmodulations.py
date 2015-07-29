@@ -25,6 +25,10 @@ from surveil.common import util
 
 class CheckModulationsController(rest.RestController):
 
+    @pecan.expose()
+    def _lookup(self, checkmodulation_name, *remainder):
+        return CheckModulationController(checkmodulation_name), remainder
+
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([checkmodulation.CheckModulation])
     def get_all(self):
@@ -34,18 +38,8 @@ class CheckModulationsController(rest.RestController):
         return checkmodulations
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(checkmodulation.CheckModulation, wtypes.text)
-    def get_one(self, checkmodulation_name):
-        """Returns a specific check modulation."""
-        handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
-        checkmodulation = handler.get(
-            {"checkmodulation_name": checkmodulation_name}
-        )
-        return checkmodulation
-
-    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=checkmodulation.CheckModulation, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new check modulation.
 
         :param data: a check modulation within the request body.
@@ -53,23 +47,38 @@ class CheckModulationsController(rest.RestController):
         handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
         handler.create(data)
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(checkmodulation.CheckModulation,
-                         wtypes.text, status_code=204)
-    def delete(self, checkmodulation_name):
-        """Returns a specific check modulation."""
-        handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
-        handler.delete({"checkmodulation_name": checkmodulation_name})
+
+class CheckModulationController(rest.RestController):
+
+    def __init__(self, check_modulation_name):
+        pecan.request.context['check_modulation_name'] = check_modulation_name
+        self._id = check_modulation_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(checkmodulation.CheckModulation,
-                         wtypes.text,
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
+        """Returns a specific check modulation."""
+        handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
+        handler.delete({"checkmodulation_name": self._id})
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None,
                          body=checkmodulation.CheckModulation,
                          status_code=204)
-    def put(self, checkmodulation_name, checkmodulation):
+    def put(self, checkmodulation):
         """Update a specific check modulation."""
         handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
         handler.update(
-            {"checkmodulation_name": checkmodulation_name},
+            {"checkmodulation_name": self._id},
             checkmodulation
         )
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(checkmodulation.CheckModulation, wtypes.text)
+    def get(self):
+        """Returns a specific check modulation."""
+        handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
+        checkmodulation = handler.get(
+            {"checkmodulation_name": self._id}
+        )
+        return checkmodulation

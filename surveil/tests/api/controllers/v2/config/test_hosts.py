@@ -189,7 +189,7 @@ class TestHostController(functionalTest.FunctionalTest):
             "custom_fields": {},
             "use": []
         }
-        response = self.post_json("/v2/config/hosts", params=new_host)
+        response = self.put_json("/v2/config/hosts", params=new_host)
 
         hosts = [host.Host(**h).as_dict() for h
                  in self.mongoconnection.shinken.hosts.find(None, {'_id': 0})]

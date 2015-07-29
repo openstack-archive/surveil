@@ -64,7 +64,7 @@ class TestRealmsController(functionalTest.FunctionalTest):
             default=1
         )
 
-        self.post_json('/v2/config/realms', r.as_dict())
+        self.put_json('/v2/config/realms', r.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.realms.find_one(r.as_dict())

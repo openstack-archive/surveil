@@ -76,7 +76,7 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
                  "tuesday": "pizza day"
              }}
 
-        self.post_json('/v2/config/timeperiods', t)
+        self.put_json('/v2/config/timeperiods', t)
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.timeperiods.find_one(

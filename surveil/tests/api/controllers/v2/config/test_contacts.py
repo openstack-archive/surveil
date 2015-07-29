@@ -68,7 +68,7 @@ class TestContactsController(functionalTest.FunctionalTest):
             contact_name='John'
         )
 
-        self.post_json('/v2/config/contacts', c.as_dict())
+        self.put_json('/v2/config/contacts', c.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.contacts.find_one(c.as_dict())
