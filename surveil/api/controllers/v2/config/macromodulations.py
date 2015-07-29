@@ -23,7 +23,11 @@ from surveil.api.handlers.config import macromodulation_handler
 from surveil.common import util
 
 
-class MacroModulationController(rest.RestController):
+class MacroModulationsController(rest.RestController):
+
+    @pecan.expose()
+    def _lookup(self, macromodulation_name, *remainder):
+        return MacroModulationController(macromodulation_name), remainder
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([macromodulation.MacroModulation])
@@ -34,18 +38,8 @@ class MacroModulationController(rest.RestController):
         return modulations
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(macromodulation.MacroModulation, wtypes.text)
-    def get_one(self, macromodulation_name):
-        """Returns a specific macro modulation."""
-        handler = macromodulation_handler.MacroModulationHandler(pecan.request)
-        modulation = handler.get(
-            {"macromodulation_name": macromodulation_name}
-        )
-        return modulation
-
-    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=macromodulation.MacroModulation, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new macro modulation object.
 
         :param data: a macro modulation within the request body.
@@ -53,21 +47,36 @@ class MacroModulationController(rest.RestController):
         handler = macromodulation_handler.MacroModulationHandler(pecan.request)
         handler.create(data)
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(macromodulation.MacroModulation,
-                         wtypes.text,
-                         status_code=204)
-    def delete(self, modulation_name):
-        """Returns a specific macro modulation."""
-        handler = macromodulation_handler.MacroModulationHandler(pecan.request)
-        handler.delete({"macromodulation_name": modulation_name})
+
+class MacroModulationController(rest.RestController):
+
+    def __init__(self, macromodulation_name):
+        pecan.request.context['macromodulation_name'] = macromodulation_name
+        self._id = macromodulation_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(macromodulation.MacroModulation,
-                         wtypes.text,
+    @wsme_pecan.wsexpose(None,
+                         status_code=204)
+    def delete(self):
+        """Returns a specific macro modulation."""
+        handler = macromodulation_handler.MacroModulationHandler(pecan.request)
+        handler.delete({"macromodulation_name": self._id})
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None,
                          body=macromodulation.MacroModulation,
                          status_code=204)
-    def put(self, modulation_name, modulation):
+    def put(self,  modulation):
         """Update a specific macro modulation."""
         handler = macromodulation_handler.MacroModulationHandler(pecan.request)
-        handler.update({"macromodulation_name": modulation_name}, modulation)
+        handler.update({"macromodulation_name": self._id}, modulation)
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(macromodulation.MacroModulation, wtypes.text)
+    def get(self):
+        """Returns a specific macro modulation."""
+        handler = macromodulation_handler.MacroModulationHandler(pecan.request)
+        modulation = handler.get(
+            {"macromodulation_name": self._id}
+        )
+        return modulation

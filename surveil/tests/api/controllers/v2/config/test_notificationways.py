@@ -106,7 +106,7 @@ class TestNotificationWayController(functionalTest.FunctionalTest):
             'min_business_impact': 5
         }
 
-        self.post_json('/v2/config/notificationways', notificationway)
+        self.put_json('/v2/config/notificationways', notificationway)
 
         self.assertIsNotNone(
             self.mongoconnection.

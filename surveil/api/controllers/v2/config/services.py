@@ -37,7 +37,7 @@ class ServicesController(rest.RestController):
     @wsme_pecan.wsexpose(service.Service,
                          body=service.Service,
                          status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new service.
 
         :param data: a service within the request body.

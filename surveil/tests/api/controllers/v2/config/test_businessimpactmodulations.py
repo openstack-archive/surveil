@@ -76,7 +76,7 @@ class TestBusinessImpactModulationController(functionalTest.FunctionalTest):
             self.mongoconnection.shinken.businessimpactmodulations.find_one(m)
         )
 
-        self.post_json('/v2/config/businessimpactmodulations', m)
+        self.put_json('/v2/config/businessimpactmodulations', m)
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.businessimpactmodulations.find_one(m)
