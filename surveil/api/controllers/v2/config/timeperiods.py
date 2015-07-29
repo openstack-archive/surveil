@@ -19,6 +19,7 @@ import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import timeperiod
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import timeperiod_handler
 from surveil.common import util
 
@@ -30,11 +31,11 @@ class TimePeriodsController(rest.RestController):
         return TimePeriodController(timeperiod_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([timeperiod.TimePeriod])
-    def get_all(self):
+    @wsme_pecan.wsexpose([timeperiod.TimePeriod], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all time periods."""
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
-        time_periods = handler.get_all()
+        time_periods = handler.get_all(data)
         return time_periods
 
     @util.policy_enforce(['authenticated'])

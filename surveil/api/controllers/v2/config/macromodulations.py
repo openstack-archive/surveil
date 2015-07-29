@@ -19,6 +19,7 @@ import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import macromodulation
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import macromodulation_handler
 from surveil.common import util
 
@@ -30,11 +31,11 @@ class MacroModulationsController(rest.RestController):
         return MacroModulationController(macromodulation_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([macromodulation.MacroModulation])
-    def get_all(self):
+    @wsme_pecan.wsexpose([macromodulation.MacroModulation], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all macro modulation objects."""
         handler = macromodulation_handler.MacroModulationHandler(pecan.request)
-        modulations = handler.get_all()
+        modulations = handler.get_all(data)
         return modulations
 
     @util.policy_enforce(['authenticated'])

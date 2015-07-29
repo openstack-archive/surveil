@@ -19,6 +19,7 @@ import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import realm
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import realm_handler
 from surveil.common import util
 
@@ -30,11 +31,11 @@ class RealmsController(rest.RestController):
         return RealmController(realm_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([realm.Realm])
-    def get_all(self):
+    @wsme_pecan.wsexpose([realm.Realm], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all realms."""
         handler = realm_handler.RealmHandler(pecan.request)
-        realms = handler.get_all()
+        realms = handler.get_all(data)
         return realms
 
     @util.policy_enforce(['authenticated'])

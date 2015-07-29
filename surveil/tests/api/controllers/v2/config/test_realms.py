@@ -41,7 +41,7 @@ class TestRealmsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_realms(self):
-        response = self.get('/v2/config/realms')
+        response = self.post_json('/v2/config/realms', params={})
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
