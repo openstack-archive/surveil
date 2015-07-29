@@ -71,7 +71,7 @@ class TestCheckModulationsController(functionalTest.FunctionalTest):
              "check_period": "evening"
              }
 
-        self.post_json('/v2/config/checkmodulations', t)
+        self.put_json('/v2/config/checkmodulations', t)
         self.assertIsNotNone(
             self.mongoconnection.shinken.checkmodulations.find_one(
                 {"checkmodulation_name": 'ping_evening',

@@ -97,7 +97,7 @@ class TestMacroModulationController(functionalTest.FunctionalTest):
             }
         }
 
-        self.post_json('/v2/config/macromodulations', m)
+        self.put_json('/v2/config/macromodulations', m)
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.macromodulations.find_one(

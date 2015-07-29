@@ -71,7 +71,7 @@ class CommandsController(rest.RestController):
     @wsme_pecan.wsexpose(command.Command,
                          body=command.Command,
                          status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new command.
 
         :param data: a command within the request body.

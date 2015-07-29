@@ -71,7 +71,7 @@ class TestHostGroupsController(functionalTest.FunctionalTest):
             members=['host1', 'host2'],
         )
 
-        self.post_json('/v2/config/hostgroups', s.as_dict())
+        self.put_json('/v2/config/hostgroups', s.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.hostgroups.find_one(s.as_dict())
