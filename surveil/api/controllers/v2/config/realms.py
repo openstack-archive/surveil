@@ -25,6 +25,10 @@ from surveil.common import util
 
 class RealmsController(rest.RestController):
 
+    @pecan.expose()
+    def _lookup(self, realm_name, *remainder):
+        return RealmController(realm_name), remainder
+
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([realm.Realm])
     def get_all(self):
@@ -34,16 +38,8 @@ class RealmsController(rest.RestController):
         return realms
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(realm.Realm, wtypes.text)
-    def get_one(self, realm_name):
-        """Returns a specific realm."""
-        handler = realm_handler.RealmHandler(pecan.request)
-        realm = handler.get({"realm_name": realm_name})
-        return realm
-
-    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=realm.Realm, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new realm.
 
         :param data: a realm within the request body.
@@ -51,22 +47,36 @@ class RealmsController(rest.RestController):
         handler = realm_handler.RealmHandler(pecan.request)
         handler.create(data)
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(realm.Realm, wtypes.text, status_code=204)
-    def delete(self, realm_name):
-        """Deletes a specific realm."""
-        handler = realm_handler.RealmHandler(pecan.request)
-        handler.delete({"realm_name": realm_name})
+
+class RealmController(rest.RestController):
+
+    def __init__(self, realm_name):
+        pecan.request.context['realm_name'] = realm_name
+        self._id = realm_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(realm.Realm,
-                         wtypes.text,
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
+        """Deletes a specific realm."""
+        handler = realm_handler.RealmHandler(pecan.request)
+        handler.delete({"realm_name": self._id})
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None,
                          body=realm.Realm,
                          status_code=204)
-    def put(self, realm_name, realm):
+    def put(self, realm):
         """Updates a specific realm."""
         handler = realm_handler.RealmHandler(pecan.request)
         handler.update(
-            {"realm_name": realm_name},
+            {"realm_name": self._id},
             realm
         )
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(realm.Realm, wtypes.text)
+    def get(self):
+        """Returns a specific realm."""
+        handler = realm_handler.RealmHandler(pecan.request)
+        realm = handler.get({"realm_name": self._id})
+        return realm

@@ -134,7 +134,7 @@ class HostsController(rest.RestController):
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(host.Host, body=host.Host, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new host.
 
         :param data: a host within the request body.

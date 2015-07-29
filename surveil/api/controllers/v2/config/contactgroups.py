@@ -25,6 +25,10 @@ from surveil.common import util
 
 class ContactGroupsController(rest.RestController):
 
+    @pecan.expose()
+    def _lookup(self, contactgroup_name, *remainder):
+        return ContactGroupController(contactgroup_name), remainder
+
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([contactgroup.ContactGroup])
     def get_all(self):
@@ -34,16 +38,8 @@ class ContactGroupsController(rest.RestController):
         return contact_groups
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(contactgroup.ContactGroup, wtypes.text)
-    def get_one(self, group_name):
-        """Returns a contact group."""
-        handler = contactgroup_handler.ContactGroupHandler(pecan.request)
-        contactgroup = handler.get({"contactgroup_name": group_name})
-        return contactgroup
-
-    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=contactgroup.ContactGroup, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new contact group.
 
         :param data: a contact group within the request body.
@@ -51,20 +47,33 @@ class ContactGroupsController(rest.RestController):
         handler = contactgroup_handler.ContactGroupHandler(pecan.request)
         handler.create(data)
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(contactgroup.ContactGroup, wtypes.text,
-                         status_code=204)
-    def delete(self, group_name):
-        """Delete a specific contact group."""
-        handler = contactgroup_handler.ContactGroupHandler(pecan.request)
-        handler.delete({"contactgroup_name": group_name})
+
+class ContactGroupController(rest.RestController):
+
+    def __init__(self, contactgroup_name):
+        pecan.request.context['contactgroup_name'] = contactgroup_name
+        self._id = contactgroup_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(contactgroup.ContactGroup,
-                         wtypes.text,
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
+        """Delete a specific contact group."""
+        handler = contactgroup_handler.ContactGroupHandler(pecan.request)
+        handler.delete({"contactgroup_name": self._id})
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None,
                          body=contactgroup.ContactGroup,
                          status_code=204)
-    def put(self, group_name, contactgroup):
+    def put(self, contactgroup):
         """Update a specific contact group."""
         handler = contactgroup_handler.ContactGroupHandler(pecan.request)
-        handler.update({"contactgroup_name": group_name}, contactgroup)
+        handler.update({"contactgroup_name": self._id}, contactgroup)
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(contactgroup.ContactGroup, wtypes.text)
+    def get(self):
+        """Returns a contact group."""
+        handler = contactgroup_handler.ContactGroupHandler(pecan.request)
+        contactgroup = handler.get({"contactgroup_name": self._id})
+        return contactgroup

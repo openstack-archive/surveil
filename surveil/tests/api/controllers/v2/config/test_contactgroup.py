@@ -63,7 +63,7 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
             members=["marie", "bob", "joe"],
         )
 
-        self.post_json('/v2/config/contactgroups', g.as_dict())
+        self.put_json('/v2/config/contactgroups', g.as_dict())
 
         self.assertIsNotNone(
             self.mongoconnection.shinken.contactgroups.find_one(g.as_dict())
