@@ -25,6 +25,10 @@ from surveil.common import util
 
 class TimePeriodsController(rest.RestController):
 
+    @pecan.expose()
+    def _lookup(self, timeperiod_name, *remainder):
+        return TimePeriodController(timeperiod_name), remainder
+
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([timeperiod.TimePeriod])
     def get_all(self):
@@ -34,16 +38,8 @@ class TimePeriodsController(rest.RestController):
         return time_periods
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(timeperiod.TimePeriod, wtypes.text)
-    def get_one(self, timeperiod_name):
-        """Returns a specific time period."""
-        handler = timeperiod_handler.TimePeriodHandler(pecan.request)
-        timeperiod = handler.get({"timeperiod_name": timeperiod_name})
-        return timeperiod
-
-    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=timeperiod.TimePeriod, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new time period.
 
         :param data: a time period within the request body.
@@ -51,19 +47,32 @@ class TimePeriodsController(rest.RestController):
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
         handler.create(data)
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(timeperiod.TimePeriod, wtypes.text, status_code=204)
-    def delete(self, timeperiod_name):
-        """Returns a specific time period."""
-        handler = timeperiod_handler.TimePeriodHandler(pecan.request)
-        handler.delete({"timeperiod_name": timeperiod_name})
+
+class TimePeriodController(rest.RestController):
+
+    def __init__(self, timeperiod_name):
+        pecan.request.context['timeperiod_name'] = timeperiod_name
+        self._id = timeperiod_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(timeperiod.TimePeriod,
-                         wtypes.text,
-                         body=timeperiod.TimePeriod,
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
+        """Returns a specific time period."""
+        handler = timeperiod_handler.TimePeriodHandler(pecan.request)
+        handler.delete({"timeperiod_name": self._id})
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None, body=timeperiod.TimePeriod,
                          status_code=204)
-    def put(self, timeperiod_name, timeperiod):
+    def put(self, timeperiod):
         """Update a specific time period."""
         handler = timeperiod_handler.TimePeriodHandler(pecan.request)
-        handler.update({"timeperiod_name": timeperiod_name}, timeperiod)
+        handler.update({"timeperiod_name": self._id}, timeperiod)
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(timeperiod.TimePeriod, wtypes.text)
+    def get(self):
+        """Returns a specific time period."""
+        handler = timeperiod_handler.TimePeriodHandler(pecan.request)
+        timeperiod = handler.get({"timeperiod_name": self._id})
+        return timeperiod
