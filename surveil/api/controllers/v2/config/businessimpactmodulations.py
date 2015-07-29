@@ -18,6 +18,7 @@ from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import businessimpactmodulation as mod
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import businessimpactmodulation_handler as bh
 from surveil.common import util
 
@@ -30,11 +31,11 @@ class BusinessImpactModulationsController(rest.RestController):
             businessimpactmodulation_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([mod.BusinessImpactModulation])
-    def get_all(self):
+    @wsme_pecan.wsexpose([mod.BusinessImpactModulation], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all business impact modulations."""
         handler = bh.BusinessImpactModulationHandler(pecan.request)
-        modulations = handler.get_all()
+        modulations = handler.get_all(data)
         return modulations
 
     @util.policy_enforce(['authenticated'])

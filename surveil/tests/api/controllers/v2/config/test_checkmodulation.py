@@ -40,7 +40,7 @@ class TestCheckModulationsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_checkmodulations(self):
-        response = self.get('/v2/config/checkmodulations')
+        response = self.post_json('/v2/config/checkmodulations', params={})
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),

@@ -88,7 +88,7 @@ class TestHostController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_hosts(self):
-        response = self.get('/v2/config/hosts')
+        response = self.post_json('/v2/config/hosts', params={})
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
@@ -112,17 +112,28 @@ class TestHostController(functionalTest.FunctionalTest):
                  "use": []}
             )
         )
-        response = self.get('/v2/config/hosts')
+        post_lq = {"filters": '{"is":{"register": "0"}}'}
+        response = self.post_json('/v2/config/hosts', params=post_lq)
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
-            self.hosts
+            [{"host_name": "bogus-router345345",
+              "address": "192.168.1.254",
+              "max_check_attempts": 5,
+              "check_period": "24x7",
+              "contacts": ["admin", "carl"],
+              "contact_groups": ["router-admins"],
+              "notification_interval": 30,
+              "notification_period": "24x7",
+              "register": "0",
+              "custom_fields": {},
+              "use": []}]
         )
 
-        response = self.get('/v2/config/hosts',  params={'templates': 1})
+        response = self.post_json('/v2/config/hosts',  params=post_lq)
         self.assertEqual(
             len(json.loads(response.body.decode())),
-            len(self.hosts) + 1
+            1
         )
 
         self.assertEqual(response.status_int, 200)

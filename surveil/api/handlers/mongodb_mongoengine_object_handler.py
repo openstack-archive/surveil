@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from surveil.api.handlers.config import mongoengine_query
 from surveil.api.handlers import handler
 
 
@@ -60,16 +61,27 @@ class MongoObjectHandler(handler.Handler):
         r = self.resource_storage(**resource.as_dict())
         r.save()
 
-    def get_all(self, identifier=None, exclude_templates=False, **kwargs):
+    def get_all(self, lq={}):
         """Return all resources."""
-        identifier = identifier or {}
-        if exclude_templates is True:
-            identifier.update(
-                {"register__ne": "0"}
-            )
 
-        return [
+        fields, query, kwargs = mongoengine_query.build_mongoengine_query(lq)
+
+        resp = [
             self.resource_datamodel(**self._get_dict(r))
             for r
-            in self.resource_storage.objects(**identifier)
-        ]
+            in self.resource_storage.objects(**query)
+        ][kwargs]
+
+        resp_field = []
+
+        if fields:
+            for obj in resp:
+                obj_with_field = {}
+                for field in fields:
+                    obj_with_field[field] = obj[field]
+                resp_field.append(obj_with_field)
+
+        else:
+            resp_field = resp
+
+        return resp_field

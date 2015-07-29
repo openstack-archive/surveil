@@ -20,8 +20,8 @@ from surveil.api.controllers.v2.status.hosts import metrics as host_metrics
 from surveil.api.controllers.v2.status.hosts import results as host_results
 from surveil.api.controllers.v2.status.hosts.services import (
     services as host_services)
+from surveil.api.datamodel import live_query
 from surveil.api.datamodel.status import live_host
-from surveil.api.datamodel.status import live_query
 from surveil.api.handlers.status import live_host_handler
 from surveil.common import util
 
