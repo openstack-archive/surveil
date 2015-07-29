@@ -25,6 +25,10 @@ from surveil.common import util
 
 class ServiceGroupsController(rest.RestController):
 
+    @pecan.expose()
+    def _lookup(self, servicegroup_name, *remainder):
+        return ServiceGroupController(servicegroup_name), remainder
+
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([servicegroup.ServiceGroup])
     def get_all(self):
@@ -34,16 +38,8 @@ class ServiceGroupsController(rest.RestController):
         return service_groups
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(servicegroup.ServiceGroup, wtypes.text)
-    def get_one(self, group_name):
-        """Returns a service group."""
-        handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
-        servicegroup = handler.get({"servicegroup_name": group_name})
-        return servicegroup
-
-    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=servicegroup.ServiceGroup, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new service group.
 
         :param data: a service group within the request body.
@@ -51,20 +47,33 @@ class ServiceGroupsController(rest.RestController):
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
         handler.create(data)
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(servicegroup.ServiceGroup, wtypes.text,
-                         status_code=204)
-    def delete(self, group_name):
-        """Returns a specific service group."""
-        handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
-        handler.delete({"servicegroup_name": group_name})
+
+class ServiceGroupController(rest.RestController):
+
+    def __init__(self, servicegroup_name):
+        pecan.request.context['servicegroup_name'] = servicegroup_name
+        self._id = servicegroup_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(servicegroup.ServiceGroup,
-                         wtypes.text,
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
+        """Returns a specific service group."""
+        handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
+        handler.delete({"servicegroup_name": self._id})
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None,
                          body=servicegroup.ServiceGroup,
                          status_code=204)
-    def put(self, group_name, servicegroup):
+    def put(self, servicegroup):
         """Update a specific service group."""
         handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
-        handler.update({"servicegroup_name": group_name}, servicegroup)
+        handler.update({"servicegroup_name": self._id}, servicegroup)
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(servicegroup.ServiceGroup, wtypes.text)
+    def get(self):
+        """Returns a service group."""
+        handler = servicegroup_handler.ServiceGroupHandler(pecan.request)
+        servicegroup = handler.get({"servicegroup_name": self._id})
+        return servicegroup

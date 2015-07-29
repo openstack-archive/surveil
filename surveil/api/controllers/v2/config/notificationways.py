@@ -25,6 +25,10 @@ from surveil.common import util
 
 class NotificationWaysController(rest.RestController):
 
+    @pecan.expose()
+    def _lookup(self, notificationway_name, *remainder):
+        return NotificationWayController(notificationway_name), remainder
+
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([notificationway.NotificationWay])
     def get_all(self):
@@ -34,18 +38,8 @@ class NotificationWaysController(rest.RestController):
         return notificationsway
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(notificationway.NotificationWay, wtypes.text)
-    def get_one(self, notificationway_name):
-        """Returns a specific notification way."""
-        handler = notificationway_handler.NotificationWayHandler(pecan.request)
-        notificationway = handler.get(
-            {"notificationway_name": notificationway_name}
-        )
-        return notificationway
-
-    @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose(body=notificationway.NotificationWay, status_code=201)
-    def post(self, data):
+    def put(self, data):
         """Create a new notification way.
 
         :param data: a notification way within the request body.
@@ -53,26 +47,38 @@ class NotificationWaysController(rest.RestController):
         handler = notificationway_handler.NotificationWayHandler(pecan.request)
         handler.create(data)
 
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(
-        notificationway.NotificationWay,
-        wtypes.text,
-        status_code=204
-    )
-    def delete(self, notificationway_name):
-        """Returns a specific notification way."""
-        handler = notificationway_handler.NotificationWayHandler(pecan.request)
-        handler.delete({"notificationway_name": notificationway_name})
+
+class NotificationWayController(rest.RestController):
+
+    def __init__(self, notificationway_name):
+        pecan.request.context['notificationway_name'] = notificationway_name
+        self._id = notificationway_name
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(notificationway.NotificationWay,
-                         wtypes.text,
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
+        """Returns a specific notification way."""
+        handler = notificationway_handler.NotificationWayHandler(pecan.request)
+        handler.delete({"notificationway_name": self._id})
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None,
                          body=notificationway.NotificationWay,
                          status_code=204)
-    def put(self, notificationway_name, notificationway):
+    def put(self,  notificationway):
         """Update a specific notification way."""
         handler = notificationway_handler.NotificationWayHandler(pecan.request)
         handler.update(
-            {"notificationway_name": notificationway_name},
+            {"notificationway_name": self._id},
             notificationway
         )
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(notificationway.NotificationWay, wtypes.text)
+    def get(self):
+        """Returns a specific notification way."""
+        handler = notificationway_handler.NotificationWayHandler(pecan.request)
+        notificationway = handler.get(
+            {"notificationway_name": self._id}
+        )
+        return notificationway

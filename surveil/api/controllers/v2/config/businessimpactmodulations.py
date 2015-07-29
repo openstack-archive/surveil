@@ -15,7 +15,6 @@
 
 import pecan
 from pecan import rest
-import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import businessimpactmodulation as mod
@@ -24,6 +23,11 @@ from surveil.common import util
 
 
 class BusinessImpactModulationsController(rest.RestController):
+
+    @pecan.expose()
+    def _lookup(self, businessimpactmodulation_name, *remainder):
+        return BusinessImpactModulationController(
+            businessimpactmodulation_name), remainder
 
     @util.policy_enforce(['authenticated'])
     @wsme_pecan.wsexpose([mod.BusinessImpactModulation])
@@ -34,18 +38,10 @@ class BusinessImpactModulationsController(rest.RestController):
         return modulations
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(mod.BusinessImpactModulation, wtypes.text)
-    def get_one(self, modulation_name):
-        """Returns a specific business impact modulation."""
-        handler = bh.BusinessImpactModulationHandler(pecan.request)
-        modulation = handler.get(
-            {"business_impact_modulation_name": modulation_name}
-        )
-        return modulation
-
-    @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(body=mod.BusinessImpactModulation, status_code=201)
-    def post(self, data):
+    @wsme_pecan.wsexpose(mod.BusinessImpactModulation,
+                         body=mod.BusinessImpactModulation,
+                         status_code=201)
+    def put(self, data):
         """Create a new business impact modulation.
 
         :param data: a business impact modulation within the request body.
@@ -53,26 +49,41 @@ class BusinessImpactModulationsController(rest.RestController):
         handler = bh.BusinessImpactModulationHandler(pecan.request)
         handler.create(data)
 
+
+class BusinessImpactModulationController(rest.RestController):
+
+    def __init__(self, business_impact_modulation_name):
+        pecan.request.context['business_impact_modulation_name'] = (
+            business_impact_modulation_name)
+        self._id = business_impact_modulation_name
+
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(mod.BusinessImpactModulation,
-                         wtypes.text,
-                         status_code=204)
-    def delete(self, modulation_name):
+    @wsme_pecan.wsexpose(mod.BusinessImpactModulation)
+    def get(self):
         """Returns a specific business impact modulation."""
         handler = bh.BusinessImpactModulationHandler(pecan.request)
+        modulation = handler.get(
+            {"business_impact_modulation_name": self._id}
+        )
+        return modulation
+
+    @util.policy_enforce(['authenticated'])
+    @wsme_pecan.wsexpose(None, status_code=204)
+    def delete(self):
+        """Delete this business impact modulation."""
+        handler = bh.BusinessImpactModulationHandler(pecan.request)
         handler.delete(
-            {"business_impact_modulation_name": modulation_name}
+            {"business_impact_modulation_name": self._id}
         )
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose(mod.BusinessImpactModulation,
-                         wtypes.text,
+    @wsme_pecan.wsexpose(None,
                          body=mod.BusinessImpactModulation,
                          status_code=204)
-    def put(self, modulaion_name, modulation):
+    def put(self, modulation):
         """Update a specific business impact modulation."""
         handler = bh.BusinessImpactModulationHandler(pecan.request)
         handler.update(
-            {"business_impact_modulation_name": modulaion_name},
+            {"business_impact_modulation_name": self._id},
             modulation
         )

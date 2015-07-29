@@ -32,7 +32,7 @@ RUN cd /tmp && \
     rm -rfv /tmp/mod-booster-nrpe*
 
 # mod-surveil
-RUN pip install python-surveilclient==0.11.0
+RUN pip install python-surveilclient==0.13.2
 RUN cd /tmp && \
     wget -O mod-surveil-config.tar.gz https://github.com/Alignak-monitoring/mod-surveil/archive/fdc98b4fc036aa483ecb58459f11f9a87cf2254a.tar.gz && \
     tar -zxvf mod-surveil-config.tar.gz && \
@@ -78,7 +78,7 @@ RUN chmod u+s /bin/ping
 RUN chmod u+s /bin/ping6
 
 # Download plugins
-ENV MONITORING_TOOLS_VERSION 0.3.2
+ENV MONITORING_TOOLS_VERSION 0.4.1
 RUN apt-get update && apt-get install -y subversion && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-glance /plugins/check_glance && \
     svn checkout https://github.com/savoirfairelinux/monitoring-tools/tags/${MONITORING_TOOLS_VERSION}/plugins/check-keystone /plugins/check_keystone && \
@@ -92,7 +92,7 @@ RUN apt-get update && apt-get install -y subversion && \
 RUN mkdir -p /opt/surveilplugins
 RUN virtualenv /opt/surveilplugins/env
 ENV PATH=$PATH:/opt/surveilplugins/env/bin
-RUN /opt/surveilplugins/env/bin/pip install "pbr>=1.3,<2.0" shinkenplugins python-keystoneclient python-glanceclient
+RUN /opt/surveilplugins/env/bin/pip install -U "pbr>=1.3,<2.0" shinkenplugins python-keystoneclient python-glanceclient
 
 ## Install Plugins
 RUN mkdir -p /usr/lib/monitoring/plugins/sfl

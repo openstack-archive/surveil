@@ -89,7 +89,7 @@ class TestCommandController(functionalTest.FunctionalTest):
             "command_name": "newcommand",
             "command_line": "/usr/bin/newcommand -hello"
         }
-        response = self.post_json(
+        response = self.put_json(
             "/v2/config/commands",
             params=new_command
         )
