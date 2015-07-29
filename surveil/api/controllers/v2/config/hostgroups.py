@@ -19,6 +19,7 @@ import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import hostgroup
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import hostgroup_handler
 from surveil.common import util
 
@@ -30,11 +31,11 @@ class HostGroupsController(rest.RestController):
         return HostGroupController(hostgroup_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([hostgroup.HostGroup])
-    def get_all(self):
+    @wsme_pecan.wsexpose([hostgroup.HostGroup], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all host groups."""
         handler = hostgroup_handler.HostGroupHandler(pecan.request)
-        host_groups = handler.get_all()
+        host_groups = handler.get_all(data)
         return host_groups
 
     @util.policy_enforce(['authenticated'])

@@ -48,7 +48,7 @@ class TestServiceGroupsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_servicegroups(self):
-        response = self.get('/v2/config/servicegroups')
+        response = self.post_json('/v2/config/servicegroups', params={})
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),

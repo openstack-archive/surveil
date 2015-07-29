@@ -19,6 +19,7 @@ import wsme.types as wtypes
 import wsmeext.pecan as wsme_pecan
 
 from surveil.api.datamodel.config import checkmodulation
+from surveil.api.datamodel import live_query as lq
 from surveil.api.handlers.config import checkmodulation_handler
 from surveil.common import util
 
@@ -30,11 +31,11 @@ class CheckModulationsController(rest.RestController):
         return CheckModulationController(checkmodulation_name), remainder
 
     @util.policy_enforce(['authenticated'])
-    @wsme_pecan.wsexpose([checkmodulation.CheckModulation])
-    def get_all(self):
+    @wsme_pecan.wsexpose([checkmodulation.CheckModulation], body=lq.LiveQuery)
+    def post(self, data):
         """Returns all  check modulations."""
         handler = checkmodulation_handler.CheckModulationHandler(pecan.request)
-        checkmodulations = handler.get_all()
+        checkmodulations = handler.get_all(data)
         return checkmodulations
 
     @util.policy_enforce(['authenticated'])

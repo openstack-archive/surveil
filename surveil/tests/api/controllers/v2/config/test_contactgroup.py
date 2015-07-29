@@ -41,7 +41,7 @@ class TestContactGroupsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_contactgroups(self):
-        response = self.get('/v2/config/contactgroups')
+        response = self.post_json('/v2/config/contactgroups', params={})
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),

@@ -16,7 +16,7 @@ import pecan
 from pecan import rest
 import wsmeext.pecan as wsme_pecan
 
-from surveil.api.datamodel.status import live_query
+from surveil.api.datamodel import live_query
 from surveil.api.datamodel.status import live_service
 from surveil.api.handlers.status import live_service_handler
 from surveil.common import util

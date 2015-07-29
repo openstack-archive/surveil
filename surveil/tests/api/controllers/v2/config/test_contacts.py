@@ -47,7 +47,7 @@ class TestContactsController(functionalTest.FunctionalTest):
         )
 
     def test_get_all_contacts(self):
-        response = self.get('/v2/config/contacts')
+        response = self.post_json('/v2/config/contacts', params={})
 
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
