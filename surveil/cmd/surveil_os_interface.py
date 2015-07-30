@@ -177,13 +177,13 @@ def main():
                           file=sys.stderr)
 
             # Tags
-            instance_tags = daemon_config["SURVEIL_DEFAULT_TAGS"]
+            instance_tags = daemon_config["SURVEIL_DEFAULT_TAGS"].split(',')
             surveil_metadata_tags = event['payload']['metadata'].get(
                 'surveil_tags',
                 None
             )
             if surveil_metadata_tags is not None:
-                instance_tags += ',' + surveil_metadata_tags
+                instance_tags += surveil_metadata_tags.split(',')
 
             sclient.config.hosts.create(
                 host_name=event['payload']['hostname'],
