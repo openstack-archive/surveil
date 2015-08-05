@@ -2,7 +2,7 @@ FROM ubuntu:trusty
 
 MAINTAINER Alexandre Viau <alexandre.viau@savoirfairelinux.com>
 
-RUN apt-get update && apt-get install -y vim supervisor python-dev libffi-dev libssl-dev nagios-nrpe-server wget python-virtualenv python-openssl
+RUN apt-get update && apt-get install -y vim git supervisor python-dev libffi-dev libssl-dev nagios-nrpe-server wget python-virtualenv python-openssl
 # libffi-devand libssl-dev are for python-cryptography
 
 ### Alignak
@@ -32,7 +32,7 @@ RUN cd /tmp && \
     rm -rfv /tmp/mod-booster-nrpe*
 
 # mod-surveil
-RUN pip install python-surveilclient==0.13.2
+RUN pip install python-surveilclient==0.13.3
 RUN cd /tmp && \
     wget -O mod-surveil-config.tar.gz https://github.com/Alignak-monitoring/mod-surveil/archive/fdc98b4fc036aa483ecb58459f11f9a87cf2254a.tar.gz && \
     tar -zxvf mod-surveil-config.tar.gz && \

@@ -10,7 +10,7 @@ keystonemiddleware
 PasteDeploy
 influxdb==2.7.3
 pika
-python-surveilclient==0.13.2
+python-surveilclient==0.13.3
 six
 docker-py
 mongoengine
