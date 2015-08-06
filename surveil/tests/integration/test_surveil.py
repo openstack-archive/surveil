@@ -42,7 +42,7 @@ class TestSeparatedIntegrationSurveil(
         self.get_surveil_client().config.hosts.create(
             host_name='integrationhosttest',
             address='127.0.0.1',
-            use='generic-host',
+            use=['generic-host'],
         )
 
         self.get_surveil_client().config.reload_config()
@@ -106,10 +106,14 @@ class TestSeparatedIntegrationSurveil(
         def function():
             status_host = (self.get_surveil_client().
                            config.hosts.get(host_name='host_name_up'))
+            use = []
+            for status_host_use in status_host['use']:
+                use.append(status_host_use.decode())
+
             self.assertTrue(
                 status_host['host_name'].decode() == 'host_name_up' and
                 status_host['address'].decode() == '127.0.1.1' and
-                status_host['use'].decode() == 'generic-host'
+                use == ['generic-host']
             )
 
         self.assertTrue(
@@ -130,9 +134,9 @@ class TestSeparatedIntegrationSurveil(
             check_command="check_integrationhosttest",
             check_interval="5",
             check_period="24x7",
-            contact_groups="admins",
-            contacts="admin",
-            host_name="integrationhosttest",
+            contact_groups=["admins"],
+            contacts=["admin"],
+            host_name=["integrationhosttest"],
             max_check_attempts="5",
             notification_interval="30",
             notification_period="24x7",
@@ -143,16 +147,22 @@ class TestSeparatedIntegrationSurveil(
 
         self.get_surveil_client().config.reload_config()
         self.get_surveil_client().status.services.submit_check_result(
-            host_name='integrationhosttest',
+            host_name=['integrationhosttest'],
             service_description='check_integrationhosttest',
             output="Hello",
             return_code=0
         )
 
+        def get_host_name(service):
+            host_name_list = []
+            for host_name in service['host_name']:
+                host_name_list.append(host_name.decode())
+            return host_name_list
+
         def function():
             status_services = self.get_surveil_client().status.services.list()
             self.assertFalse(
-                any(service['host_name'].decode() == 'integrationhosttest' and
+                any(get_host_name(service) == ['integrationhosttest'] and
                     service['service_description'].decode() ==
                     'check_integrationhosttest' and
                     service['plugin_output'].decode() == 'Hello' and
@@ -194,9 +204,9 @@ class TestSeparatedIntegrationSurveil(
             check_command="check_integrationhosttest",
             check_interval="5",
             check_period="24x7",
-            contact_groups="admins",
-            contacts="admin",
-            host_name="integrationhosttest",
+            contact_groups=["admins"],
+            contacts=["admin"],
+            host_name=["integrationhosttest"],
             max_check_attempts="5",
             notification_interval="30",
             notification_period="24x7",
