@@ -67,7 +67,7 @@ class DockerBackend():
         now = time.time()
         while True:
             print("Waiting for surveil... %s" % int(time.time() - now))
-            if time.time() < (now + 280):
+            if time.time() < (now + 380):
                 try:
                     #  If 'ws-arbiter' is found, Surveil is ready!
                     configured_hosts = self.surveil_client.status.hosts.list()
