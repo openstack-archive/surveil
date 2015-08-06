@@ -40,7 +40,7 @@ RUN cd /tmp && \
     rm -rfv /tmp/mod-surveil*
 
 # mod-influxdb
-RUN pip install influxdb==2.3.0
+RUN pip install influxdb==2.8.0
 RUN cd /tmp && \
     wget -O mod-influxdb.tar.gz https://github.com/savoirfairelinux/mod-influxdb/archive/3.0.tar.gz && \
     tar -zxvf mod-influxdb.tar.gz && \
