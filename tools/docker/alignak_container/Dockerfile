@@ -42,7 +42,7 @@ RUN cd /tmp && \
 # mod-influxdb
 RUN pip install influxdb==2.8.0
 RUN cd /tmp && \
-    wget -O mod-influxdb.tar.gz https://github.com/savoirfairelinux/mod-influxdb/archive/3.0.tar.gz && \
+    wget -O mod-influxdb.tar.gz https://github.com/savoirfairelinux/mod-influxdb/archive//92b1ccbd670991c495c71c0914a1fb0b18676bb6.tar.gz && \
     tar -zxvf mod-influxdb.tar.gz && \
     mv /tmp/mod-influxdb-*/module /var/lib/alignak/modules/mod-influxdb && \
     rm -rfv /tmp/mod-influxdb*
