@@ -47,6 +47,7 @@ def build_mongoengine_query(live_query):
 def _get_mongoengine_filter(field_name, filter_name, value):
     filters = {
         "is": field_name + "__in",
-        "isnot": field_name + "__nin"
+        "isnot": field_name + "__nin",
+        "defined": field_name + "__exists"
     }
     return {filters[filter_name]: value}
