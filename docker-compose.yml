@@ -53,7 +53,7 @@ redis:
   image: redis
 
 grafana:
-  image: surveil/grafana:2.1.0-pre1
+  image: surveil/grafana:2.1.0
   environment:
     GRAFANA_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
     GRAFANA_AUTH_PROXY_ENABLED: true
