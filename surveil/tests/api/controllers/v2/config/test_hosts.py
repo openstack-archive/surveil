@@ -107,12 +107,14 @@ class TestHostController(functionalTest.FunctionalTest):
                  "contact_groups": ["router-admins"],
                  "notification_interval": 30,
                  "notification_period": "24x7",
+                 "name": "Template",
                  "register": "0",
                  "custom_fields": {},
                  "use": []}
             )
         )
-        post_lq = {"filters": '{"is":{"register": "0"}}'}
+        post_lq = {"filters": '{"is":{"register": "0"},'
+                              '"defined":{"name": "True"}}'}
         response = self.post_json('/v2/config/hosts', params=post_lq)
 
         self.assert_count_equal_backport(
@@ -125,6 +127,7 @@ class TestHostController(functionalTest.FunctionalTest):
               "contact_groups": ["router-admins"],
               "notification_interval": 30,
               "notification_period": "24x7",
+              "name": "Template",
               "register": "0",
               "custom_fields": {},
               "use": []}]

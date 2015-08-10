@@ -32,6 +32,9 @@ class MongoliveQueryTest(base.BaseTestCase):
                 },
                 "is": {
                     "event_type": ["ALERT"]
+                },
+                "defined": {
+                    "name": True
                 }
             }),
             paging=paging.Paging(
@@ -53,7 +56,8 @@ class MongoliveQueryTest(base.BaseTestCase):
             query,
             {"state__nin": ["0", "1"],
              "host_state__nin": ["2"],
-             "event_type__in": ["ALERT"]},
+             "event_type__in": ["ALERT"],
+             "name__exists": True, }
         )
 
         self.assertEqual(
