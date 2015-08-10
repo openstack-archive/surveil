@@ -2,7 +2,7 @@ test: clean start-mongo
 	tox
 	sudo docker stop surveil_test_mongo
 
-integration: clean
+integration: clean start-mongo
 	tox -eintegration
 	sudo docker stop surveil_test_mongo
 
