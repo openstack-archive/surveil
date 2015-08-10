@@ -56,6 +56,9 @@ class LiveQuery(types.Base):
                 },
                 "is": {
                     "event_type": ["ALERT"]
+                },
+                "defined": {
+                    "name": True
                 }
             })
         )

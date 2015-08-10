@@ -100,13 +100,15 @@ class TestServiceController(functionalTest.FunctionalTest):
                  "notification_interval": 30,
                  "notification_period": "24x7",
                  "contacts": ["surveil-ptl", "surveil-bob"],
+                 "name": "Template",
                  "register": "0",
                  "contact_groups": ["linux-admins"],
                  "use": []}
             )
         )
 
-        post_lq = {"filters": '{"is":{"register": "0"}}'}
+        post_lq = {"filters": '{"is":{"register": "0"},'
+                              '"defined":{"name": "True"}}'}
         response = self.post_json('/v2/config/services', params=post_lq)
 
         self.assert_count_equal_backport(
@@ -121,6 +123,7 @@ class TestServiceController(functionalTest.FunctionalTest):
               "notification_interval": 30,
               "notification_period": "24x7",
               "contacts": ["surveil-ptl", "surveil-bob"],
+              "name": "Template",
               "register": "0",
               "contact_groups": ["linux-admins"],
               "use":[]}]
