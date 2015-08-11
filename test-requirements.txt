@@ -9,4 +9,4 @@ testrepository>=0.0.18
 https://github.com/aviau/mongomock/archive/create_index.zip#egg=mongomock
 requests_mock
 sphinx_rtd_theme
-docker-compose
+docker-compose==1.3.3

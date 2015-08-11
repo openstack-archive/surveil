@@ -108,7 +108,7 @@ def paging(response, datamodel, live_query=None):
     """
     if live_query and live_query.paging:
         limit_paging = live_query.paging.size * (live_query.paging.page + 1)
-        limit = live_query.paging.size + live_query.paging.page
+        limit = limit_paging + live_query.paging.size
         offset_paging = live_query.paging.page * live_query.paging.size
 
         def sort_by_time(init, point_tag):
