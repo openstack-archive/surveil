@@ -182,5 +182,5 @@ class TestHostMetric(functionalTest.FunctionalTest):
             self.assertEqual(
                 m.last_request.qs['q'],
                 ["show measurements where host_name='ws-arbiter' "
-                 "and service_description=''"]
+                 "and service_description='__host__'"]
             )

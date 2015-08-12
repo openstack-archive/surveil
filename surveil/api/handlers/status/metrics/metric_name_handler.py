@@ -21,7 +21,7 @@ class MetricNameHandler(handler.Handler):
 
     def get(self, host_name, service_description=None):
         """Return all metrics name."""
-        service_description = service_description or ''
+        service_description = service_description or '__host__'
         query = ("SHOW measurements WHERE host_name='%s' "
                  "AND service_description='%s'"
                  % (host_name, service_description))
