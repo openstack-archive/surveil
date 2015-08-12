@@ -35,7 +35,7 @@ class TestServiceController(functionalTest.FunctionalTest):
                 "notification_interval": 30,
                 "notification_period": "24x7",
                 "contacts": ["surveil-ptl", "surveil-bob"],
-                "contact_groups": ["linux-admins"],
+                "contact_groups": ["linux-masters"],
                 "use": []
             },
             {
@@ -86,6 +86,20 @@ class TestServiceController(functionalTest.FunctionalTest):
             self.services
         )
         self.assertEqual(response.status_int, 200)
+
+    def test_search(self):
+        response = self.post_json('/v2/config/services', params={
+            "search": "admins",
+            "fields": ['service_description']
+        })
+
+        self.assert_count_equal_backport(
+            json.loads(response.body.decode()),
+            [
+                {'service_description': 'check-disk-sdb2'},
+                {'service_description': 'check-disk-sdb3'},
+            ]
+        )
 
     def test_get_all_services_templates(self):
         self.mongoconnection.shinken.services.insert(

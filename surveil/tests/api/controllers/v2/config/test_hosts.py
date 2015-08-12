@@ -96,6 +96,19 @@ class TestHostController(functionalTest.FunctionalTest):
         )
         self.assertEqual(response.status_int, 200)
 
+    def test_get_all_hosts_paging(self):
+        response = self.post_json(
+            '/v2/config/hosts',
+            params={"paging": {"page": 2, "size": 1}}
+        )
+
+        hosts = json.loads(response.body.decode())
+
+        self.assertEqual(
+            hosts,
+            [self.hosts[2]]
+        )
+
     def test_get_all_hosts_templates(self):
         self.mongoconnection.shinken.hosts.insert(
             copy.deepcopy(

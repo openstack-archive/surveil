@@ -27,6 +27,10 @@ def build_mongodb_query(live_query):
                 _get_mongo_filter(filter_name): values
             }
 
+    search = live_query.get('search', None)
+    if search:
+        filters["$text"] = {"$search": search}
+
     if filters:
         query.append(filters)
 
