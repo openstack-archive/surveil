@@ -14,6 +14,7 @@
 
 import copy
 import json
+import unittest
 
 import requests_mock
 from six.moves import urllib_parse
@@ -164,6 +165,20 @@ class TestStatusHosts(functionalTest.FunctionalTest):
 
         self.assert_count_equal_backport(json.loads(response.body.decode()),
                                          expected)
+
+    @unittest.skip("Does not work on jenkins")
+    def test_search_hosts(self):
+        query = {
+            'fields': ['host_name'],
+            'search': 'another'
+        }
+
+        response = self.post_json("/v2/status/hosts", params=query)
+
+        self.assertEqual(
+            json.loads(response.body.decode()),
+            [{"host_name": "test_keystone"}]
+        )
 
     def test_query_host_paging(self):
         query = {
