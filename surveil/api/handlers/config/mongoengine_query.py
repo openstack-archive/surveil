@@ -14,34 +14,72 @@
 
 import json
 
+import mongoengine
 
-def build_mongoengine_query(live_query):
+from surveil.api.storage.mongodb import foreign_key_field
 
-    #  Build the filters
-    query = {}
-    kwargs = None
+
+def build_mongoengine_query(live_query, resource_storage):
+
+    query = mongoengine.Q()
+
+    # Filters
+    if live_query.filters and json.loads(live_query.filters).items():
+        for filter_name, filter_data in json.loads(live_query.filters).items():
+            for field, value in filter_data.items():
+                qobj = mongoengine.Q(
+                    **_get_mongoengine_filter(field,
+                                              filter_name,
+                                              value)
+                )
+                query = query & qobj
+
+    # search
+    if live_query.search:
+        search_q = None
+
+        string_fields = [
+            field for field in resource_storage._fields
+            if isinstance(
+                getattr(resource_storage, field),
+                (
+                    mongoengine.StringField,
+                    mongoengine.ListField,
+                    foreign_key_field.ForeignKeyListField,
+                    foreign_key_field.ForeignKeyListField
+                )
+            )
+        ]
+
+        for field in string_fields:
+            field_q = mongoengine.Q(
+                __raw__={
+                    field: {"$regex": ".*%s.*" % live_query.search,
+                            "$options": "-i"}
+                }
+            )
+
+            if search_q is None:
+                search_q = field_q
+            else:
+                search_q = search_q | field_q
+
+        query = query & search_q
+
+    # Fields
     fields = []
-
     if live_query.fields:
         for field in live_query.fields:
             fields.append(field)
 
-    if live_query.filters and json.loads(live_query.filters).items():
-        for filter_name, filter_data in json.loads(live_query.filters).items():
-            for field, value in filter_data.items():
-                query.update(_get_mongoengine_filter(field,
-                                                     filter_name,
-                                                     value))
-
-    live_query.paging
+    # Paging
+    skip = None
+    limit = None
     if live_query.paging:
-        paging = live_query.paging
-        skip = paging.size * paging.page
-        limit = skip + paging.size
-        kwargs = slice(skip, limit)
-    else:
-        kwargs = slice(None, None)
-    return fields, query, kwargs
+        skip = live_query.paging.size * live_query.paging.page
+        limit = skip + live_query.paging.size
+
+    return fields, query, skip, limit
 
 
 def _get_mongoengine_filter(field_name, filter_name, value):

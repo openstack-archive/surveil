@@ -13,11 +13,11 @@
 # under the License.
 
 from surveil.api.datamodel.status import live_host
-from surveil.api.handlers import handler
+from surveil.api.handlers.status import status_handler
 from surveil.api.handlers.status import mongodb_query
 
 
-class HostHandler(handler.Handler):
+class HostHandler(status_handler.StatusHandler):
     """Fulfills a request on the live hosts."""
 
     def get(self, host_name):

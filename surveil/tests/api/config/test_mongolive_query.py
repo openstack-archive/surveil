@@ -17,12 +17,13 @@ import json
 from surveil.api.datamodel import live_query
 from surveil.api.datamodel.status import paging
 from surveil.api.handlers.config import mongoengine_query
+from surveil.api.storage.mongodb.config import host
 from surveil.tests import base
 
 
-class MongoliveQueryTest(base.BaseTestCase):
+class MongoEngineliveQueryTest(base.BaseTestCase):
 
-    def test_build_mongo_query(self):
+    def test_build_mongoengine_query(self):
         query = live_query.LiveQuery(
             fields=['host_name', 'last_check'],
             filters=json.dumps({
@@ -44,23 +45,15 @@ class MongoliveQueryTest(base.BaseTestCase):
 
         )
 
-        fields, query, kwargs = mongoengine_query.build_mongoengine_query(
-            query)
+        fields, query, skip, limit = mongoengine_query.build_mongoengine_query(
+            query,
+            host.Host
+        )
 
         self.assertEqual(
             fields,
             ['host_name', 'last_check']
         )
 
-        self.assertEqual(
-            query,
-            {"state__nin": ["0", "1"],
-             "host_state__nin": ["2"],
-             "event_type__in": ["ALERT"],
-             "name__exists": True, }
-        )
-
-        self.assertEqual(
-            kwargs,
-            slice(300, 400)
-        )
+        self.assertEqual(skip, 300)
+        self.assertEqual(limit, 400)
