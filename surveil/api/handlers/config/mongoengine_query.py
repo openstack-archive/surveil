@@ -14,34 +14,38 @@
 
 import json
 
+import mongoengine
+
 
 def build_mongoengine_query(live_query):
 
-    #  Build the filters
-    query = {}
-    kwargs = None
-    fields = []
+    query = mongoengine.Q()
 
+    # Filters
+    if live_query.filters and json.loads(live_query.filters).items():
+        for filter_name, filter_data in json.loads(live_query.filters).items():
+            for field, value in filter_data.items():
+                qobj = mongoengine.Q(
+                    **_get_mongoengine_filter(field,
+                                              filter_name,
+                                              value)
+                )
+                query = query & qobj
+
+    # Fields
+    fields = []
     if live_query.fields:
         for field in live_query.fields:
             fields.append(field)
 
-    if live_query.filters and json.loads(live_query.filters).items():
-        for filter_name, filter_data in json.loads(live_query.filters).items():
-            for field, value in filter_data.items():
-                query.update(_get_mongoengine_filter(field,
-                                                     filter_name,
-                                                     value))
-
-    live_query.paging
+    # Paging
+    skip = None
+    limit = None
     if live_query.paging:
-        paging = live_query.paging
-        skip = paging.size * paging.page
-        limit = skip + paging.size
-        kwargs = slice(skip, limit)
-    else:
-        kwargs = slice(None, None)
-    return fields, query, kwargs
+        skip = limit.paging.size * live_query.paging.page
+        limit = skip + live_query.paging.size
+
+    return fields, query, skip, limit
 
 
 def _get_mongoengine_filter(field_name, filter_name, value):

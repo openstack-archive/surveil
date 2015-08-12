@@ -37,6 +37,8 @@ class LiveQuery(types.Base):
     paging = wsme.wsattr(paging.Paging, mandatory=False)
     "Paging."
 
+    fuzzy = wsme.wsattr(wtypes.text, mandatory=False)
+
     @classmethod
     def sample(cls):
         return cls(
@@ -60,5 +62,6 @@ class LiveQuery(types.Base):
                 "defined": {
                     "name": True
                 }
-            })
+            }),
+            fuzzy='web'
         )
