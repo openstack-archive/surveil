@@ -165,6 +165,14 @@ class TestStatusHosts(functionalTest.FunctionalTest):
         self.assert_count_equal_backport(json.loads(response.body.decode()),
                                          expected)
 
+    # def test_search_hosts(self):
+    #     query = {
+    #         'fields': ['host_name'],
+    #         'search': ''
+    #     }
+    #
+    #     response = self.post
+
     def test_query_host_paging(self):
         query = {
             'paging': {
