@@ -64,24 +64,24 @@ class MongoObjectHandler(handler.Handler):
     def get_all(self, lq={}):
         """Return all resources."""
 
-        fields, query, kwargs = mongoengine_query.build_mongoengine_query(lq)
+        fields, query, skip, limit = mongoengine_query.build_mongoengine_query(
+            lq, self.resource_storage
+        )
+
+        if skip is not None and limit is not None:
+            objects = (
+                self.resource_storage.objects(query)
+                .only(*fields)
+                .skip(skip)
+                .limit(limit)
+            )
+        else:
+            objects = self.resource_storage.objects(query).only(*fields)
 
         resp = [
             self.resource_datamodel(**self._get_dict(r))
             for r
-            in self.resource_storage.objects(**query)
-        ][kwargs]
+            in objects
+        ]
 
-        resp_field = []
-
-        if fields:
-            for obj in resp:
-                obj_with_field = {}
-                for field in fields:
-                    obj_with_field[field] = obj[field]
-                resp_field.append(obj_with_field)
-
-        else:
-            resp_field = resp
-
-        return resp_field
+        return resp
