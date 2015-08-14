@@ -56,7 +56,8 @@ You can get development environment without docker
 
 ::
 
-    git clone https://review.openstack.org/stackforge/surveil￼
+    apt-get install python-dev
+    git clone https://review.openstack.org/stackforge/surveil
     cd surveil
     virtualenv env
     source env/bin/activate
