@@ -52,11 +52,24 @@ This will modify permissions so that all API calls that require the ``admin`` ru
 Developping the API without docker
 ----------------------------------
 
+Prerequisite
+~~~~~~~~~~~~
+
+Please ensure you have the following packages
+
+* python-devel/python-dev
+* python-virtulenv
+* make
+* gcc
+
+Installation
+~~~~~~~~~~~~
+
 You can get development environment without docker
 
 ::
 
-    git clone https://review.openstack.org/stackforge/surveil￼
+    git clone https://review.openstack.org/stackforge/surveil
     cd surveil
     virtualenv env
     source env/bin/activate
@@ -64,6 +77,9 @@ You can get development environment without docker
     python setup.py develop
     python setup.py install_data
     surveil-api -p env/etc/surveil/config.py -a env/etc/surveil/api_paste.ini -c env/etc/surveil/surveil.cfg -r
+
+Configuration
+~~~~~~~~~~~~~
 
 Edit your config files
 
