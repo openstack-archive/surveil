@@ -22,3 +22,4 @@ PasteDeploy
 influxdb==2.4.0
 python-surveilclient==0.6.0
 six
+mongoengine
