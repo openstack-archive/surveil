@@ -265,6 +265,99 @@ def main():
             service_description="iamadownservice"
         )
 
+        cli_surveil.config.businessimpactmodulations.create(
+            business_impact_modulation_name="demoBIM",
+            business_impact=42,
+            modulation_period="24x7"
+        )
+
+        cli_surveil.config.checkmodulations.create(
+            checkmodulation_name="demoCheckModulation",
+            check_command="42",
+            check_period="24x7"
+        )
+
+        cli_surveil.config.commands.create(
+            command_name="demoCommand",
+            command_line="ls --all",
+            module_type="active"
+        )
+
+        cli_surveil.config.contacts.create(
+            contact_name="demoContact",
+            host_notifications_enabled=1,
+            service_notifications_enabled=0,
+            host_notification_period="24x6",
+            service_notification_period="12x7",
+            host_notification_options=["mail", "sms"],
+            service_notification_options=["mail"],
+            host_notification_commands=["sms admin"],
+            service_notification_commands=["send mail to admin"],
+            email="surveil.demo@gmail.com",
+            pager="12",
+            can_submit_commands=1,
+            is_admin=0,
+            retain_status_information=1,
+            retain_nonstatus_information=365,
+            min_business_impact=24
+        )
+
+        cli_surveil.config.contactgroups.create(
+            contactgroup_name="BDFL",
+            members=["demoContact"],
+            alias="group Alias",
+            contactgroup_members=["Linus", "Richard"]
+        )
+
+        cli_surveil.config.hostgroups.create(
+            hostgroup_name="OpenStack01",
+            members=['sw-iwebcore-01', 'srv-monitoring-01'],
+            alias="group Alias",
+            hostgroup_members=["AWS01", "Azure01"],
+            notes="notes",
+            notes_url="http://....notes.com",
+            action_url="mail"
+        )
+
+        cli_surveil.config.macromodulations.create(
+            macromodulation_name="Demo macroModulation",
+            modulation_period="24x7",
+            macro={"Linus": "Linux", "Richard": "Gnu"}
+        )
+
+        cli_surveil.config.notificationways.create(
+            notificationway_name="Demo motificationway",
+            host_notification_period="24x7",
+            service_notification_period="12x7",
+            host_notification_options=["mail", "sms"],
+            service_notification_options=["mail"],
+            host_notification_commands=["sms admin"],
+            service_notification_commands=["send mail to admin"],
+            min_business_impact="24"
+        )
+
+        cli_surveil.config.realms.create(
+            realm_name="Mordor",
+            realm_members=["Frodon", "Gandalf", "Sauron"],
+            default=42
+        )
+
+        cli_surveil.config.servicegroups.create(
+            servicegroup_name="check Openstack",
+            members=["check-ws-arbiter"],
+            alias="group Alias",
+            servicegroup_members=["check Keystone", "check Nova"],
+            notes="notes",
+            notes_url="http://....notes.com",
+            action_url="mail"
+        )
+
+        cli_surveil.config.timeperiods.create(
+            timeperiod_name="Demo TimePeriod",
+            exclude=["24x7", "11x12"],
+            periods={"day": "demo", "night": "demoNight"},
+            alias="aliasGroup"
+        )
     # Reload the shinken config
     cli_surveil.config.reload_config()
 
