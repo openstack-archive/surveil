@@ -49,10 +49,12 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
         self.assert_count_equal_backport(
             json.loads(response.body.decode()),
             [
-                {'timeperiod_name': 'misc-single-days',
+                {'exclude': [],
+                 'timeperiod_name': 'misc-single-days',
                  'periods': {'day 2': '00:00-24:00',
                              '1999-01-28': '00:00-24:00'}},
-                {'timeperiod_name': 'nonworkhours',
+                {'exclude': [],
+                 'timeperiod_name': 'nonworkhours',
                  'periods': {'sunday': '00:00-24:00',
                              'monday': '00:00-09:00,17:00-24:00'}}
             ]
@@ -64,7 +66,8 @@ class TestTimePeriodsController(functionalTest.FunctionalTest):
 
         self.assertEqual(
             json.loads(response.body.decode()),
-            {'timeperiod_name': 'nonworkhours',
+            {'exclude': [],
+             'timeperiod_name': 'nonworkhours',
              'periods': {'sunday': '00:00-24:00',
                          'monday': '00:00-09:00,17:00-24:00'}}
         )

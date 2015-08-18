@@ -18,6 +18,6 @@ import mongoengine
 class TimePeriod(mongoengine.Document):
     meta = {'collection': 'timeperiods'}
     timeperiod_name = mongoengine.StringField()
-    exclude = mongoengine.StringField()
+    exclude = mongoengine.ListField()
     periods = mongoengine.DictField()
     alias = mongoengine.StringField()
