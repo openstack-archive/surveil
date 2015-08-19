@@ -9,9 +9,10 @@ Table of Contents:
 
    readme
    project_architecture
-   tutorials/index.rst
+   tutorials/index
    webapi/index
-   administration/index.rst
+   webui/index
+   administration/index
 
 Indices and tables
 ==================
