@@ -1,0 +1,234 @@
+{
+    "results": [
+        {
+            "series": [
+                {
+                    "name": "EVENT",
+                    "tags": {
+                        "common": "1",
+                        "event_type": "",
+                        "host_name": "google.com",
+                        "service_description": "__host__"
+                    },
+                    "columns": [
+                        "time",
+                        "attempts",
+                        "output",
+                        "state",
+                        "state_type",
+                        "alert_type"
+                    ],
+                    "values": [
+                        [
+                            "2015-08-13T19:09:54Z",
+                            null,
+                            "Host assumed to be UP",
+                            "UP",
+                            "HARD",
+                            null
+                        ]
+                    ]
+                },
+                {
+                    "name": "EVENT",
+                    "tags": {
+                        "common": "1",
+                        "event_type": "",
+                        "host_name": "myparentisdown",
+                        "service_description": "__host__"
+                    },
+                    "columns": [
+                        "time",
+                        "attempts",
+                        "output",
+                        "state",
+                        "state_type",
+                        "alert_type"
+                    ],
+                    "values": [
+                        [
+                            "2015-08-13T19:11
+                            :
+                            39
+                            Z
+                            ",null,"
+                            Host
+                            assumed
+                            to
+                            be
+                            UP
+                            ","
+                            UP
+                            ","
+                            HARD
+                            ",null]]},{"
+                            name
+                            ":"
+                            EVENT
+                            ","
+                            tags
+                            ":{"
+                            common
+                            ":"
+                            1
+                            ","
+                            event_type
+                            "
+                            :
+                            "",
+                            "host_name"
+                            :
+                            "openstackceilometer-host",
+                            "service_description"
+                            :
+                            "__host__"
+                            },
+                            "columns"
+                            :
+                            [
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ],
+                            "values"
+                            :
+                        [[
+                            "2015-08-13T19:10:24Z", null, "OK - 127.0.0.1:
+                            rta 0.038ms, lost
+                            0%","UP","HARD",null]]},{"name":"EVENT
+                            ","tags":{"common":"1","event_type":"","
+                            host_name": "passive_check_host", "service_description": "__host__"},
+                            "columns":
+                            [
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ]
+                            , "values":
+                        [[
+                            "2015-08-13T19:10:33Z", null, "OK - 127.0.0.1: rta 0.036ms, lost
+                            0%","UP","HARD",null]]},{"name":"EVENT","tags":{"common":"1","event_type":"","host_name":"srv-apache-01", "service_description": "__host__"}, "columns":[
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ], "values":[
+                            [
+                            "2015-08-13T19:10:34Z", null, "check_icmp: Failed to resolve srv-apache-01", "DOWN", "SOFT",null
+                            ],[
+                            "2015-08-13T19:11:35Z", null, "check_icmp: Failed to resolve srv-apache-01", "DOWN", "HARD",null
+                            ]
+                            ]},{"name": "EVENT", "tags":{"common": "1", "event_type": "", "host_name":
+                            "srv-ldap-01", "service_description": "__host__"}, "columns":
+                            ["time", "attempts", "output", "state", "state_type","alert_type"]
+                            , "values":
+                        [[
+                            "2015-08-13T19: 11: 47Z",null,"OK - 127.0
+                            .0.1: rta 0.039ms, lost 0%
+                            ","UP","HARD",null]]},{"name":"EVENT","tags
+                            ":{"common": "1", "event_type": "",
+                            "host_name": "srv-monitoring-01", "service_description": "__host__"}, "columns"
+                            :
+                            [
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ]
+                            , "values":
+                        [[
+                            "2015-08-13T19:10:38Z", null, "OK -
+                            127.0.0.1: rta
+                            0.034ms, lost 0%","UP","HARD
+                            ",null]]},{"name":"EVENT","tags":{"common":"1
+                            ","event_type": "", "host_name": "sw-iwebcore-01",
+                            "service_description": "__host__"}, "columns":
+                            [
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ]
+                            , "values":
+                        [[
+                            "2015-08-13T19:11:59Z", null, "OK - 127.0.0.1: rta 0.037ms, lost 0%","
+                            UP","HARD",null]]},{"name":"EVENT","tags":{"common":"1","event_type":"","host_name":"test_keystone", "service_description": "__host__"}, "columns":[
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ], "values":[["2015-08-13T19:10:03Z", null, "OK - 127.0.0.1: rta 0.029ms, lost 0%", "UP", "HARD",null]]}
+                            ,
+                            {
+                            "name": "EVENT", "tags":
+                            {"common": "1", "event_type": "", "host_name":"ws-arbiter", "service_description": "__host__"
+                            }
+                            , "columns":["time", "attempts", "output", "state", "state_type","alert_type"]
+                            , "values":
+                        [[
+                            "2015-08-13T19: 10: 13Z",null,"OK - localhost
+                            : rta 0.041ms, lost 0%","UP
+                            ","HARD",null]]},{"name":"EVENT","tags":{"common
+                            ": "", "event_type": "ALERT", "host_name":
+                            "srv-apache-01", "service_description": "_self_"}, "columns":
+                            [
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ]
+                            , "values":
+                        [[
+                            "2015-08-13T19:10:35Z", 1, "check_icmp: Failed to resolve srv-apache-01\\n","DOWN","SOFT","HOST"],["2015-08-13T19:11: 05Z",1,"check_icmp: Failed
+                            to resolve srv-apache-01\\n","DOWN","SOFT","HOST"],["2015-08-13T19: 11: 37Z",2,"check_icmp: Failed to
+                            resolve srv-apache-01\\n","DOWN","HARD","HOST"]]},{"name":"EVENT","tags":{"common":"","event_type":"ALERT"
+                            , "host_name": "srv-apache-01", "service_description": "disk"},
+                            "columns":
+                            [
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ]
+                            , "values":
+                        [[
+                            "2015-08-13T19:11:35Z", 1, "[Errno -2] Name or service not known
+                            \\n","CRITICAL
+                            ","SOFT","SERVICE"]]},{"name":"EVENT","tags":{"common":"","event_type":"ALERT","host_name"
+                            : "srv-apache-01", "service_description": "memory"}, "columns":[
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ], "values":[
+                            [
+                            "2015-08-13T19:11:35Z", 1, "[Errno -2] Name or service not known\\n", "CRITICAL", "SOFT","SERVICE"
+                            ]
+                            ]},{"name": "EVENT", "tags":{"common": "", "event_type": "ALERT", "host_name":"srv-apache-01", "service_description": "users"}, "columns":[
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ]
+                            , "values":
+                            [
+                            [
+                            "2015-08-13T19:11:02Z", 1, "[Errno -2] Name or service not known\\n", "CRITICAL", "SOFT","SERVICE"
+                            ]
+                            ]
+                            },{"name": "EVENT", "tags":{
+                            "common": "", "event_type": "ALERT", "host_name":
+                            "srv-monitoring-01", "service_description": "disk"}, "columns":
+                            ["time", "attempts", "output", "state", "state_type","alert_type"]
+                            , "values":
+                        [[
+                            "2015-08-13T19: 10: 45Z",1,"NRPE: Command 'check_disk' not defined\\n","CRITICAL","SOFT","SERVICE"]]},{"name":"EVENT", "tags":{"common": "", "event_type": "", "host_name": "srv-apache-01", "service_description": "disk"
+                            }
+                            , "columns":["time", "attempts", "output", "state", "state_type","alert_type"], "values":[
+                            [
+                            "2015-08-13T19:11:34Z", null, "[Errno -2] Name or service not known", "CRITICAL", "SOFT",null
+                            ]
+                            ]},{"name": "EVENT", "tags":{"common": "", "event_type": "", "host_name":
+                            "srv-apache-01", "service_description": "memory"}, "columns":
+                            [
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ]
+                            , "values":
+                        [[
+                            "2015-08-13T19:11:34Z", null, "[Errno -2] Name
+                            or service not known","
+                            CRITICAL","SOFT",null]]},{"name":"EVENT","tags":{"common":"","event_type":"", "host_name": "srv-apache-01", "service_description": "users"}, "columns":[
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ], "values":[
+                            [
+                            "2015-08-13T19:11:01Z", null, "[Errno -2] Name or service not known", "CRITICAL", "SOFT",null
+                            ]
+                            ]},{"name": "EVENT", "tags":{"common": "", "event_type": "", "host_name":"srv-monitoring-01", "service_description": "disk"}, "columns":[
+                            "time", "attempts", "output", "state", "state_type","alert_type"
+                            ]
+                            , "values":
+                            [
+                            [
+                            "2015-08-13T19:10:42Z", null, "NRPE: Command 'check_disk' not defined", "CRITICAL", "SOFT",null
+                            ]
+                            ]
+                            },{"name": "EVENT", "tags":{
+                            "common": "", "event_type": "", "host_name":
+                            "srv-monitoring-01", "service_description": "users"}, "columns":
+                            ["time", "attempts", "output", "state", "state_type","alert_type"]
+                            , "values":
+                        [[
+                            "2015-08-13T19: 11: 13Z",null,"USERS OK -
+                            0 users currently logged in","OK","HARD",null]]}]}]}
