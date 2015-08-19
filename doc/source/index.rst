@@ -11,6 +11,7 @@ Table of Contents:
    project_architecture
    tutorials/index.rst
    webapi/index
+   webapi/index
    administration/index.rst
 
 Indices and tables
