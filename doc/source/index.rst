@@ -10,7 +10,8 @@ Table of Contents:
    readme
    project_architecture
    tutorials/index.rst
-   webapi/index
+   webapi/index.rst
+   webui/index.rst
    administration/index.rst
 
 Indices and tables
