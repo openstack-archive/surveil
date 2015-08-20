@@ -12,8 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import pymongo
-
 from surveil.api.handlers import handler
 
 
@@ -32,9 +30,9 @@ class StatusHandler(handler.Handler):
             pass
 
         self.request.mongo_connection.alignak_live.hosts.ensure_index(
-            [("$**", pymongo.TEXT)]
+            [("$**", 'text')]
         )
 
         self.request.mongo_connection.alignak_live.services.ensure_index(
-            [("$**", pymongo.TEXT)]
+            [("$**", 'text')]
         )
