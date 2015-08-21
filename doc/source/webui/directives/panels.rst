@@ -1,8 +1,9 @@
 Tabpanel and panel
 ==================
 
-Panels are use to put components in a section. Tabpanels are a mechanism to show
-and hide panels according to a panelId.
+Panels are used to put components in a section.
+
+Tabpanels are a mechanism to show and hide panels according to a panelId.
 
 Panel
 *****
@@ -19,7 +20,7 @@ Panel
 
 
 panelId
-    The id of the panel use by tabpanel toggle if shown.
+    The id of the panel use by tabpanel.
 
 Components
     The list of components of the panel.
@@ -47,14 +48,14 @@ Tabpanel
   }
 
 navigation (required)
-    Contains keys of every panelId you want to toggle if shown.
+    Contains keys of every panelId managed by the tabpanel.
 
     title
         The title of the tab.
 
     provider
-        A provider to show a number right next to the title.
+        A provider to show a number next to the title.
 
 components
-    A list of panel objects to toggle view.
+    The list of panels managed by the tabpanel.
 

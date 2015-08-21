@@ -1,7 +1,7 @@
 Title
 *****
 
-Title write an header.
+Title writes a header.
 
 .. code-block:: javascript
 
@@ -18,8 +18,8 @@ title (required)
     the title to write.
 
 item
-    A string to print inside the orange banner representing the type of items that was count by the provider.
+    A string to print inside the orange banner representing the type of items that is counted by the provider.
 
 provider
-    A provider querying Surveil returning a number to write inside the banner. See providers for key.
+    A provider returning a number to write inside the banner. See providers for key.
 
