@@ -1,23 +1,22 @@
 Action Bar
-**********
+==========
 
-Action Bar is a bar container with components who can filters, reload, search data. This data are inside the mother object and can be identified by a datasourceId
-::
+The action bar is the bar containing components that act on data. Theses
+components can apply filters, recheck selected data, etc. on specified datasourceId.
 
-  {
-    "type": "actionbar",
-    "attributes": { "datasourceId": [ 1, 2]},
-    "components": [...]
-  }
+.. code-block:: javascript
 
-
-Attributes:
+    {
+        "type": "actionbar",
+        "attributes": { "datasourceId": [ 0, 1 ] },
+        "components": [...]
+    }
 
 datasourceId (required, type: array of int)
     The datasources on which the actionbar components will act.
 
 Components
-    A list of actionbar components.
+    The list of actionbar components.
 
 Components of an actionbar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,8 +24,9 @@ Components of an actionbar
 Acknowledge
 ***********
 
-Open a form to make an acknowledge on objects selected with a checkbox (see table checkbox attribute)
-::
+Open the acknowledge form that is apply on selected entries. (see table checkbox attribute)
+
+.. code-block:: javascript
 
   {
       "type": "actionbar-acknowledge",
@@ -34,63 +34,78 @@ Open a form to make an acknowledge on objects selected with a checkbox (see tabl
   }
 
 
-Down time
-*********
+Downtime
+********
 
-Open a form to make a downtime on objects selected with a checkbox (see table checkbox attribute)
-::
+Open the downtime form that is apply on selected entries. (see table checkbox attribute)
+
+.. code-block:: javascript
 
   {
       "type": "actionbar-downtime",
       "attributes": {}
   }
 
-filter
+Filter
 ******
 
 Create a collapse menu of filters
-::
 
-  {
-      "type": "actionbar-filter",
-      "attributes": {
-          "filters": [{
-                        "location": [locationkey],
-                        "content": [contentKey]
-                     }]
-      }
-  }
+.. code-block:: javascript
 
-Attributes:
+    {
+        "type": "actionbar-filter",
+        "attributes": {
+        "filters": [
+                {
+                    "location": "componentsConfig",
+                    "content": "componentsConfigFilterKey"
+                }
+            ]
+        }
+    }
 
-location(required)
-    2 key available : inline and componentsConfig.
+location (required) [ inline || componentsConfig ]
+    Where the filter is loaded. Inline will directly load content as a filter.
 
-content(required)
-    depend on the value of location. If inside, content is a live query object used to filter a data
-    If it is componentsConfig, content must refer to a filters object defined on componentsConfig.json. The filters of this object is used to filter data
-more
+content (required)
+    Depend on the value of location.
+
+    +-------------------+------------------------------------------------+
+    | location          | content                                        |
+    +-------------------+------------------------------------------------+
+    | inline            | An inline filter                               |
+    +-------------------+------------------------------------------------+
+    | componentsConfig  | A filters key defined on componentsConfig.json |
+    +-------------------+------------------------------------------------+
+
+More
 ****
+
 Implemented but unused for the moment
 
-recheck
+Recheck
 *******
+
 Make recheck on objects selected with a checkbox (see table checkbox attribute)
-::
+
+.. code-block:: javascript
 
   {
       "type": "actionbar-recheck",
       "attributes": {}
   }
 
-search-filter
+Search-filter
 *************
-Add a search field inside actionbar on data linked with the mother actionbar by datasourceId
-::
 
-  {
-      "type": "actionbar-search-filter",
-      "attributes": {}
-  }
+Add a search field inside actionbar on data linked with the mother actionbar by datasourceId
+
+.. code-block:: javascript
+
+    {
+        "type": "actionbar-search-filter",
+        "attributes": {}
+    }
 
 
