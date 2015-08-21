@@ -1,18 +1,17 @@
 Custom directives
 =================
 
-Custom directives are use in WebUi mainly to create complex page layout with a
-JSON configuration file.
+Custom directives are use in WebUI mainly to create complex page layout.
 
-Every injectable directives in a layout configuration file are found in
-```app/components/directive/``` and have three properties: Attributes and
+All injectable directives in a layout configuration file are found in
+```app/components/directive/``` and have two properties: Attributes and
 Components.
 
 Attributes
-    Attributes are use to configure current directive for example in the
-    table directive we use attributes to specify, among other things, the shown
-    datasourceId, if the table header will follow on scroll and if there is a
-    checkbox column.
+    Attributes are used to configure the current directive.
+
+    For example, in the table directive, we use attributes to specify the shown datasourceId,
+    whether the table header will follow on scroll and whether there is a checkbox column.
 
 .. code-block:: javascript
 
@@ -28,9 +27,8 @@ Attributes
 
 
 Components
-    Components on the other hand are where we specify all the others directives
-    you want to inject in the current directive. For example, in the table
-    directive we use components to specify columns.
+    Components is a list of directives to inject in the current directive.
+    For example, in the table directive, we use components to specify columns.
 
 .. code-block:: javascript
 
@@ -39,11 +37,11 @@ Components
         "attributes": {...},
         "components": [
             {
-                "type": "cell-single",
+                "type": "cell-host-state",
                 "attributes": {...}
             },
             {
-                "type": "cell-other-fields",
+                "type": "cell-service-state",
                 "attributes": {...}
             }
         ]

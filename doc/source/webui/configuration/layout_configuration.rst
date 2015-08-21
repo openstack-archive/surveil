@@ -1,8 +1,9 @@
 Layout configuration
 --------------------
 The layout configuration is a ``JSON`` file containing the configuration of
-every pages.
-in a particular page the format look like this:
+every page.
+
+For example, the following page would be available at: /#/view?view=myPageUrl.
 
 .. code-block:: javascript
 
@@ -13,16 +14,15 @@ in a particular page the format look like this:
     }
   }
 
-Where the page is accessible via /#/view?view=myPageUrl.
 
 Template [ page || dupal || drupal_dashboard ]
-    This correspond to the template that will be loaded by the webUI. To
+    This corresponds to the template that will be loaded by the webUI.
 
 Components
-    Components is an array of custom directives that define layout of the
-    application. See directives (put url)
+    Components is an array of custom directives that define the layout of
+    the page. See directives (put url)
 
-    The directive you can put are:
+    The available custom directives are:
 
     * panel ./directives/panels.rst
     * tabpanel ./directives/panels.rst
@@ -30,7 +30,7 @@ Components
     * table ./directives/table.rst
     * actionbar ./directives/actionbar.rst
 
-    Alternatively, you can put any custom directives but layout of the WebUI
+    Alternatively, you can use any custom directives but layout of the WebUI
     can look a little off.
 
 
