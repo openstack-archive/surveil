@@ -1,20 +1,21 @@
 Components of a table
 ~~~~~~~~~~~~~~~~~~~~~
 
+Table components represent its columns. The collumns are named after the types of cell they will contain. For example: cell-single.
 
-This components are the column of our table. All attributes param can contains the following objects
+Common column attributes:
+*************************
 
-Common attributes objects:
-**************************
+All columns may define the following attributes.
 
-title(require):
+title (required):
     Title of the column
 
 class
     width of the column. Choose between xsmart, smart, medium and large
 
 url
-    A specific object to create a link on another bansho view when you click on the entryKey of a surveil object inside the table
+    Creates a link to another bansho view
     ::
 
       "url": {
@@ -33,17 +34,18 @@ url
 
 
 
-    view(require):
-        the view to redirect when you click
+    view (required):
+        the view to redirect to
 
     params:
-        a list of object to pass at the url to print some information on the new page
+        a list of objects that will be used to generate the URL
 
-    urlParam
-        name of the parameter to pass to the query to obtain all information for the next page
+    urlParam:
+        name of the url parameter
 
-    "entryKey"(required):
-        a key of the father inputSource’s table object.Its value is the value of the url param passed inside the query
+    entryKey (required):
+        a key of the father inputSource’s table object. Its value is the value of the url param in the URL
+
 cell-single
 ***********
 Column for a specific value of the father inputSource’s table object
@@ -79,7 +81,7 @@ entryKey(required):
 
 cell-other-fields
 *****************
-A column who can grouping  some value from father inputSource’s table object. You can see all this value when you clicked on the cell
+A column that groups values from the parent inputSource’s table object.
 
 ::
 
@@ -101,14 +103,12 @@ A column who can grouping  some value from father inputSource’s table object. 
 Attributes::
 
 skipFields:
-    Key of the father inputSource’s table object value who will not print inside the column
-
-
+    Fields to exclude from the cell
 
 
 cell-status-duration
 ********************
-Used only inside a status service object table. Print the time from the last service check
+Only used inside a status service object table. Prints the time of the last service check
 ::
 
   {
@@ -122,7 +122,7 @@ Used only inside a status service object table. Print the time from the last ser
 
 cell-status-last-check
 **********************
-Used only inside a status host object table. Print the date of the last host check
+Only used inside a status host object table. Prints the date of the last host check
 ::
 
   {
@@ -136,7 +136,7 @@ Used only inside a status host object table. Print the date of the last host che
 
 cell-status-host-status
 ***********************
-Used only inside a status host object table. Print the host state with a specific icon for his curent state
+Only used inside a status host object table. Prints the host state with a specific icon for his curent state
 ::
 
   {
@@ -148,7 +148,7 @@ Used only inside a status host object table. Print the host state with a specifi
 
 cell-status-host
 ****************
-Used only inside a status host object table. Print the hostName with a specific icon for his curent state
+Only used inside a status host object table. Prints the hostName with a specific icon for his curent state
 ::
 
   {
@@ -169,7 +169,7 @@ Used only inside a status host object table. Print the hostName with a specific 
 
 cell-status-service-check
 *************************
-Used only inside a status service table. Print a service name, is current output and an icon for his state
+Only used inside a status service table. Prints a service name, its current output and an icon for his state
 ::
 
   {
@@ -195,7 +195,7 @@ Used only inside a status service table. Print a service name, is current output
 
 cell-config-host-register
 *************************
-Used only inside a config host object table. Print a validate icon if the host is register, print an unvalidate icon if the host is not register
+Only used inside a config host object table. Prints a validate icon if the host is register, prints an unvalidate icon if the host is not registered
 ::
 
   {

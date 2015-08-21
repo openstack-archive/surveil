@@ -1,7 +1,7 @@
 Action Bar
 ==========
 
-The action bar is the bar containing components that act on data. Theses
+The action bar is the bar containing components that act on data. These
 components can apply filters, recheck selected data, etc. on specified datasourceId.
 
 .. code-block:: javascript
@@ -24,7 +24,7 @@ Components of an actionbar
 Acknowledge
 ***********
 
-Open the acknowledge form that is apply on selected entries. (see table checkbox attribute)
+Adds a button that will open an acknowledgement form for all selected entries. (see table checkbox attribute)
 
 .. code-block:: javascript
 
@@ -37,7 +37,7 @@ Open the acknowledge form that is apply on selected entries. (see table checkbox
 Downtime
 ********
 
-Open the downtime form that is apply on selected entries. (see table checkbox attribute)
+Adds a button that will open a downtime form for all selected entries. (see table checkbox attribute)
 
 .. code-block:: javascript
 
@@ -49,7 +49,7 @@ Open the downtime form that is apply on selected entries. (see table checkbox at
 Filter
 ******
 
-Create a collapse menu of filters
+Creates a customizable, collapsed menu of filters
 
 .. code-block:: javascript
 
@@ -82,12 +82,12 @@ content (required)
 More
 ****
 
-Implemented but unused for the moment
+Unused for the moment
 
 Recheck
 *******
 
-Make recheck on objects selected with a checkbox (see table checkbox attribute)
+Adds a recheck button that will launch a recheck command for all selected items (see table checkbox attribute)
 
 .. code-block:: javascript
 
@@ -99,7 +99,7 @@ Make recheck on objects selected with a checkbox (see table checkbox attribute)
 Search-filter
 *************
 
-Add a search field inside actionbar on data linked with the mother actionbar by datasourceId
+Adds a search field inside actionbar that allows to search on data linked with the mother actionbar by datasourceId
 
 .. code-block:: javascript
 
