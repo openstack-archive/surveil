@@ -34,3 +34,7 @@ class Base(wtypes.Base):
                     for k in keys
                     if hasattr(self, k) and
                     getattr(self, k) != wsme.Unset)
+
+    def get_json_schema(self):
+        """Returns a json schema for the datamodel"""
+        return {}

@@ -14,3 +14,4 @@ python-surveilclient==0.13.3
 six
 docker-py
 mongoengine
+jsl
