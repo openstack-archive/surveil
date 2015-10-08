@@ -49,7 +49,7 @@ by: ::
 This will modify permissions so that all API calls that require the ``admin`` rule now pass without any verification.
 
 
-Developping the API without docker
+Developing the API without docker
 ----------------------------------
 
 You can get development environment without docker
