@@ -11,6 +11,6 @@ PasteDeploy
 influxdb==2.8.0
 pika
 python-surveilclient==0.13.3
-six
+six==1.9.0
 docker-py
 mongoengine
