@@ -71,7 +71,7 @@ types documentation
 .. autotype:: surveil.api.datamodel.checkresult.CheckResult
    :members:
 
-.. autotype:: surveil.api.datamodel.config.businessimpactmodulation.BuisnessImpactModulation
+.. autotype:: surveil.api.datamodel.config.businessimpactmodulation.BusinessImpactModulation
    :members:
 
 .. autotype:: surveil.api.datamodel.config.checkmodulation.CheckModulation
