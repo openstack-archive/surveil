@@ -51,7 +51,7 @@ time the project files change thus providing a proper development environment.
 2. Interacting with the API
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can use the `python-surveilclient <https://pypi.python.org/pypi/python-surveilclient>`_ CLI to interact with the API.
+You can use the `python-surveilclient <https://pypi.org/project/python-surveilclient/>`_ CLI to interact with the API.
 
 Install it with the following command:
 
