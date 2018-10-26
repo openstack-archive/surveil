@@ -19,7 +19,10 @@ with discovered elements/devices from Openstack."""
 import argparse
 import os
 import sys
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 import keystoneclient.v2_0 as kc
 import surveilclient.client as sc
