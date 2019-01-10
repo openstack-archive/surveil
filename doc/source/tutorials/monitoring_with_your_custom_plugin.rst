@@ -4,7 +4,7 @@
 Monitoring with your custom plugin
 ##################################
 
-Surveil is compatible with Nagios plugins. It is trivial to write a custom plugin to monitor your applcation. In this guide, we will create a new plugin and configure a new Host that uses it in Surveil.
+Surveil is compatible with Nagios plugins. It is trivial to write a custom plugin to monitor your application. In this guide, we will create a new plugin and configure a new Host that uses it in Surveil.
 
 0. Install the plugin
 ~~~~~~~~~~~~~~~~~~~~~
